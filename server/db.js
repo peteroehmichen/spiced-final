@@ -12,6 +12,19 @@ module.exports.addUser = function (first, last, email, hashedPW) {
     );
 };
 
+module.exports.addLocation = function (continent, country, name) {
+    // console.log("DB query with:", continent, country, name);
+    return sql.query(
+        `INSERT INTO locations (continent, country, name) VALUES ($1, $2, $3);`,
+        [continent, country, name]
+    );
+};
+
+module.exports.getLocations = function () {
+    // console.log("DB query fetching Locations:");
+    return sql.query(`SELECT * FROM locations;`);
+};
+
 module.exports.getAuthenticatedUser = async function (email, password) {
     try {
         const result = await this.getUserByEmail(email);

@@ -170,7 +170,7 @@ app.get("/in/userData.json", async (req, res) => {
 });
 
 app.post("/in/updateUserData.json", async (req, res) => {
-    console.log("updating: ", req.body);
+    // console.log("updating: ", req.body);
     const {
         age,
         location,
@@ -189,6 +189,58 @@ app.post("/in/updateUserData.json", async (req, res) => {
         req.session.userId
     );
     res.json(result);
+});
+
+app.get("/in/addLocation.json", async (req, res) => {
+    // console.log("receiving:", req.query);
+    const { continent, country, name } = req.query;
+    try {
+        const result = await db.addLocation(continent, country, name);
+        // console.log("checking:", result);
+        if (result.rowCount > 0) {
+            return res.json({
+                success: true,
+                error: false,
+            });
+        } else {
+            res.json({
+                success: false,
+                error: "Error in writing to DB",
+            });
+        }
+    } catch (err) {
+        console.log("checking Error:", err);
+        res.json({
+            success: false,
+            error: "Failed Connection to Database",
+        });
+    }
+});
+
+app.get("/in/getLocations.json", async (req, res) => {
+    // console.log("fetching locations");
+    try {
+        const result = await db.getLocations();
+        // console.log("from DB:", result.rows);
+        if (result.rows) {
+            res.json({
+                success: result.rows,
+                error: false,
+            });
+        } else {
+            console.log("DB-Rejection:", result);
+            res.json({
+                success: false,
+                error: "DB rejected command",
+            });
+        }
+    } catch (error) {
+        console.log("DB-Error:", error);
+        res.json({
+            success: false,
+            error: "Failed Connection to DB",
+        });
+    }
 });
 
 app.get("/logout", (req, res) => {

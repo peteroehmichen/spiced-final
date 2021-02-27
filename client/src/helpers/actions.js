@@ -1,10 +1,10 @@
 import axios from "./axios";
 
 export async function getUserData(id) {
-    console.log("Going to fetch user data:");
+    // console.log("Going to fetch user data:");
     try {
         const { data } = await axios.get(`/in/userData.json?id=${id}`);
-        console.log("received", data);
+        // console.log("received", data);
         return {
             type: "FULL_USER_DATA",
             payload: data,
@@ -23,7 +23,7 @@ export async function getUserData(id) {
 export async function updateUserData(values) {
     try {
         const { data } = await axios.post("/in/updateUserData.json", values);
-        console.log("reveived:", data);
+        // console.log("reveived:", data);
         return {
             type: "UPDATE_USER_DATA",
             payload: values,
@@ -32,6 +32,60 @@ export async function updateUserData(values) {
         return {
             type: "UPDATE_USER_DATA",
             payload: error,
+        };
+    }
+}
+
+export function toggleLocationForm() {
+    return { type: "TOGGLE_LOCATION_FORM" };
+}
+
+export async function addNewLocation(values) {
+    // console.log("writing new Location:", values);
+    try {
+        const { data } = await axios.get(
+            `in/addLocation.json?continent=${values.continent}&country=${values.country}&name=${values.name}`
+        );
+        // console.log("response:", data);
+        if (data.success) {
+            return {
+                type: "ADD_NEW_LOCATION",
+                payload: values,
+            };
+        } else {
+            return {
+                type: "ADD_NEW_LOCATION",
+                error: data.error,
+            };
+        }
+    } catch (error) {
+        return {
+            type: "ADD_NEW_LOCATION",
+            error: "Could not access Server",
+        };
+    }
+}
+
+export async function getLocations() {
+    // console.log("getting all Locations");
+    try {
+        const { data } = await axios.get(`in/getLocations.json`);
+        // console.log("response:", data);
+        if (data.success) {
+            return {
+                type: "GET_LOCATIONS",
+                payload: data.success,
+            };
+        } else {
+            return {
+                type: "GET_LOCATIONS",
+                error: data.error,
+            };
+        }
+    } catch (error) {
+        return {
+            type: "GET_LOCATIONS",
+            error: "Could not retrieve Locations",
         };
     }
 }

@@ -1,18 +1,17 @@
 export default function reducer(store = {}, action) {
+    store = {
+        ...store,
+        user: {
+            ...store.user,
+        },
+        otherUser: {
+            ...store.otherUser,
+        },
+        locations: store.locations && [...store.locations],
+        grades: store.grades && [...store.grades],
+    };
+
     if (action.type == "FULL_USER_DATA") {
-        store = {
-            ...store,
-            user: {
-                ...store.user,
-            },
-            otherUser: {
-                ...store.otherUser,
-            },
-            // TODO adding more?
-        };
-        // if (!action.payload.picture) {
-        //     action.payload.picture = "/default.jpg";
-        // }
         if (action.id == "0") {
             store.user = action.payload.user;
             store.gardes = action.payload.grades;
@@ -27,17 +26,35 @@ export default function reducer(store = {}, action) {
     if (action.type == "UPDATE_USER_DATA") {
         console.log("reducer - updating...");
         // FIXME Error Handling
-        store = {
-            ...store,
-            user: {
-                ...store.user,
-                ...action.payload,
-            },
-            otherUser: {
-                ...store.otherUser,
-            },
+        store.user = {
+            ...store.user,
+            ...action.payload,
         };
     }
+
+    if (action.type == "TOGGLE_LOCATION_FORM") {
+        store.activeLocationForm = !store.activeLocationForm;
+    }
+
+    if (action.type == "ADD_NEW_LOCATION") {
+        // console.log("writing new Location to store");
+        if (action.payload) {
+            store.locations = store.locations.concat(action.payload);
+        } else {
+            store.locationError = action.error;
+        }
+        store.activeLocationForm = !store.activeLocationForm;
+    }
+
+    if (action.type == "GET_LOCATIONS") {
+        // console.log("writing all Locations to store");
+        if (action.payload) {
+            store.locations = action.payload;
+        } else {
+            store.locationError = action.error;
+        }
+    }
+
     return store;
 }
 
@@ -150,16 +167,7 @@ export default function reducer(store = {}, action) {
         };
     }
 
-    if (action.type == "TOGGLE_BIO_EDITOR") {
-        store = {
-            ...store,
-            user: {
-                ...store.user,
-            },
-            activeBioEditor:
-                store.activeBioEditor == null ? true : !store.activeBioEditor,
-        };
-    }
+    
 
     if (action.type == "UPDATE_BIO") {
         // maybe handle errors and thik about handling loading

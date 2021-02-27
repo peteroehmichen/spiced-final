@@ -55,14 +55,19 @@ export function useFormEval() {
         e.target.style.borderBottom = "3px solid orangered";
 
         let value = e.target.value;
-        if (!value || value.startsWith(" ")) {
-            value = false;
-        }
-        if (
-            e.target.attributes.type.value == "email" &&
-            !emailFormat.test(e.target.value)
-        ) {
-            value = false;
+
+        if (e.target.nodeName == "SELECT") {
+            //
+        } else {
+            if (!value || value.startsWith(" ")) {
+                value = false;
+            }
+            if (
+                e.target.attributes.type.value == "email" &&
+                !emailFormat.test(e.target.value)
+            ) {
+                value = false;
+            }
         }
 
         if (value) {
