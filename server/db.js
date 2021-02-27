@@ -15,7 +15,7 @@ module.exports.addUser = function (first, last, email, hashedPW) {
 module.exports.addLocation = function (continent, country, name) {
     // console.log("DB query with:", continent, country, name);
     return sql.query(
-        `INSERT INTO locations (continent, country, name) VALUES ($1, $2, $3);`,
+        `INSERT INTO locations (continent, country, name) VALUES ($1, $2, $3) RETURNING id;`,
         [continent, country, name]
     );
 };
@@ -23,6 +23,34 @@ module.exports.addLocation = function (continent, country, name) {
 module.exports.getLocations = function () {
     // console.log("DB query fetching Locations:");
     return sql.query(`SELECT * FROM locations;`);
+};
+
+module.exports.getTripsbyUser = async function (id) {
+    // console.log("DB query fetching Locations:");
+    const friends = await sql.query(
+        `SELECT users.id FROM friendships JOIN users ON (recipient=${id} AND sender=users.id) OR (sender=${id} AND recipient=users.id) WHERE confirmed=true;`
+    );
+    const friendIds = friends.rows.map((friend) => friend.id);
+    friendIds.push(id);
+    console.log("id of friends:", friendIds);
+    // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
+    return sql.query(
+        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1);`,
+        [friendIds]
+    );
+};
+
+module.exports.addTrip = function (
+    location_id,
+    from_min,
+    until_max,
+    comment,
+    userId
+) {
+    return sql.query(
+        `INSERT INTO trips (location_id, from_min, until_max, comment, person) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at;`,
+        [location_id, from_min, until_max, comment, userId]
+    );
 };
 
 module.exports.getAuthenticatedUser = async function (email, password) {
@@ -78,7 +106,15 @@ module.exports.updateUserPw = function (email, hashedPw) {
     ]);
 };
 
-module.exports.getUserById = function getUserByEmail(id) {
+module.exports.getEssentialData = async function (id) {
+    return {
+        userRaw: await this.getUserById(id),
+        locationsRaw: await this.getLocations(),
+        tripsRaw: await this.getTripsbyUser(id),
+    };
+};
+
+module.exports.getUserById = function (id) {
     return sql.query(
         `SELECT * FROM users WHERE id=${id} FOR UPDATE; UPDATE users SET last_online=now() WHERE id=${id};`
     );
@@ -96,6 +132,48 @@ module.exports.updateUserData = function (
     return sql.query(
         `UPDATE users SET age=$1, location=$2, grade_comfort=$3, grade_max=$4, description=$5, experience=$6 WHERE id = $7;`,
         [age, location, grade_comfort, grade_max, description, experience, id]
+    );
+};
+
+module.exports.safeFriendRequest = function (userId, friendId) {
+    return sql.query(
+        `INSERT INTO friendships (sender, recipient) VALUES ($1, $2);`,
+        [userId, friendId]
+    );
+};
+
+module.exports.confirmFriendRequest = function (userId, friendId) {
+    return sql.query(
+        `UPDATE friendships SET confirmed=true WHERE (sender=$1 AND recipient=$2);`,
+        [friendId, userId]
+    );
+};
+
+module.exports.deleteFriendRequest = function (userId, friendId) {
+    return sql.query(
+        `DELETE FROM friendships WHERE (sender=$1 AND recipient=$2);`,
+        [userId, friendId]
+    );
+};
+
+module.exports.deleteFriendship = function (userId, friendId) {
+    return sql.query(
+        `DELETE FROM friendships WHERE (sender=$1 AND recipient=$2) OR (sender=$2 AND recipient=$1);`,
+        [userId, friendId]
+    );
+};
+
+module.exports.getFriendInfo = function (userId, friendId) {
+    return sql.query(
+        `SELECT * FROM friendships WHERE (sender=$1 AND recipient=$2) OR (sender=$2 AND recipient=$1);`,
+        [userId, friendId]
+    );
+};
+
+module.exports.getFriendships = function (userId) {
+    return sql.query(
+        `SELECT users.id, first, last, sender, recipient, confirmed FROM friendships JOIN users ON (recipient = $1 AND sender = users.id) OR (sender = $1 AND recipient = users.id);`,
+        [userId]
     );
 };
 

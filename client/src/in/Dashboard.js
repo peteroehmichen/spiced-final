@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../helpers/actions";
+import axios from "../helpers/axios";
 
 /*
 Summary from other Elements
@@ -10,45 +11,41 @@ Summary from other Elements
 */
 
 export default function Dashboard() {
-    const { user, grades } = useSelector((store) => store);
+    const { user, grades, experience } = useSelector((store) => store);
     const dispatch = useDispatch();
+    // const [countries, setCountries] = useState([]);
 
-    useEffect(() => {
-        dispatch(getUserData("0"));
-    }, []);
+    useEffect(async () => {}, []);
 
-    const details = user && (
-        <div>
-            <p>
-                <b>Your Name:</b> {user.first} {user.last}
-            </p>
-            <p>
-                <b>Your Age:</b> {user.age}
-            </p>
-            <p>
-                <b>Your E-Mail:</b> {user.email}
-            </p>
-            <p>
-                <b>Your Location:</b> {user.location}
-            </p>
-            <p>
-                <b>Your Climbing Grade:</b> {user.grade_comfort} up to{" "}
-                {user.grade_max}
-            </p>
-            <p>
-                <b>Your Experience:</b> {user.experience}
-            </p>
-            <p>
-                <b>Brief Description:</b> {user.description}
-            </p>
-            <a href="/logout">LOGOUT</a>
-        </div>
-    );
+    if (!user || !grades || !experience) return null;
 
     return (
         <div className="central dashboard">
             <h1>Dashboard</h1>
-            {details}
+            <div>
+                <p>
+                    <b>Your Name:</b> {user.first} {user.last}
+                </p>
+                <p>
+                    <b>Your Age:</b> {user.age}
+                </p>
+                <p>
+                    <b>Your E-Mail:</b> {user.email}
+                </p>
+                <p>
+                    <b>Your Location:</b> {user.location}
+                </p>
+                <p>
+                    <b>Your Climbing Grade:</b> {grades[user.grade_comfort]} up
+                    to {grades[user.grade_max]}
+                </p>
+                <p>
+                    <b>Your Experience:</b> {experience[user.experience]}
+                </p>
+                <p>
+                    <b>Brief Description:</b> {user.description}
+                </p>
+            </div>
         </div>
     );
 }

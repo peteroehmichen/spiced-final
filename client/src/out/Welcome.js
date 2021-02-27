@@ -1,5 +1,5 @@
 import { HashRouter, Link, Route } from "react-router-dom";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 
 import Register from "./Register";
 import Login from "./Login";
@@ -11,16 +11,20 @@ import Reset from "./Reset";
 // called "dumb" or "presentational" components (because they dont have much functionaility. - "Pre-hooks")
 export default function Welcome() {
     return (
-        <div className="welcome">
-            <h1>welcome to the start - page</h1>
-            <HashRouter>
-                <Link to="/register">Register</Link>
-                <Link to="/login">Log In</Link>
-                <Link to="reset">Reset</Link>
-                <Route path="/register" component={Register} />
-                <Route path="/login" component={Login} />
-                <Route path="/reset" component={Reset} />
-            </HashRouter>
-        </div>
+        <Fragment>
+            <header></header>
+
+            <div className="central">
+                <h1>welcome to the start - page</h1>
+                <HashRouter>
+                    <Link to="/register">Register</Link>
+                    <Link to="/login">Log In</Link>
+                    <Link to="reset">Reset</Link>
+                    <Route path="/register" component={Register} />
+                    <Route path="/login" component={Login} />
+                    <Route path="/reset" component={Reset} />
+                </HashRouter>
+            </div>
+        </Fragment>
     );
 }

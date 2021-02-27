@@ -24,8 +24,8 @@ CREATE TABLE users (
 
 CREATE TABLE locations (
       id SERIAL PRIMARY KEY,
-      continent INT NOT NULL,
-      country INT NOT NULL,
+      continent VARCHAR(255) NOT NULL,
+      country VARCHAR(255) NOT NULL,
       name VARCHAR(255) NOT NULL UNIQUE,
       rate_1 INT,
       rate_2 INT,
@@ -61,7 +61,7 @@ CREATE TABLE trips (
       from_max TIMESTAMP,
       until_min TIMESTAMP,
       until_max TIMESTAMP,
-      comment TEXT NOT  NULL,
+      comment TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

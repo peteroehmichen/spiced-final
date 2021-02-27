@@ -7,7 +7,7 @@ export default function Login() {
         values
     );
     return (
-        <div className="welcome-blocks login">
+        <div className="login">
             <div className="title">
                 <h3>please log in with your email address</h3>
             </div>

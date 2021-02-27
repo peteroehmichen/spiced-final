@@ -63,6 +63,7 @@ export function useFormEval() {
                 value = false;
             }
             if (
+                e.target.attributes.type &&
                 e.target.attributes.type.value == "email" &&
                 !emailFormat.test(e.target.value)
             ) {

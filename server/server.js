@@ -42,7 +42,11 @@ app.use(compression());
 
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
-const { CODE_VALIDITY_IN_MINUTES, grades } = require("./config.json");
+const {
+    CODE_VALIDITY_IN_MINUTES,
+    grades,
+    experience,
+} = require("./config.json");
 
 app.get("/welcome", (req, res) => {
     if (req.session.userId) {
@@ -145,6 +149,33 @@ app.post("/welcome/code.json", async (req, res) => {
     }
 });
 
+app.get("/in/essentialData.json", async (req, res) => {
+    try {
+        const results = await db.getEssentialData(req.session.userId);
+        // results.tripsRaw.rowCount > 0
+        if (
+            results.userRaw[0].rowCount > 0 &&
+            results.userRaw[1].rowCount > 0 &&
+            results.locationsRaw.rowCount > 0
+        ) {
+            const obj = {
+                user: results.userRaw[0].rows[0],
+                locations: results.locationsRaw.rows,
+                // trips: results.tripsRaw.rows,
+                grades,
+                experience,
+            };
+            res.json({ success: obj, error: false });
+        } else {
+            console.log("error in Obj:", results);
+            res.json({ success: false, error: "couldn't load necessary data" });
+        }
+    } catch (error) {
+        console.log("Error in DB:", error);
+        res.json({ success: false, error: "couldn't access database" });
+    }
+});
+
 app.get("/in/userData.json", async (req, res) => {
     // console.log("receiving:", req.query);
     if (req.query.id == req.session.userId) {
@@ -198,8 +229,9 @@ app.get("/in/addLocation.json", async (req, res) => {
         const result = await db.addLocation(continent, country, name);
         // console.log("checking:", result);
         if (result.rowCount > 0) {
+            req.query.id = result.rows[0].id;
             return res.json({
-                success: true,
+                success: req.query,
                 error: false,
             });
         } else {
@@ -239,6 +271,155 @@ app.get("/in/getLocations.json", async (req, res) => {
         res.json({
             success: false,
             error: "Failed Connection to DB",
+        });
+    }
+});
+
+app.get("/in/getTrips.json", async (req, res) => {
+    // console.log("fetching trips");
+    try {
+        const result = await db.getTripsbyUser(req.session.userId);
+        // console.log("from DB:", result.rows);
+        if (result.rows) {
+            res.json({
+                success: result.rows,
+                error: false,
+            });
+        } else {
+            console.log("DB-Rejection:", result);
+            res.json({
+                success: false,
+                error: "DB rejected command",
+            });
+        }
+    } catch (error) {
+        console.log("DB-Error:", error);
+        res.json({
+            success: false,
+            error: "Failed Connection to DB",
+        });
+    }
+});
+
+app.post("/in/addTrip.json", async (req, res) => {
+    console.log("receiving:", req.body);
+    const { location_id, from_min, until_max, comment } = req.body;
+    try {
+        const result = await db.addTrip(
+            location_id,
+            from_min,
+            until_max,
+            comment,
+            req.session.userId
+        );
+        console.log("checking:", result);
+        if (result.rowCount > 0) {
+            req.body.person = req.session.userId;
+            req.body.id = result.rows[0].id;
+            return res.json({
+                success: req.body,
+                error: false,
+            });
+        } else {
+            res.json({
+                success: false,
+                error: "Error in writing to DB",
+            });
+        }
+    } catch (err) {
+        console.log("checking Error:", err);
+        res.json({
+            success: false,
+            error: "Failed Connection to Database",
+        });
+    }
+    // res.json({ success: "OK - trip" });
+});
+
+app.get("/api/friends.json", async (req, res) => {
+    // console.log("fetching friends for user:", req.session.userId);
+    try {
+        const { rows } = await db.getFriendships(req.session.userId);
+        res.json(rows);
+    } catch (error) {
+        console.log("error in fetching friends:", error);
+        res.json({ error: "Error in Loading Friends" });
+    }
+});
+
+app.post("/api/user/friendBtn.json", async (req, res) => {
+    // console.log();
+    try {
+        if (req.body.task == "") {
+            const { rows } = await db.getFriendInfo(
+                req.session.userId,
+                req.body.friendId
+            );
+            // console.log("DB-Results", rows);
+            if (rows.length == 0) {
+                return res.json({ text: "Send Friend Request" });
+            }
+            if (rows[0].confirmed) {
+                return res.json({ text: "Cancel Friendship" });
+            }
+            if (rows[0].sender == req.session.userId) {
+                return res.json({ text: "Cancel Request" });
+            }
+            return res.json({ text: "Accept Request" });
+        }
+
+        if (req.body.task == "Send Friend Request") {
+            const { rowCount } = await db.safeFriendRequest(
+                req.session.userId,
+                req.body.friendId
+            );
+            if (rowCount > 0) {
+                return res.json({ text: "Cancel Request" });
+            }
+        }
+
+        if (req.body.task == "Cancel Request") {
+            const { rowCount } = await db.deleteFriendRequest(
+                req.session.userId,
+                req.body.friendId
+            );
+            if (rowCount > 0) {
+                return res.json({ text: "Send Friend Request" });
+            }
+        }
+
+        if (req.body.task == "Accept Request") {
+            const { rowCount } = await db.confirmFriendRequest(
+                req.session.userId,
+                req.body.friendId
+            );
+            if (rowCount > 0) {
+                return res.json({ text: "Cancel Friendship" });
+            }
+        }
+
+        if (
+            req.body.task == "Cancel Friendship" ||
+            req.body.task == "Deny Request"
+        ) {
+            const { rowCount } = await db.deleteFriendship(
+                req.session.userId,
+                req.body.friendId
+            );
+            // console.log("DB from Cancel", rowCount);
+            if (rowCount > 0) {
+                return res.json({ text: "Send Friend Request" });
+            }
+        }
+
+        return res.json({
+            text: "Internal error - please try again later",
+            error: true,
+        });
+    } catch (error) {
+        return res.json({
+            text: "Server error - please try again later",
+            error: true,
         });
     }
 });

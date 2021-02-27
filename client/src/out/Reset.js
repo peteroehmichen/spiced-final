@@ -141,7 +141,7 @@ export default function Reset() {
     }
 
     return (
-        <div className="welcome-blocks reset">
+        <div className="reset">
             <div className="title">
                 <h3>Reset your password...</h3>
             </div>

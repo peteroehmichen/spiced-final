@@ -2,19 +2,29 @@ import { formatDistance, parseISO } from "date-fns";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Link, Route } from "react-router-dom";
-import { getUserData, updateUserData } from "../helpers/actions";
+import {
+    getEssentialData,
+    getUserData,
+    updateUserData,
+} from "../helpers/actions";
 import Dashboard from "./Dashboard";
 import Locations from "./Locations";
 import Social from "./Social";
 import Trips from "./Trips";
-import UserEdit from "./UserEdit";
+
+// actually need to get the store-data for location, etc already here!
 
 export default function App() {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getEssentialData());
+    }, []);
+
     return (
         <BrowserRouter>
             <header>
                 <Link to="/">
-                    <div className="nav-element">Start</div>
+                    <div className="nav-element">Dashboard</div>
                 </Link>
                 <Link to="/locations">
                     <div className="nav-element">Locations</div>
@@ -25,6 +35,9 @@ export default function App() {
                 <Link to="/social">
                     <div className="nav-element">Friends</div>
                 </Link>
+                <a href="/logout">
+                    <div className="nav-element grey">Logout</div>
+                </a>
             </header>
             <Fragment>
                 <Route exact path="/" render={() => <Dashboard />} />

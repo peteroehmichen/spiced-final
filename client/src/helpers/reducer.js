@@ -8,13 +8,29 @@ export default function reducer(store = {}, action) {
             ...store.otherUser,
         },
         locations: store.locations && [...store.locations],
+        trips: store.trips && [...store.trips],
         grades: store.grades && [...store.grades],
+        friendships: store.friendships && [...store.friendships],
     };
+
+    if (action.type == "GET_ESSENTIAL_DATA") {
+        if (action.payload.success) {
+            console.log("waiting to work...");
+            store.user = action.payload.success.user;
+            store.locations = action.payload.success.locations;
+            // store.trips = action.payload.success.trips;
+            store.grades = action.payload.success.grades;
+            store.experience = action.payload.success.experience;
+            store.countries = action.payload.countries;
+        } else {
+            store.appError = action.error;
+        }
+    }
 
     if (action.type == "FULL_USER_DATA") {
         if (action.id == "0") {
             store.user = action.payload.user;
-            store.gardes = action.payload.grades;
+            store.grades = action.payload.grades;
         } else {
             store.otherUser = {
                 ...store.otherUser,
@@ -36,6 +52,10 @@ export default function reducer(store = {}, action) {
         store.activeLocationForm = !store.activeLocationForm;
     }
 
+    if (action.type == "TOGGLE_TRIP_FORM") {
+        store.activeTripForm = !store.activeTripForm;
+    }
+
     if (action.type == "ADD_NEW_LOCATION") {
         // console.log("writing new Location to store");
         if (action.payload) {
@@ -53,6 +73,60 @@ export default function reducer(store = {}, action) {
         } else {
             store.locationError = action.error;
         }
+    }
+
+    if (action.type == "GET_TRIPS") {
+        // console.log("writing all Trips to store");
+        if (action.payload) {
+            store.trips = action.payload;
+        } else {
+            store.tripsError = action.error;
+        }
+    }
+
+    if (action.type == "ADD_NEW_TRIP") {
+        console.log("writing new trip to store");
+        if (action.payload) {
+            store.trips = store.trips.concat(action.payload);
+        } else {
+            store.tripsError = action.error;
+        }
+        store.activeTripForm = !store.activeTripForm;
+    }
+
+    if (action.type == "GET_FRIENDSHIPS") {
+        store.friendships = action.payload;
+    }
+
+    if (action.type == "CANCEL_FRIENDSHIP") {
+        store.friendships = store.friendships.filter(
+            (user) => user.id != action.payload
+        );
+    }
+
+    if (action.type == "ACCEPT_REQUEST") {
+        store.friendships = store.friendships.map((user) => {
+            if (user.sender == action.payload) {
+                return {
+                    ...user,
+                    confirmed: true,
+                };
+            } else {
+                return user;
+            }
+        });
+    }
+
+    if (action.type == "CANCEL_REQUEST") {
+        store.friendships = store.friendships.filter(
+            (user) => user.recipient != action.payload
+        );
+    }
+
+    if (action.type == "DENY_REQUEST") {
+        store.friendships = store.friendships.filter(
+            (user) => user.sender != action.payload
+        );
     }
 
     return store;

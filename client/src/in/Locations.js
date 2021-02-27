@@ -14,7 +14,7 @@ export default function Locations() {
     const { activeLocationForm, locations } = useSelector((store) => store);
 
     useEffect(() => {
-        dispatch(getLocations());
+        // dispatch(getLocations());
     }, []);
 
     if (!locations) return null;
@@ -22,7 +22,6 @@ export default function Locations() {
     return (
         <div className="central locations">
             <h1>Locations</h1>
-            <p>List of Locations</p>
             <ul>
                 {locations &&
                     locations.map((elem, i) => (

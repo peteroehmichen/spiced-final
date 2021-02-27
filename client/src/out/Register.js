@@ -8,7 +8,7 @@ export default function Register() {
     );
 
     return (
-        <div className="welcome-blocks register">
+        <div className="register">
             <div className="title">
                 <h3>Please sign up with your personal information</h3>
             </div>

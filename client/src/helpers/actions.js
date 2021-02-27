@@ -1,5 +1,29 @@
 import axios from "./axios";
 
+export async function getEssentialData() {
+    // console.log("Going to fetch user data:");
+    try {
+        const { data } = await axios.get(`/in/essentialData.json`);
+        const countries = await axios.get(
+            "http://countryapi.gear.host/v1/Country/getCountries"
+        );
+        console.log("received", data);
+        return {
+            type: "GET_ESSENTIAL_DATA",
+            payload: {
+                ...data,
+                countries: [...countries.data.Response],
+            },
+        };
+    } catch (err) {
+        console.log("Received an error on /app:", err);
+        return {
+            type: "GET_ESSENTIAL_DATA",
+            error: "No Connection to Database",
+        };
+    }
+}
+
 export async function getUserData(id) {
     // console.log("Going to fetch user data:");
     try {
@@ -40,17 +64,21 @@ export function toggleLocationForm() {
     return { type: "TOGGLE_LOCATION_FORM" };
 }
 
+export function toggleTripForm() {
+    return { type: "TOGGLE_TRIP_FORM" };
+}
+
 export async function addNewLocation(values) {
     // console.log("writing new Location:", values);
     try {
         const { data } = await axios.get(
-            `in/addLocation.json?continent=${values.continent}&country=${values.country}&name=${values.name}`
+            `/in/addLocation.json?continent=${values.continent}&country=${values.country}&name=${values.name}`
         );
-        // console.log("response:", data);
+        console.log("response:", data);
         if (data.success) {
             return {
                 type: "ADD_NEW_LOCATION",
-                payload: values,
+                payload: data.success,
             };
         } else {
             return {
@@ -61,6 +89,30 @@ export async function addNewLocation(values) {
     } catch (error) {
         return {
             type: "ADD_NEW_LOCATION",
+            error: "Could not access Server",
+        };
+    }
+}
+
+export async function addNewTrip(values) {
+    console.log("writing new Location:", values);
+    try {
+        const { data } = await axios.post(`/in/addTrip.json`, values);
+        console.log("response:", data);
+        if (data.success) {
+            return {
+                type: "ADD_NEW_TRIP",
+                payload: data.success,
+            };
+        } else {
+            return {
+                type: "ADD_NEW_TRIP",
+                error: data.error,
+            };
+        }
+    } catch (error) {
+        return {
+            type: "ADD_NEW_TRIP",
             error: "Could not access Server",
         };
     }
@@ -86,6 +138,99 @@ export async function getLocations() {
         return {
             type: "GET_LOCATIONS",
             error: "Could not retrieve Locations",
+        };
+    }
+}
+
+export async function getTrips() {
+    // console.log("getting all Trips");
+    try {
+        const { data } = await axios.get(`in/getTrips.json`);
+        // console.log("response:", data);
+        if (data.success) {
+            return {
+                type: "GET_TRIPS",
+                payload: data.success,
+            };
+        } else {
+            return {
+                type: "GET_TRIPS",
+                error: data.error,
+            };
+        }
+    } catch (error) {
+        return {
+            type: "GET_TRIPS",
+            error: "Could not retrieve Trips",
+        };
+    }
+}
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+export async function getFriendships() {
+    const { data } = await axios.get("/api/friends.json");
+    // console.log("data from server", data);
+    return {
+        type: "GET_FRIENDSHIPS",
+        payload: data,
+    };
+}
+
+export async function unfriend(id) {
+    // console.log("Going to unfriend id", id);
+    const { data } = await axios.post("/api/user/friendBtn.json", {
+        task: "Cancel Friendship",
+        friendId: id,
+    });
+    console.log("received:", data);
+    if (!data.error) {
+        return {
+            type: "CANCEL_FRIENDSHIP",
+            payload: id,
+        };
+    }
+}
+
+export async function acceptRequest(id) {
+    // console.log("Going to accept id", id);
+    const { data } = await axios.post("/api/user/friendBtn.json", {
+        task: "Accept Request",
+        friendId: id,
+    });
+    if (!data.error) {
+        return {
+            type: "ACCEPT_REQUEST",
+            payload: id,
+        };
+    }
+}
+
+export async function denyRequest(id) {
+    // console.log("Going to deny id", id);
+    const { data } = await axios.post("/api/user/friendBtn.json", {
+        action: "Deny Request",
+        task: id,
+    });
+    if (!data.error) {
+        return {
+            type: "DENY_REQUEST",
+            payload: id,
+        };
+    }
+}
+
+export async function cancelRequest(id) {
+    // console.log("Going to cancel id", id);
+    const { data } = await axios.post("/api/user/friendBtn.json", {
+        task: "Cancel Request",
+        friendId: id,
+    });
+    if (!data.error) {
+        return {
+            type: "CANCEL_REQUEST",
+            payload: id,
         };
     }
 }
