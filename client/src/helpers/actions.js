@@ -7,7 +7,7 @@ export async function getEssentialData() {
         const countries = await axios.get(
             "http://countryapi.gear.host/v1/Country/getCountries"
         );
-        console.log("received", data);
+        // console.log("received", data);
         return {
             type: "GET_ESSENTIAL_DATA",
             payload: {
@@ -40,6 +40,24 @@ export async function getUserData(id) {
             type: "FULL_USER_DATA",
             payload: { error: "No Connection to Database" },
             id: id,
+        };
+    }
+}
+
+export async function getLocationData(id) {
+    // console.log("Going to fetch user data:");
+    try {
+        const { data } = await axios.get(`/in/locationData.json?id=${id}`);
+        // console.log("received", data);
+        return {
+            type: "FULL_LOCATION_DATA",
+            payload: data,
+        };
+    } catch (err) {
+        console.log("Received an error on /location:", err);
+        return {
+            type: "FULL_LOCATION_DATA",
+            payload: { error: "No Connection to Database" },
         };
     }
 }
@@ -184,7 +202,7 @@ export async function unfriend(id) {
         task: "Cancel Friendship",
         friendId: id,
     });
-    console.log("received:", data);
+    // console.log("received:", data);
     if (!data.error) {
         return {
             type: "CANCEL_FRIENDSHIP",
@@ -231,6 +249,32 @@ export async function cancelRequest(id) {
         return {
             type: "CANCEL_REQUEST",
             payload: id,
+        };
+    }
+}
+
+export async function submitFriendAction(id, task) {
+    // console.log("friend BTN Run (ID, TASK):", id, task);
+    try {
+        const result = await axios.post("/api/user/friendBtn.json", {
+            friendId: id,
+            task: task,
+        });
+        // console.log("result from BTN Action:", result.data);
+        return {
+            type: "SUBMIT_FRIEND_ACTION",
+            payload: {
+                text: result.data.text,
+                error: !!result.data.error,
+            },
+        };
+    } catch (err) {
+        return {
+            type: "SUBMIT_FRIEND_ACTION",
+            payload: {
+                text: false,
+                error: true,
+            },
         };
     }
 }

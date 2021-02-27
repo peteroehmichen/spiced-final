@@ -187,10 +187,7 @@ app.get("/in/userData.json", async (req, res) => {
         // console.log("checking:", result[0]);
         if (results[0].rowCount > 0) {
             delete results[0].rows[0].password;
-            return res.json({
-                user: { ...results[0].rows[0] },
-                grades: grades,
-            });
+            return res.json({ ...results[0].rows[0] });
         } else {
             res.json({ error: "User unkown - please log in again" });
         }
@@ -272,6 +269,23 @@ app.get("/in/getLocations.json", async (req, res) => {
             success: false,
             error: "Failed Connection to DB",
         });
+    }
+});
+
+app.get("/in/locationData.json", async (req, res) => {
+    // console.log("receiving:", req.query);
+    // const idForDb = req.query.id == 0 ? req.session.userId : req.query.id;
+    try {
+        const results = await db.getLocationById(req.query.id);
+        // console.log("checking:", results);
+        if (results.rowCount > 0) {
+            return res.json({ success: results.rows[0] });
+        } else {
+            res.json({ error: "Location unkown" });
+        }
+    } catch (err) {
+        // console.log("checking2:", err);
+        res.json({ error: "Failed Connection to Database" });
     }
 });
 
@@ -424,6 +438,107 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
     }
 });
 
+app.get("/api/findUsers.json", async (req, res) => {
+    // console.log("answering with:", req.query);
+    const { search } = req.query;
+    try {
+        const result = await db.getUserByTextSearch(search, req.session.userId);
+        // console.log(result.first.rows);
+        // console.log(result.last.rows);
+        result.rows = [...result.first.rows, ...result.last.rows];
+        result.rowCount = result.first.rowCount + result.last.rowCount;
+
+        if (result.rowCount > 0) {
+            res.json({
+                search,
+                result: result.rows,
+            });
+        } else {
+            res.json({ empty: "no users found" });
+        }
+    } catch (err) {
+        console.log(err);
+        res.json({ error: "Problem in connecting to Database" });
+    }
+});
+
+app.post("/api/user/friendBtn.json", async (req, res) => {
+    // console.log();
+    try {
+        if (req.body.task == "") {
+            const { rows } = await db.getFriendInfo(
+                req.session.userId,
+                req.body.friendId
+            );
+            // console.log("DB-Results", rows);
+            if (rows.length == 0) {
+                return res.json({ text: "Send Friend Request" });
+            }
+            if (rows[0].confirmed) {
+                return res.json({ text: "Cancel Friendship" });
+            }
+            if (rows[0].sender == req.session.userId) {
+                return res.json({ text: "Cancel Request" });
+            }
+            return res.json({ text: "Accept Request" });
+        }
+
+        if (req.body.task == "Send Friend Request") {
+            const { rowCount } = await db.safeFriendRequest(
+                req.session.userId,
+                req.body.friendId
+            );
+            if (rowCount > 0) {
+                return res.json({ text: "Cancel Request" });
+            }
+        }
+
+        if (req.body.task == "Cancel Request") {
+            const { rowCount } = await db.deleteFriendRequest(
+                req.session.userId,
+                req.body.friendId
+            );
+            if (rowCount > 0) {
+                return res.json({ text: "Send Friend Request" });
+            }
+        }
+
+        if (req.body.task == "Accept Request") {
+            const { rowCount } = await db.confirmFriendRequest(
+                req.session.userId,
+                req.body.friendId
+            );
+            if (rowCount > 0) {
+                return res.json({ text: "Cancel Friendship" });
+            }
+        }
+
+        if (
+            req.body.task == "Cancel Friendship" ||
+            req.body.task == "Deny Request"
+        ) {
+            const { rowCount } = await db.deleteFriendship(
+                req.session.userId,
+                req.body.friendId
+            );
+            // console.log("DB from Cancel", rowCount);
+            if (rowCount > 0) {
+                return res.json({ text: "Send Friend Request" });
+            }
+        }
+
+        return res.json({
+            text: "Internal error - please try again later",
+            error: true,
+        });
+    } catch (error) {
+        return res.json({
+            text: "Server error - please try again later",
+            error: true,
+        });
+    }
+});
+
 app.get("/logout", (req, res) => {
     req.session = null;
     res.redirect("/welcome");
@@ -442,9 +557,9 @@ server.listen(process.env.PORT || 3001, function () {
 });
 
 io.on("connection", (socket) => {
-    console.log("connecting socket:", socket.id);
+    // console.log("connecting socket:", socket.id);
 
     socket.on("disconnect", () => {
-        console.log("disconnecting socket:", socket.id);
+        // console.log("disconnecting socket:", socket.id);
     });
 });

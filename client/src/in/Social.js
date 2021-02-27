@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
     getFriendships,
     unfriend,
 } from "../helpers/actions";
+import Finder from "./Finder";
 
 export default function Social() {
     const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export default function Social() {
     let error;
 
     if (!all) {
-        console.log("exiting");
+        // console.log("exiting");
         return null;
     } else if (all.error) {
         console.log("We hit an error:", all.error);
@@ -95,6 +96,8 @@ export default function Social() {
                     <div>{pending}</div>
                 </div>
             )}
+            <p>------------------------------</p>
+            <Finder />
         </div>
     );
 }

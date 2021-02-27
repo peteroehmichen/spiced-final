@@ -6,6 +6,7 @@ Rate Locations
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { getLocations, toggleLocationForm } from "../helpers/actions";
 import NewLocation from "./NewLocation";
 
@@ -26,7 +27,8 @@ export default function Locations() {
                 {locations &&
                     locations.map((elem, i) => (
                         <li key={i}>
-                            {elem.continent} {elem.country}: {elem.name}
+                            {elem.continent} {elem.country}:{" "}
+                            <Link to={`/location/${elem.id}`}>{elem.name}</Link>
                         </li>
                     ))}
             </ul>

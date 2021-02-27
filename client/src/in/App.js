@@ -11,7 +11,8 @@ import Dashboard from "./Dashboard";
 import Locations from "./Locations";
 import Social from "./Social";
 import Trips from "./Trips";
-
+import User from "./User";
+import Location from "./Location";
 // actually need to get the store-data for location, etc already here!
 
 export default function App() {
@@ -44,6 +45,26 @@ export default function App() {
                 <Route path="/locations" render={() => <Locations />} />
                 <Route path="/social" render={() => <Social />} />
                 <Route path="/trips" render={() => <Trips />} />
+                <Route
+                    path="/user/:id"
+                    render={(props) => (
+                        <User
+                            key={props.match.url}
+                            history={props.history}
+                            match={props.match}
+                        />
+                    )}
+                />
+                <Route
+                    path="/location/:id"
+                    render={(props) => (
+                        <Location
+                            key={props.match.url}
+                            history={props.history}
+                            match={props.match}
+                        />
+                    )}
+                />
             </Fragment>
         </BrowserRouter>
     );

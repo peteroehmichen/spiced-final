@@ -14,8 +14,14 @@ export default function NewTrip() {
             <h2>please fill out the following core information</h2>
             <label>
                 Location
-                <select name="location_id" onChange={handleChangeEval}>
-                    <option value="" selected></option>
+                <select
+                    defaultValue={"DEFAULT"}
+                    name="location_id"
+                    onChange={handleChangeEval}
+                >
+                    <option value="DEFAULT" disabled>
+                        Choose...
+                    </option>
                     {locations &&
                         locations.map((elem) => (
                             <option key={elem.id} value={elem.id}>

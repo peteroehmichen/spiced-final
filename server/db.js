@@ -32,7 +32,7 @@ module.exports.getTripsbyUser = async function (id) {
     );
     const friendIds = friends.rows.map((friend) => friend.id);
     friendIds.push(id);
-    console.log("id of friends:", friendIds);
+    // console.log("id of friends:", friendIds);
     // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
     return sql.query(
         `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1);`,
@@ -120,6 +120,10 @@ module.exports.getUserById = function (id) {
     );
 };
 
+module.exports.getLocationById = function (id) {
+    return sql.query(`SELECT * FROM locations WHERE id=${id};`);
+};
+
 module.exports.updateUserData = function (
     age,
     location,
@@ -174,6 +178,57 @@ module.exports.getFriendships = function (userId) {
     return sql.query(
         `SELECT users.id, first, last, sender, recipient, confirmed FROM friendships JOIN users ON (recipient = $1 AND sender = users.id) OR (sender = $1 AND recipient = users.id);`,
         [userId]
+    );
+};
+
+module.exports.getUserByTextSearch = async function (text, userId) {
+    const tag = text.length > 1 ? `%${text}%` : `${text}%`;
+    // console.log("DB for", tag, userId);
+    return {
+        first: await sql.query(
+            `SELECT id, first, last FROM users WHERE first ILIKE $1 AND id!=$2;`,
+            [tag, userId]
+        ),
+        last: await sql.query(
+            `SELECT id, first, last FROM users WHERE last ILIKE $1 AND id!=$2;`,
+            [tag, userId]
+        ),
+    };
+    //
+};
+
+module.exports.safeFriendRequest = function (userId, friendId) {
+    return sql.query(
+        `INSERT INTO friendships (sender, recipient) VALUES ($1, $2);`,
+        [userId, friendId]
+    );
+};
+
+module.exports.confirmFriendRequest = function (userId, friendId) {
+    return sql.query(
+        `UPDATE friendships SET confirmed=true WHERE (sender=$1 AND recipient=$2);`,
+        [friendId, userId]
+    );
+};
+
+module.exports.deleteFriendRequest = function (userId, friendId) {
+    return sql.query(
+        `DELETE FROM friendships WHERE (sender=$1 AND recipient=$2);`,
+        [userId, friendId]
+    );
+};
+
+module.exports.deleteFriendship = function (userId, friendId) {
+    return sql.query(
+        `DELETE FROM friendships WHERE (sender=$1 AND recipient=$2) OR (sender=$2 AND recipient=$1);`,
+        [userId, friendId]
+    );
+};
+
+module.exports.getFriendInfo = function (userId, friendId) {
+    return sql.query(
+        `SELECT * FROM friendships WHERE (sender=$1 AND recipient=$2) OR (sender=$2 AND recipient=$1);`,
+        [userId, friendId]
     );
 };
 

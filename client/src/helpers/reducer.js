@@ -7,6 +7,9 @@ export default function reducer(store = {}, action) {
         otherUser: {
             ...store.otherUser,
         },
+        location: {
+            ...store.location,
+        },
         locations: store.locations && [...store.locations],
         trips: store.trips && [...store.trips],
         grades: store.grades && [...store.grades],
@@ -15,7 +18,7 @@ export default function reducer(store = {}, action) {
 
     if (action.type == "GET_ESSENTIAL_DATA") {
         if (action.payload.success) {
-            console.log("waiting to work...");
+            // console.log("waiting to work...");
             store.user = action.payload.success.user;
             store.locations = action.payload.success.locations;
             // store.trips = action.payload.success.trips;
@@ -36,6 +39,14 @@ export default function reducer(store = {}, action) {
                 ...store.otherUser,
                 ...action.payload,
             };
+        }
+    }
+
+    if (action.type == "FULL_LOCATION_DATA") {
+        if (action.payload.error) {
+            store.location = action.payload;
+        } else {
+            store.location = action.payload.success;
         }
     }
 
@@ -127,6 +138,12 @@ export default function reducer(store = {}, action) {
         store.friendships = store.friendships.filter(
             (user) => user.sender != action.payload
         );
+    }
+
+    if (action.type == "SUBMIT_FRIEND_ACTION") {
+        // console.log("payload:", action.payload);
+        store.otherUser.nextFriendAction = action.payload.text;
+        store.otherUser.dbError = action.payload.error;
     }
 
     return store;

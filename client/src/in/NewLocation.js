@@ -15,14 +15,20 @@ export default function NewLocation() {
             continents.push(country.Region);
         }
     });
-    console.log(continents);
+    // console.log(continents);
     return (
         <div className="form new-locations">
             <h2>please fill out the following core information</h2>
             <label>
                 Continent
-                <select name="continent" onChange={handleChangeEval}>
-                    <option value="" selected></option>
+                <select
+                    name="continent"
+                    defaultValue={"DEFAULT"}
+                    onChange={handleChangeEval}
+                >
+                    <option value="DEFAULT" disabled>
+                        Choose...
+                    </option>
                     {continents.map((elem, i) => (
                         <option key={i} value={elem}>
                             {elem}
@@ -33,11 +39,14 @@ export default function NewLocation() {
             <label>
                 Country
                 <select
+                    defaultValue={"DEFAULT"}
                     name="country"
                     disabled={!values.continent}
                     onChange={handleChangeEval}
                 >
-                    <option value="" selected></option>
+                    <option value="DEFAULT" disabled>
+                        Choose...
+                    </option>
                     {countries
                         .filter((elem) => elem.Region == values.continent)
                         .map((elem, i) => (
