@@ -47,6 +47,7 @@ const {
     grades,
     experience,
 } = require("./config.json");
+const { getCountries } = require("./countryAPI");
 
 app.get("/welcome", (req, res) => {
     if (req.session.userId) {
@@ -150,6 +151,15 @@ app.post("/welcome/code.json", async (req, res) => {
 });
 
 app.get("/in/essentialData.json", async (req, res) => {
+    let result = await getCountries();
+    const { Response: countries } = JSON.parse(result.body);
+    const continents = [];
+    countries.forEach((country) => {
+        if (!continents.includes(country.Region) && country.Region != "") {
+            continents.push(country.Region);
+        }
+    });
+    // console.log("continents:", continents);
     try {
         const results = await db.getEssentialData(req.session.userId);
         // results.tripsRaw.rowCount > 0
@@ -161,7 +171,8 @@ app.get("/in/essentialData.json", async (req, res) => {
             const obj = {
                 user: results.userRaw[0].rows[0],
                 locations: results.locationsRaw.rows,
-                // trips: results.tripsRaw.rows,
+                countries,
+                continents,
                 grades,
                 experience,
             };

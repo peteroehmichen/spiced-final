@@ -24,7 +24,8 @@ export default function reducer(store = {}, action) {
             // store.trips = action.payload.success.trips;
             store.grades = action.payload.success.grades;
             store.experience = action.payload.success.experience;
-            store.countries = action.payload.countries;
+            store.countries = action.payload.success.countries;
+            store.continents = action.payload.success.continents;
         } else {
             store.appError = action.error;
         }

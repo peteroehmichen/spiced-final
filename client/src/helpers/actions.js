@@ -4,15 +4,14 @@ export async function getEssentialData() {
     // console.log("Going to fetch user data:");
     try {
         const { data } = await axios.get(`/in/essentialData.json`);
-        const countries = await axios.get(
-            "http://countryapi.gear.host/v1/Country/getCountries"
-        );
+        // const countries = await axios.get(
+        //     "http://countryapi.gear.host/v1/Country/getCountries"
+        // );
         // console.log("received", data);
         return {
             type: "GET_ESSENTIAL_DATA",
             payload: {
                 ...data,
-                countries: [...countries.data.Response],
             },
         };
     } catch (err) {

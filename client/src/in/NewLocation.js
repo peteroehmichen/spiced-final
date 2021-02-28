@@ -3,18 +3,18 @@ import { addNewLocation, toggleLocationForm } from "../helpers/actions";
 import { useFormEval } from "../helpers/customHooks";
 
 export default function NewLocation() {
-    const countries = useSelector((store) => store.countries);
+    const { countries, continents } = useSelector((store) => store);
     const [values, handleChangeEval] = useFormEval();
 
     const dispatch = useDispatch();
 
-    if (!countries) return null;
-    const continents = [];
-    countries.forEach((country) => {
-        if (!continents.includes(country.Region) && country.Region != "") {
-            continents.push(country.Region);
-        }
-    });
+    if (!countries || !continents) return null;
+    // const continents = [];
+    // countries.forEach((country) => {
+    //     if (!continents.includes(country.Region) && country.Region != "") {
+    //         continents.push(country.Region);
+    //     }
+    // });
     // console.log(continents);
     return (
         <div className="form new-locations">
