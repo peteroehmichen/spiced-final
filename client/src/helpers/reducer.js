@@ -15,6 +15,7 @@ export default function reducer(store = {}, action) {
         grades: store.grades && [...store.grades],
         friendships: store.friendships && [...store.friendships],
         matches: store.matches && [...store.matches],
+        chat: store.chat && [...store.chat],
     };
 
     if (action.type == "GET_ESSENTIAL_DATA") {
@@ -152,6 +153,36 @@ export default function reducer(store = {}, action) {
         // console.log("received:", action);
         store.matches = action.payload;
         store.matchesError = action.error;
+    }
+
+    if (action.type == "RECEIVE_CHAT_MESSAGES") {
+        store.chat = action.payload;
+        store.chatError = action.error;
+    }
+
+    if (action.type == "NEW_FRIEND_MESSAGE") {
+        if (action.payload.error) {
+            store.msgError = action.payload.error;
+        } else {
+            store.chat.push(action.payload);
+            store.msgError = null;
+        }
+    }
+    if (action.type == "NEW_TRIP_MESSAGE") {
+        if (action.payload.error) {
+            store.msgError = action.payload.error;
+        } else {
+            store.chat.push(action.payload);
+            store.msgError = null;
+        }
+    }
+    if (action.type == "NEW_LOCATION_MESSAGE") {
+        if (action.payload.error) {
+            store.msgError = action.payload.error;
+        } else {
+            store.chat.push(action.payload);
+            store.msgError = null;
+        }
     }
 
     return store;

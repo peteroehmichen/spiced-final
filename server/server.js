@@ -23,7 +23,7 @@ const csurf = require("csurf");
 const db = require("./db");
 const auth = require("./auth");
 const aws = require("./aws");
-
+const activeSockets = {};
 app.use(cookieSessionMiddleware);
 io.use(function (socket, next) {
     cookieSessionMiddleware(socket.request, socket.request.res, next);
@@ -49,6 +49,7 @@ const {
 } = require("./config.json");
 const { getCountries } = require("./countryAPI");
 const { match } = require("assert");
+const { activeUsers } = require("./socketHelper");
 
 app.get("/welcome", (req, res) => {
     if (req.session.userId) {
@@ -196,6 +197,7 @@ app.get("/in/userData.json", async (req, res) => {
         const results = await db.getUserById(idForDb, req.session.userId);
         // console.log("checking:", results);
         if (results.rowCount > 0) {
+            results.rows[0].id = idForDb;
             delete results.rows[0].password;
             delete results.rows[0].sender;
             delete results.rows[0].recipient;
@@ -630,25 +632,22 @@ app.get("/in/matches.json", async (req, res) => {
             error: "Could not fetch matches from Server",
         });
     }
+});
 
-    /*
-how do you look for matches
-what is a match:
- - base are my trips that end in the future
- - trip that is not mine,
- - fits with Destination
- - has date overlap
- - result
-    - full trip
-    - id, first, last of other climber
-    - id of my matching trip
-    - percent of overlapping days to mine
+app.get("/in/chat.json", async (req, res) => {
+    console.log("requested chat", req.query);
+    const { about, id } = req.query;
+    try {
+        const { rows } = await db.getLastChats(about, id, req.session.userId);
+        console.log("sending Chats:", rows);
+        res.json(rows.reverse());
+    } catch (error) {
+        console.log("error in loading chat:", error);
+        res.json({ error: "Error in Loading Chat" });
+    }
 
-steps:
-1) get my trips (id, from, until, location_id)
-2) find other trips where dates overlap
-
-    */
+    // res.json([{ success: "test" }]);
+    // id = req.session.userId;
 });
 
 app.get("/logout", (req, res) => {
@@ -669,9 +668,80 @@ server.listen(process.env.PORT || 3001, function () {
 });
 
 io.on("connection", (socket) => {
-    // console.log("connecting socket:", socket.id);
+    activeSockets[socket.id] = socket.request.session.userId;
 
-    socket.on("disconnect", () => {
+    socket.on("newFriendMessage", async (msg) => {
+        console.log("Friend-Chat:", msg);
+        let status;
+        try {
+            const result = await db.addFriendMessage(
+                socket.request.session.userId,
+                msg.recipient,
+                msg.value
+            );
+            status = {
+                ...result.user.rows[0],
+                ...result.chat.rows[0],
+            };
+        } catch (error) {
+            status = { error: "Server Error" };
+        }
+        socket.emit("newFriendMsg", status);
+        let recipientSocket = Object.entries(activeSockets);
+        for (let i = 0; i < recipientSocket.length; i++) {
+            if (recipientSocket[i][1] == msg.recipient) {
+                // FIXME mail if unavailable
+                io.to(recipientSocket[i][0]).emit("newFriendMsg", status);
+            }
+        }
+    });
+    socket.on("newTripMessage", async (msg) => {
+        console.log("Trip-Chat:", msg);
+        let status;
+        try {
+            const result = await db.addTripMessage(
+                socket.request.session.userId,
+                msg.recipient,
+                msg.value,
+                msg.group
+            );
+
+            status = {
+                ...result.user.rows[0],
+                ...result.chat.rows[0],
+            };
+            console.log("status:", status);
+            console.log("result:", result);
+        } catch (error) {
+            console.log("Problem:", error);
+            status = { error: "Server Error" };
+        }
+        socket.emit("newTripMsg", status);
+        let recipientSocket = Object.entries(activeSockets);
+        for (let i = 0; i < recipientSocket.length; i++) {
+            if (recipientSocket[i][1] == msg.recipient) {
+                // FIXME mail if unavailable
+                io.to(recipientSocket[i][0]).emit("newTripMsg", status);
+            }
+        }
+    });
+
+    // if (msg.recipient == 0) {
+    //     // message to all
+    //     status.public = true;
+    //     status.private = false;
+    //     io.emit("newMsg", status);
+    // } else if (msg.recipient == id) {
+    //     // message to self
+    //     status.public = false;
+    //     status.private = true;
+    //     socket.emit("newMsg", status);
+    // } else {
+    // }
+    socket.on("disconnect", async () => {
+        delete activeSockets[socket.id];
+        io.emit("activeUsers", await activeUsers(activeSockets));
+
         // console.log("disconnecting socket:", socket.id);
     });
 });

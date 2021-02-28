@@ -27,7 +27,7 @@ export async function getUserData(id) {
     // console.log("Going to fetch user data:");
     try {
         const { data } = await axios.get(`/in/userData.json?id=${id}`);
-        // console.log("received", data);
+        console.log("received", data);
         return {
             type: "FULL_USER_DATA",
             payload: data,
@@ -299,6 +299,42 @@ export async function findMatchingTrips() {
             error: "Could not retrieve Matches",
         };
     }
+}
+
+export async function receiveChatMessages(about, id) {
+    // console.log("asking server for chat data:");
+    const { data } = await axios.get(`/in/chat.json?about=${about}&id=${id}`);
+    console.log("data from AXIOS CHAT:", data);
+    if (!data.error) {
+        return {
+            type: "RECEIVE_CHAT_MESSAGES",
+            payload: data,
+        };
+    } else {
+        return {
+            type: "RECEIVE_CHAT_MESSAGES",
+            error: data.error,
+        };
+    }
+}
+
+export function newFriendMessage(obj) {
+    return {
+        type: "NEW_FRIEND_MESSAGE",
+        payload: obj,
+    };
+}
+export function newTripMessage(obj) {
+    return {
+        type: "NEW_TRIP_MESSAGE",
+        payload: obj,
+    };
+}
+export function newLocationMessage(obj) {
+    return {
+        type: "NEW_LOCATION_MESSAGE",
+        payload: obj,
+    };
 }
 
 /*

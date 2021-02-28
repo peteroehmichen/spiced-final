@@ -69,6 +69,8 @@ CREATE TABLE chat (
       id SERIAL PRIMARY KEY,
       sender INT REFERENCES users(id) NOT NULL,
       recipient INT NOT NULL,
+      trip INT,
+      location INT,
       text TEXT NOT  NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
