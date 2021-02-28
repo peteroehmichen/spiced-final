@@ -55,7 +55,7 @@ export default function Dashboard() {
                             </li>
                         ))}
             </ul>
-            <Matches />
+            <Matches limit="0" />
         </div>
     );
 }

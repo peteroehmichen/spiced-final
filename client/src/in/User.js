@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { formatDistance, parseISO } from "date-fns";
 import { getUserData } from "../helpers/actions";
 import FriendButton from "./FriendBtn";
+import Matches from "./Matches";
 
 export default function User(props) {
     const dispatch = useDispatch();
@@ -66,6 +67,7 @@ export default function User(props) {
                     )}
                     <p className="todo">sum of trips in future</p>
                     <FriendButton friendId={props.match.params.id} />
+                    <Matches limit={props.match.params.id} />
                 </div>
             )}
         </div>
