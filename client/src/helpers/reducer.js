@@ -14,6 +14,7 @@ export default function reducer(store = {}, action) {
         trips: store.trips && [...store.trips],
         grades: store.grades && [...store.grades],
         friendships: store.friendships && [...store.friendships],
+        matches: store.matches && [...store.matches],
     };
 
     if (action.type == "GET_ESSENTIAL_DATA") {
@@ -145,6 +146,12 @@ export default function reducer(store = {}, action) {
         // console.log("payload:", action.payload);
         store.otherUser.nextFriendAction = action.payload.text;
         store.otherUser.dbError = action.payload.error;
+    }
+
+    if (action.type == "FIND_MATCHES") {
+        // console.log("received:", action);
+        store.matches = action.payload;
+        store.matchesError = action.error;
     }
 
     return store;

@@ -57,10 +57,10 @@ CREATE TABLE trips (
       id SERIAL PRIMARY KEY,
       location_id INT REFERENCES locations(id) NOT NULL,
       person INT REFERENCES users(id) NOT NULL,
-      from_min TIMESTAMP,
-      from_max TIMESTAMP,
-      until_min TIMESTAMP,
-      until_max TIMESTAMP,
+      from_min DATE,
+      from_max DATE,
+      until_min DATE,
+      until_max DATE,
       comment TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

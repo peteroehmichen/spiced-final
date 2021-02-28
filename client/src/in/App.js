@@ -10,7 +10,7 @@ import {
 import Dashboard from "./Dashboard";
 import Locations from "./Locations";
 import Social from "./Social";
-import Trips from "./Trips";
+import Profile from "./Profile";
 import User from "./User";
 import Location from "./Location";
 // actually need to get the store-data for location, etc already here!
@@ -30,8 +30,8 @@ export default function App() {
                 <Link to="/locations">
                     <div className="nav-element">Locations</div>
                 </Link>
-                <Link to="/trips">
-                    <div className="nav-element">Your Trips</div>
+                <Link to="/profile">
+                    <div className="nav-element">My Profile</div>
                 </Link>
                 <Link to="/social">
                     <div className="nav-element">Friends</div>
@@ -44,7 +44,7 @@ export default function App() {
                 <Route exact path="/" render={() => <Dashboard />} />
                 <Route path="/locations" render={() => <Locations />} />
                 <Route path="/social" render={() => <Social />} />
-                <Route path="/trips" render={() => <Trips />} />
+                <Route path="/profile" render={() => <Profile />} />
                 <Route
                     path="/user/:id"
                     render={(props) => (

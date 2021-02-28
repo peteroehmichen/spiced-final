@@ -278,6 +278,29 @@ export async function submitFriendAction(id, task) {
     }
 }
 
+export async function findMatchingTrips() {
+    try {
+        const { data } = await axios.get("/in/matches.json");
+        if (data.success) {
+            return {
+                type: "FIND_MATCHES",
+                payload: data.success,
+            };
+        } else {
+            return {
+                type: "FIND_MATCHES",
+                error: data.error,
+            };
+        }
+    } catch (error) {
+        console.log("Error while fetching matches:", error);
+        return {
+            type: "FIND_MATCHES",
+            error: "Could not retrieve Matches",
+        };
+    }
+}
+
 /*
 import axios from "./axios";
 import { analyseMessages } from "./helpers";

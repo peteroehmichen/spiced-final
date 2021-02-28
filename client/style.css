@@ -52,3 +52,7 @@ footer {
 .grey {
     background-color: grey;
 }
+
+.todo {
+    color: red;
+}

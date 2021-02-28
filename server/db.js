@@ -108,16 +108,22 @@ module.exports.updateUserPw = function (email, hashedPw) {
 
 module.exports.getEssentialData = async function (id) {
     return {
-        userRaw: await this.getUserById(id),
+        userRaw: await this.getUserById(id, id),
         locationsRaw: await this.getLocations(),
         tripsRaw: await this.getTripsbyUser(id),
     };
 };
 
-module.exports.getUserById = function (id) {
+module.exports.getUserById = function (id, userId) {
+    // FIXME is also called when seeing other users so Update is wrong
+    // console.log("Hello");
     return sql.query(
-        `SELECT * FROM users WHERE id=${id} FOR UPDATE; UPDATE users SET last_online=now() WHERE id=${id};`
+        `WITH relations as (SELECT * FROM friendships WHERE (recipient=$1 AND sender=$2) OR (sender=$1 AND recipient=$2)) SELECT * FROM users LEFT OUTER JOIN relations ON users.id=relations.recipient OR users.id=relations.sender WHERE users.id=$1;`,
+        [id, userId]
     );
+    // return sql.query(
+    //     `SELECT * FROM users WHERE id=${id} FOR UPDATE; UPDATE users SET last_online=now() WHERE id=${id};`
+    // );
 };
 
 module.exports.getLocationById = function (id) {
@@ -229,6 +235,13 @@ module.exports.getFriendInfo = function (userId, friendId) {
     return sql.query(
         `SELECT * FROM friendships WHERE (sender=$1 AND recipient=$2) OR (sender=$2 AND recipient=$1);`,
         [userId, friendId]
+    );
+};
+
+module.exports.getLocationMatches = function (userId) {
+    return sql.query(
+        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
+        [userId]
     );
 };
 

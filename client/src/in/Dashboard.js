@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserData } from "../helpers/actions";
+import { getTrips, getUserData } from "../helpers/actions";
 import axios from "../helpers/axios";
+import Matches from "./Matches";
 
 /*
 Summary from other Elements
@@ -11,41 +12,50 @@ Summary from other Elements
 */
 
 export default function Dashboard() {
-    const { user, grades, experience } = useSelector((store) => store);
     const dispatch = useDispatch();
+    const { user, grades, experience, trips, locations } = useSelector(
+        (store) => store
+    );
+    // const dispatch = useDispatch();
     // const [countries, setCountries] = useState([]);
 
-    useEffect(async () => {}, []);
+    useEffect(async () => {
+        dispatch(getTrips());
+    }, []);
 
-    if (!user || !grades || !experience) return null;
+    const getLocationName = function (id) {
+        const obj = locations.find((loc) => loc.id == id);
+        return obj.name;
+    };
+
+    // if (!user || !grades || !experience) return null;
 
     return (
         <div className="central dashboard">
+            <ul className="todo">
+                <li>view my trips</li>
+                <li>view pinned friends trips</li>
+                <li>(maybe notifications)</li>
+            </ul>
             <h1>Dashboard</h1>
-            <div>
-                <p>
-                    <b>Your Name:</b> {user.first} {user.last}
-                </p>
-                <p>
-                    <b>Your Age:</b> {user.age}
-                </p>
-                <p>
-                    <b>Your E-Mail:</b> {user.email}
-                </p>
-                <p>
-                    <b>Your Location:</b> {user.location}
-                </p>
-                <p>
-                    <b>Your Climbing Grade:</b> {grades[user.grade_comfort]} up
-                    to {grades[user.grade_max]}
-                </p>
-                <p>
-                    <b>Your Experience:</b> {experience[user.experience]}
-                </p>
-                <p>
-                    <b>Brief Description:</b> {user.description}
-                </p>
-            </div>
+            <h2>Your Friends Trips</h2>
+            <ul>
+                {trips &&
+                    locations &&
+                    user &&
+                    trips
+                        .filter((trip) => trip.person != user.id)
+                        .map((elem, i) => (
+                            <li key={i}>
+                                {elem.first} {elem.last} ||
+                                {getLocationName(elem.location_id)} --{" "}
+                                {new Date(elem.from_min).toLocaleDateString()} -{" "}
+                                {new Date(elem.until_max).toLocaleDateString()}:
+                                ({elem.comment})
+                            </li>
+                        ))}
+            </ul>
+            <Matches />
         </div>
     );
 }
