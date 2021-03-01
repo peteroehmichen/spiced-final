@@ -357,7 +357,7 @@ export async function changeMyRating(value, id) {
     const { data } = await axios.get(
         `/in/changeLocationRating.json?value=${value}&id=${id}`
     );
-    console.log("received:", data);
+    // console.log("received:", data);
     if (!data.error) {
         return {
             type: "GET_LOCATION_RATING",

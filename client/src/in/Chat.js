@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { formatDistance, parseISO } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { receiveChatMessages } from "../helpers/actions";
 import {
@@ -175,7 +176,11 @@ export default function Chat(props) {
                                     <b>
                                         {msg.first} {msg.last}
                                     </b>
-                                    , {msg.created_at}
+                                    ,{" "}
+                                    {formatDistance(
+                                        parseISO(msg.created_at),
+                                        Date.now()
+                                    )}
                                 </p>
                                 <p>{msg.text}</p>
                             </div>

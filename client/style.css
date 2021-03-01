@@ -59,6 +59,7 @@ footer {
 
 .chat {
     height: 350px;
+    width: 400px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -80,6 +81,7 @@ footer {
 
 .messages {
     height: 250px;
+    width: 100%;
     overflow: auto;
 }
 

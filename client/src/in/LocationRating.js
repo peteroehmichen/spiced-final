@@ -4,7 +4,6 @@ import { getLocationRating, changeMyRating } from "../helpers/actions";
 
 export default function LocationRating(props) {
     const { rating } = useSelector((store) => store);
-    const [loading, setLoading] = useState(false);
     // 1) summary value and sum of opinions
     // 2) either function to delete own rating or add new rating
     const dispatch = useDispatch();
@@ -16,10 +15,10 @@ export default function LocationRating(props) {
     const submit = function (e) {
         if (e.target.innerText == "delete") {
             dispatch(changeMyRating("delete", props.id));
-            console.log("deleting my rateing");
+            // console.log("deleting my rateing");
         } else if (e.target.value) {
             dispatch(changeMyRating(e.target.value, props.id));
-            console.log("adding", e);
+            // console.log("adding", e);
         }
     };
 
@@ -44,7 +43,6 @@ export default function LocationRating(props) {
                     defaultValue={"DEFAULT"}
                     name="rating"
                     onChange={submit}
-                    disabled={loading}
                 >
                     <option value="DEFAULT" disabled>
                         your Rating...

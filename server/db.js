@@ -5,6 +5,21 @@ const sql = spicedPg(
         "postgres:postgres:postgres@localhost:5432/final-project"
 );
 
+const redis = require("redis");
+const { promisify } = require("util");
+const client = redis.createClient({
+    host: "localhost",
+    port: 6379,
+});
+client.on("error", function (err) {
+    console.log(err);
+});
+const rds = {};
+module.exports.rdsSet = promisify(client.set).bind(client);
+module.exports.rdsGet = promisify(client.get).bind(client);
+module.exports.rdsSetex = promisify(client.setex).bind(client);
+module.exports.rdsDel = promisify(client.del).bind(client);
+
 module.exports.addUser = function (first, last, email, hashedPW) {
     return sql.query(
         `INSERT INTO USERS (first, last, email, password) VALUES ($1, $2, $3, $4) RETURNING id;`,
@@ -317,10 +332,10 @@ module.exports.getLocationRating = async function (id, user) {
 module.exports.changeLocationRating = function (value, location, user) {
     let q;
     if (value == "delete") {
-        console.log("delete");
+        // console.log("delete");
         q = `DELETE FROM location_rating WHERE location_id=${location} AND user_id=${user}`;
     } else if (value < 6 && value >= 0) {
-        console.log("number");
+        // console.log("number");
         q = `INSERT INTO location_rating (user_id, location_id, rate) VALUES (${user}, ${location}, ${value})`;
     }
     return sql.query(q);
