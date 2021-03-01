@@ -12,14 +12,17 @@ import Reset from "./Reset";
 export default function Welcome() {
     return (
         <Fragment>
-            <header></header>
-
             <div className="central">
                 <h1>welcome to the start - page</h1>
                 <HashRouter>
-                    <Link to="/register">Register</Link>
-                    <Link to="/login">Log In</Link>
-                    <Link to="reset">Reset</Link>
+                    <Link to="/register">
+                        <div className="link-out">Register</div>
+                    </Link>
+                    <Link to="/login">
+                        <div className="link-out">Register</div>
+                    </Link>
+                    <Link to="reset"></Link>
+                    <div className="link-out">Register</div>
                     <Route path="/register" component={Register} />
                     <Route path="/login" component={Login} />
                     <Route path="/reset" component={Reset} />
