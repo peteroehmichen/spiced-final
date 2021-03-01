@@ -635,11 +635,11 @@ app.get("/in/matches.json", async (req, res) => {
 });
 
 app.get("/in/chat.json", async (req, res) => {
-    console.log("requested chat", req.query);
+    // console.log("requested chat", req.query);
     const { about, id } = req.query;
     try {
         const { rows } = await db.getLastChats(about, id, req.session.userId);
-        console.log("sending Chats:", rows);
+        // console.log("sending back Chats:", rows.length);
         res.json(rows.reverse());
     } catch (error) {
         console.log("error in loading chat:", error);
@@ -671,7 +671,7 @@ io.on("connection", (socket) => {
     activeSockets[socket.id] = socket.request.session.userId;
 
     socket.on("newFriendMessage", async (msg) => {
-        console.log("Friend-Chat:", msg);
+        // console.log("Friend-Chat:", msg);
         let status;
         try {
             const result = await db.addFriendMessage(
@@ -696,22 +696,23 @@ io.on("connection", (socket) => {
         }
     });
     socket.on("newTripMessage", async (msg) => {
-        console.log("Trip-Chat:", msg);
+        // console.log("received Trip-Chat:", msg);
         let status;
         try {
             const result = await db.addTripMessage(
                 socket.request.session.userId,
                 msg.recipient,
-                msg.value,
-                msg.group
+                msg.trip_origin,
+                msg.trip_target,
+                msg.value
             );
 
             status = {
                 ...result.user.rows[0],
                 ...result.chat.rows[0],
             };
-            console.log("status:", status);
-            console.log("result:", result);
+            // console.log("status:", status);
+            // console.log("result:", result);
         } catch (error) {
             console.log("Problem:", error);
             status = { error: "Server Error" };
@@ -724,6 +725,28 @@ io.on("connection", (socket) => {
                 io.to(recipientSocket[i][0]).emit("newTripMsg", status);
             }
         }
+    });
+    socket.on("newLocationMessage", async (msg) => {
+        // console.log("received Location-Chat:", msg);
+        let status;
+        try {
+            const result = await db.addLocationMessage(
+                socket.request.session.userId,
+                msg.location,
+                msg.value
+            );
+
+            status = {
+                ...result.user.rows[0],
+                ...result.chat.rows[0],
+            };
+            // console.log("status:", status);
+            // console.log("result:", result);
+        } catch (error) {
+            console.log("Problem:", error);
+            status = { error: "Server Error" };
+        }
+        io.emit("newLocationMsg", status);
     });
 
     // if (msg.recipient == 0) {

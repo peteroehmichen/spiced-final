@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getLocationData } from "../helpers/actions";
+import Chat from "./Chat";
 
 export default function User(props) {
     const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function User(props) {
                 {loc.name} {loc.name}
             </h1>
             <p>...</p>
+            <Chat type="location" location={props.match.params.id} />
         </div>
     );
     const errorBlock = (

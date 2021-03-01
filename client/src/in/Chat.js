@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { receiveChatMessages } from "../helpers/actions";
-import { emitFriendMessage, emitTripMessage } from "../helpers/socket";
+import {
+    emitFriendMessage,
+    emitLocationMessage,
+    emitTripMessage,
+} from "../helpers/socket";
 // import { receiveChatMessages } from "./action";
 // import Countdown from "./countdown";
 // import { format_time } from "./helpers";
@@ -28,13 +32,16 @@ export default function Chat(props) {
         // console.log("receiving chat messages...");
         if (props.type == "user+" || props.type == "user-") {
             dispatch(receiveChatMessages("general", props.user));
+        } else if (props.type == "location") {
+            // console.log("fetching location chats on...", props.location);
+            dispatch(receiveChatMessages("location", props.location));
         }
     }, []);
 
     useEffect(() => {
         if (group == "direct") {
             dispatch(receiveChatMessages("general", props.user));
-        } else if (group > 0) {
+        } else if (group[0] == "T") {
             dispatch(receiveChatMessages("trip", group));
         }
     }, [group]);
@@ -49,16 +56,29 @@ export default function Chat(props) {
     const submit = function (e) {
         if (e.key === "Enter" || e.type == "click") {
             e.preventDefault();
-            if (group == "" || group == "direct") {
+            if (
+                props.type != "location" &&
+                (group == "" || group == "direct")
+            ) {
+                // console.log("sending friend-message...");
                 emitFriendMessage({
                     recipient: props.user,
                     value,
                 });
-            } else if (group > 0) {
+            } else if (group[0] == "T") {
+                // console.log("sending trip-message...");
+                const data = group.split("T");
                 emitTripMessage({
-                    recipient: props.user,
+                    recipient: data[3],
+                    trip_target: data[1],
+                    trip_origin: data[2],
                     value,
-                    group,
+                });
+            } else if (props.type == "location") {
+                // console.log("sending location-message...");
+                emitLocationMessage({
+                    location: props.location,
+                    value,
                 });
             }
             input.current.value = "";
@@ -74,16 +94,25 @@ export default function Chat(props) {
     };
 
     if (Array.isArray(messages)) {
+        // FIXME filter on array for error control
         messages = messages.filter((message) => {
             if (
-                !message.trip_id &&
+                !message.trip_origin &&
+                !message.trip_target &&
                 !message.location_id &&
                 (group == "" || group == "direct")
             ) {
                 return true;
-            } else if (message.trip_id && message.trip_id == group) {
+            } else if (
+                group[0] == "T" &&
+                group.includes(message.trip_origin) &&
+                group.includes(message.trip_target)
+            ) {
                 return true;
-            } else if (message.location_id && message.location_id == group[1]) {
+            } else if (
+                props.type == "location" &&
+                props.location == message.location_id
+            ) {
                 return true;
             } else {
                 return false;
@@ -95,36 +124,45 @@ export default function Chat(props) {
         // <h1>Chatis here</h1>
         <div className="chat">
             <div className="target">
-                {other && other.confirmed && (
-                    <div onClick={selectGroup}>direct</div>
-                )}
-                {other && matches && (
-                    <select
-                        defaultValue={"DEFAULT"}
-                        name="tripChat"
-                        onChange={(e) => {
-                            // console.log(e.target.value);
-                            setGroup(e.target.value);
-                        }}
-                    >
-                        <option value="DEFAULT" disabled>
-                            Choose...
-                        </option>
-                        {matches
-                            .filter((elem) => elem.person == other.id)
-                            .map((elem, i) => {
-                                return (
-                                    <option key={i} value={elem.id}>
-                                        trip #{elem.id}
-                                    </option>
-                                );
-                            })}
-                    </select>
+                {props.type != "location" && other && matches && (
+                    <label>
+                        Chat Channel:
+                        <select
+                            defaultValue={"DEFAULT"}
+                            name="tripChat"
+                            onChange={(e) => {
+                                // console.log(e.target.value);
+                                setGroup(e.target.value);
+                            }}
+                        >
+                            <option value="DEFAULT" disabled>
+                                Choose...
+                            </option>
+                            {other.confirmed && (
+                                <option value="direct">direct</option>
+                            )}
+                            {matches
+                                .filter((elem) => elem.person == other.id)
+                                .map((elem, i) => {
+                                    return (
+                                        <option
+                                            key={i}
+                                            value={`T${elem.id}T${elem.match_id}T${elem.person}`}
+                                        >
+                                            trip on{" "}
+                                            {new Date(
+                                                elem.from_min
+                                            ).toDateString()}
+                                        </option>
+                                    );
+                                })}
+                        </select>
+                    </label>
                 )}
             </div>
             <div ref={chatRef} className="messages">
                 {((!messages || messages.length == 0) && (
-                    <h2>No Messages found</h2>
+                    <h3>No Messages found</h3>
                 )) ||
                     (Array.isArray(messages) &&
                         messages.map((msg, i) => (

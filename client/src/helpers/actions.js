@@ -27,7 +27,7 @@ export async function getUserData(id) {
     // console.log("Going to fetch user data:");
     try {
         const { data } = await axios.get(`/in/userData.json?id=${id}`);
-        console.log("received", data);
+        // console.log("received", data);
         return {
             type: "FULL_USER_DATA",
             payload: data,
@@ -91,7 +91,7 @@ export async function addNewLocation(values) {
         const { data } = await axios.get(
             `/in/addLocation.json?continent=${values.continent}&country=${values.country}&name=${values.name}`
         );
-        console.log("response:", data);
+        // console.log("response:", data);
         if (data.success) {
             return {
                 type: "ADD_NEW_LOCATION",
@@ -112,10 +112,10 @@ export async function addNewLocation(values) {
 }
 
 export async function addNewTrip(values) {
-    console.log("writing new Location:", values);
+    // console.log("writing new Location:", values);
     try {
         const { data } = await axios.post(`/in/addTrip.json`, values);
-        console.log("response:", data);
+        // console.log("response:", data);
         if (data.success) {
             return {
                 type: "ADD_NEW_TRIP",
@@ -302,9 +302,9 @@ export async function findMatchingTrips() {
 }
 
 export async function receiveChatMessages(about, id) {
-    // console.log("asking server for chat data:");
+    // console.log("asking server for chat data on", about, id);
     const { data } = await axios.get(`/in/chat.json?about=${about}&id=${id}`);
-    console.log("data from AXIOS CHAT:", data);
+    // console.log("chats received:", data);
     if (!data.error) {
         return {
             type: "RECEIVE_CHAT_MESSAGES",
