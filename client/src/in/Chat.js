@@ -6,6 +6,7 @@ import {
     emitLocationMessage,
     emitTripMessage,
 } from "../helpers/socket";
+import LocationRating from "./LocationRating";
 // import { receiveChatMessages } from "./action";
 // import Countdown from "./countdown";
 // import { format_time } from "./helpers";
@@ -158,6 +159,9 @@ export default function Chat(props) {
                                 })}
                         </select>
                     </label>
+                )}
+                {props.type == "location" && (
+                    <LocationRating id={props.location} />
                 )}
             </div>
             <div ref={chatRef} className="messages">

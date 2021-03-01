@@ -337,6 +337,40 @@ export function newLocationMessage(obj) {
     };
 }
 
+export async function getLocationRating(id) {
+    const { data } = await axios.get(`/in/getLocationRating.json?q=${id}`);
+    // console.log("received:", data);
+    if (!data.error) {
+        return {
+            type: "GET_LOCATION_RATING",
+            payload: data.success,
+        };
+    } else {
+        return {
+            type: "GET_LOCATION_RATING",
+            error: data.error,
+        };
+    }
+}
+
+export async function changeMyRating(value, id) {
+    const { data } = await axios.get(
+        `/in/changeLocationRating.json?value=${value}&id=${id}`
+    );
+    console.log("received:", data);
+    if (!data.error) {
+        return {
+            type: "GET_LOCATION_RATING",
+            payload: data.success,
+        };
+    } else {
+        return {
+            type: "GET_LOCATION_RATING",
+            error: data.error,
+        };
+    }
+}
+
 /*
 import axios from "./axios";
 import { analyseMessages } from "./helpers";

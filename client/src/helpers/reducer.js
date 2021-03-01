@@ -10,6 +10,9 @@ export default function reducer(store = {}, action) {
         location: {
             ...store.location,
         },
+        rating: {
+            ...store.rating,
+        },
         locations: store.locations && [...store.locations],
         trips: store.trips && [...store.trips],
         grades: store.grades && [...store.grades],
@@ -184,6 +187,25 @@ export default function reducer(store = {}, action) {
             store.msgError = null;
         }
     }
+    if (action.type == "GET_LOCATION_RATING") {
+        if (action.error) {
+            store.ratingError = action.payload.error;
+            store.rating = null;
+        } else {
+            store.rating = action.payload;
+            store.ratingError = null;
+        }
+    }
+    // if (action.type == "CHANGE_LOCATION_RATING") {
+    //     if (action.error) {
+    //         store.ratingError = action.payload.error;
+    //         store.rating = null;
+    //     } else {
+    //         console.log(action.payload);
+    //         // store.rating = action.payload;
+    //         store.ratingError = null;
+    //     }
+    // }
 
     return store;
 }

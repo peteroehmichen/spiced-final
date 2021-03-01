@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS location_rating;
 DROP TABLE IF EXISTS trips;
 DROP TABLE IF EXISTS chat;
 DROP TABLE IF EXISTS friendships;
@@ -27,11 +28,6 @@ CREATE TABLE locations (
       continent VARCHAR(255) NOT NULL,
       country VARCHAR(255) NOT NULL,
       name VARCHAR(255) NOT NULL UNIQUE,
-      rate_1 INT,
-      rate_2 INT,
-      rate_3 INT,
-      rate_4 INT,
-      rate_5 INT,
       sport BOOLEAN,
       trad BOOLEAN,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -69,8 +65,18 @@ CREATE TABLE chat (
       id SERIAL PRIMARY KEY,
       sender INT REFERENCES users(id) NOT NULL,
       recipient INT NOT NULL,
-      trip INT,
-      location INT,
-      text TEXT NOT  NULL,
+      trip_origin INT,
+      trip_target INT,
+      location_id INT,
+      text TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE location_rating (
+      id SERIAL PRIMARY KEY,
+      user_id INT REFERENCES users(id) NOT NULL,
+      location_id INT REFERENCES locations(id) NOT NULL,
+      rate INT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

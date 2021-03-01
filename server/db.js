@@ -302,6 +302,30 @@ module.exports.addTripMessage = async function (
     };
 };
 
+module.exports.getLocationRating = async function (id, user) {
+    return {
+        rating: await sql.query(
+            `SELECT COUNT(user_id) AS sum, AVG(rate) AS avg FROM location_rating WHERE (location_id=$1);`,
+            [id]
+        ),
+        user: await sql.query(
+            `SELECT rate, created_at FROM location_rating WHERE location_id=${id} AND user_id=${user}`
+        ),
+    };
+};
+
+module.exports.changeLocationRating = function (value, location, user) {
+    let q;
+    if (value == "delete") {
+        console.log("delete");
+        q = `DELETE FROM location_rating WHERE location_id=${location} AND user_id=${user}`;
+    } else if (value < 6 && value >= 0) {
+        console.log("number");
+        q = `INSERT INTO location_rating (user_id, location_id, rate) VALUES (${user}, ${location}, ${value})`;
+    }
+    return sql.query(q);
+};
+
 // module.exports.addNewMessage = async function (
 //     about,
 //     sender,

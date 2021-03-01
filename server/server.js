@@ -650,6 +650,51 @@ app.get("/in/chat.json", async (req, res) => {
     // id = req.session.userId;
 });
 
+app.get("/in/getLocationRating.json", async (req, res) => {
+    // console.log("fetching rating for location", req.query.q);
+    try {
+        const results = await db.getLocationRating(
+            req.query.q,
+            req.session.userId
+        );
+        let rating = results.rating.rows[0];
+        rating.location = req.query.q;
+        if (results.user.rows.length) {
+            rating.your_rating = results.user.rows[0].rate;
+            rating.your_rating_date = results.user.rows[0].created_at;
+        }
+        res.json({ success: rating, error: false });
+    } catch (error) {
+        console.log("Error during fetching rating:", error);
+        res.json({ success: false, error: "Server Error" });
+    }
+});
+
+app.get("/in/changeLocationRating.json", async (req, res) => {
+    // console.log(req.query);
+    try {
+        const result = await db.changeLocationRating(
+            req.query.value,
+            req.query.id,
+            req.session.userId
+        );
+        const results = await db.getLocationRating(
+            req.query.id,
+            req.session.userId
+        );
+        let rating = results.rating.rows[0];
+        rating.location = req.query.q;
+        if (results.user.rows.length) {
+            rating.your_rating = results.user.rows[0].rate;
+            rating.your_rating_date = results.user.rows[0].created_at;
+        }
+        res.json({ success: rating, error: false });
+    } catch (error) {
+        console.log("Error in updating rating:", error);
+        res.json({ success: false, error: "Server Error" });
+    }
+});
+
 app.get("/logout", (req, res) => {
     req.session = null;
     res.redirect("/welcome");
