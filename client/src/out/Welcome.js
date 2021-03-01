@@ -13,21 +13,26 @@ export default function Welcome() {
     return (
         <Fragment>
             <div className="central">
-                <h1>welcome to the start - page</h1>
+                <h1>NAME OF PAGE</h1>
                 <HashRouter>
-                    <Link to="/register">
-                        <div className="link-out">Register</div>
-                    </Link>
-                    <Link to="/login">
-                        <div className="link-out">Register</div>
-                    </Link>
-                    <Link to="reset"></Link>
-                    <div className="link-out">Register</div>
-                    <Route path="/register" component={Register} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/reset" component={Reset} />
+                    <div className="getting-started">
+                        <Link to="/register">
+                            <div className="link-out">Getting started</div>
+                        </Link>
+
+                        <Route path="/register" component={Register} />
+                        <Route path="/login" component={Login} />
+                        <Route path="/reset" component={Reset} />
+                    </div>
                 </HashRouter>
             </div>
         </Fragment>
     );
 }
+
+// <Link to="/login">
+//                             <div className="link-out">LogIn</div>
+//                         </Link>
+//                         <Link to="reset">
+//                             <div className="link-out">Reset</div>
+//                         </Link>

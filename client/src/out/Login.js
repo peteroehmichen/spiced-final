@@ -1,4 +1,5 @@
 import { useAthenticate, useFormEval } from "../helpers/customHooks";
+import { Link } from "react-router-dom";
 
 export default function Login() {
     const [values, handleChangeEval] = useFormEval();
@@ -40,6 +41,16 @@ export default function Login() {
                         ? "Loading"
                         : "Log In"}
                 </button>
+            </div>
+            <div className="welcome-footnote">
+                <p>
+                    Not yet a user? Click here to{" "}
+                    <Link to="/register">register</Link>
+                </p>
+                <p>
+                    Forgot your password? Click here to{" "}
+                    <Link to="/reset">reset</Link>
+                </p>
             </div>
         </div>
     );

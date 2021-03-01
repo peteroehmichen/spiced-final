@@ -35,9 +35,23 @@ module.exports.addLocation = function (continent, country, name) {
     );
 };
 
+module.exports.addLocationPic = function (url, id) {
+    return sql.query(`UPDATE locations SET picture = $1 WHERE id = $2;`, [
+        url,
+        id,
+    ]);
+};
+
+module.exports.addProfilePic = function (url, id) {
+    return sql.query(`UPDATE users SET picture = $1 WHERE id = $2;`, [url, id]);
+};
+
 module.exports.getLocations = function () {
     // console.log("DB query fetching Locations:");
-    return sql.query(`SELECT * FROM locations;`);
+    // return sql.query(`SELECT * FROM locations;`);
+    return sql.query(
+        `WITH avg AS (SELECT location_id, AVG(rate) AS rate_avg from location_rating GROUP BY location_id) SELECT * FROM locations FULL JOIN avg ON avg.location_id=locations.id;`
+    );
 };
 
 module.exports.getTripsbyUser = async function (id) {

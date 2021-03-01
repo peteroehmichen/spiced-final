@@ -85,6 +85,36 @@ export function toggleTripForm() {
     return { type: "TOGGLE_TRIP_FORM" };
 }
 
+export async function toggleUploadModal() {
+    // console.log("Going to fetch user data:");
+    return {
+        type: "TOGGLE_UPLOAD_MODAL",
+    };
+}
+
+export async function updateProfilePicture(response) {
+    const obj = {
+        type: "UPDATE_PROFILE_PICTURE",
+    };
+    if (response.url) {
+        obj.payload = response.url;
+    } else {
+        obj.profilePicError = response.error;
+    }
+    return obj;
+}
+
+export async function updateLocationPicture(response) {
+    const obj = {
+        type: "UPDATE_LOCATION_PICTURE",
+    };
+    if (response.url) {
+        obj.payload = response.url;
+    } else {
+        obj.profilePicError = response.error;
+    }
+    return obj;
+}
 export async function addNewLocation(values) {
     // console.log("writing new Location:", values);
     try {

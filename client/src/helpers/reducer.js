@@ -73,10 +73,33 @@ export default function reducer(store = {}, action) {
         store.activeTripForm = !store.activeTripForm;
     }
 
+    if (action.type == "TOGGLE_UPLOAD_MODAL") {
+        store.activateUploadModal =
+            store.activateUploadModal == null
+                ? true
+                : !store.activateUploadModal;
+    }
+
+    if (action.type == "UPDATE_LOCATION_PICTURE") {
+        if (action.payload) {
+            store.location.picture = action.payload;
+        } else {
+            store.location.profilePicError = action.error;
+        }
+    }
+
+    if (action.type == "UPDATE_PROFILE_PICTURE") {
+        if (action.payload) {
+            store.user.picture = action.payload;
+        } else {
+            store.user.profilePicError = action.error;
+        }
+    }
+
     if (action.type == "ADD_NEW_LOCATION") {
         // console.log("writing new Location to store");
         if (action.payload) {
-            store.locations = store.locations.concat(action.payload);
+            store.locations.unshift(action.payload);
         } else {
             store.locationError = action.error;
         }
@@ -104,7 +127,7 @@ export default function reducer(store = {}, action) {
     if (action.type == "ADD_NEW_TRIP") {
         console.log("writing new trip to store");
         if (action.payload) {
-            store.trips = store.trips.concat(action.payload);
+            store.trips.unshift(action.payload);
         } else {
             store.tripsError = action.error;
         }

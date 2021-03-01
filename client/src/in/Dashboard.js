@@ -37,25 +37,41 @@ export default function Dashboard() {
                 <li>view pinned friends trips</li>
                 <li>(maybe notifications)</li>
             </ul>
-            <h1>Dashboard</h1>
-            <h2>Your Friends Trips</h2>
-            <ul>
+            <Matches limit="0" size="medium" alignment="horiontal" />
+
+            <h1>Your Friends Trips</h1>
+            <div className="card-container">
                 {trips &&
                     locations &&
                     user &&
                     trips
                         .filter((trip) => trip.person != user.id)
                         .map((elem, i) => (
-                            <li key={i}>
-                                {elem.first} {elem.last} ||
-                                {getLocationName(elem.location_id)} --{" "}
-                                {new Date(elem.from_min).toLocaleDateString()} -{" "}
-                                {new Date(elem.until_max).toLocaleDateString()}:
-                                ({elem.comment})
-                            </li>
+                            <div className="card small" key={i}>
+                                <div className="card-thumb">
+                                    <img src="/default.svg" />
+                                </div>
+                                <div className="card-image">
+                                    <img src="/default.svg" />
+                                </div>
+                                <div className="card-text">
+                                    <h4>
+                                        {elem.first} {elem.last[0]}.
+                                    </h4>
+                                    <p>
+                                        {new Date(
+                                            elem.from_min
+                                        ).toLocaleDateString()}{" "}
+                                        -{" "}
+                                        {new Date(
+                                            elem.until_max
+                                        ).toLocaleDateString()}
+                                    </p>
+                                </div>
+                                <div className="card-foot"></div>
+                            </div>
                         ))}
-            </ul>
-            <Matches limit="0" />
+            </div>
         </div>
     );
 }

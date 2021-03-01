@@ -1,6 +1,6 @@
 {
     "CODE_VALIDITY_IN_MINUTES": "10",
-    "S3URL": "",
+    "S3URL": "https://s3.amazonaws.com/oehmichen-messageboard/",
     "grades": [
         "1",
         "2",

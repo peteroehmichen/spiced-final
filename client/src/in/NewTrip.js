@@ -11,64 +11,65 @@ export default function NewTrip() {
     const dispatch = useDispatch();
     return (
         <div className="form new-trips">
-            <h2>please fill out the following core information</h2>
-            <label>
-                Location
-                <select
-                    defaultValue={"DEFAULT"}
-                    name="location_id"
-                    onChange={handleChangeEval}
+            <div>
+                <h2>Basic information</h2>
+            </div>
+            <div>
+                <label>
+                    Location
+                    <select
+                        defaultValue={"DEFAULT"}
+                        name="location_id"
+                        onChange={handleChangeEval}
+                    >
+                        <option value="DEFAULT" disabled>
+                            Choose...
+                        </option>
+                        {locations &&
+                            locations.map((elem) => (
+                                <option key={elem.id} value={elem.id}>
+                                    {elem.name}
+                                </option>
+                            ))}
+                    </select>
+                </label>
+                <label>
+                    Start
+                    <input
+                        type="date"
+                        name="from_min"
+                        onChange={handleChangeEval}
+                        disabled={!values.location_id}
+                    />
+                </label>
+                <label>
+                    End
+                    <input
+                        type="date"
+                        name="until_max"
+                        onChange={handleChangeEval}
+                        disabled={!values.from_min}
+                    />
+                </label>
+            </div>
+
+            <div>
+                <button
+                    onClick={() => {
+                        dispatch(toggleTripForm());
+                    }}
                 >
-                    <option value="DEFAULT" disabled>
-                        Choose...
-                    </option>
-                    {locations &&
-                        locations.map((elem) => (
-                            <option key={elem.id} value={elem.id}>
-                                {elem.name}
-                            </option>
-                        ))}
-                </select>
-            </label>
-            <label>
-                earliest Start
-                <input
-                    type="date"
-                    name="from_min"
-                    onChange={handleChangeEval}
-                    disabled={!values.location_id}
-                />
-            </label>
-            <label>
-                latest End
-                <input
-                    type="date"
-                    name="until_max"
-                    onChange={handleChangeEval}
-                    disabled={!values.from_min}
-                />
-            </label>
-            <textarea
-                name="comment"
-                placeholder="Tell others a bit about it"
-                disabled={!values.until_max}
-                onChange={handleChangeEval}
-            />
-            <button
-                onClick={() => {
-                    dispatch(toggleTripForm());
-                }}
-            >
-                cancel
-            </button>
-            <button
-                disabled={!values.until_max}
-                onClick={() => {
-                    dispatch(addNewTrip(values));
-                }}
-            >
-                save
-            </button>
+                    cancel
+                </button>
+                <button
+                    disabled={!values.until_max}
+                    onClick={() => {
+                        dispatch(addNewTrip(values));
+                    }}
+                >
+                    save
+                </button>
+            </div>
         </div>
     );
 }

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useAthenticate, useFormEval } from "../helpers/customHooks";
 
 export default function Register() {
@@ -55,6 +56,12 @@ export default function Register() {
                         ? "Loading"
                         : "Register"}
                 </button>
+            </div>
+            <div className="welcome-footnote">
+                <p>
+                    Already a user? Click here to{" "}
+                    <Link to="/login">log in</Link>
+                </p>
             </div>
         </div>
     );

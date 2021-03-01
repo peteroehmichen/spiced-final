@@ -3,6 +3,7 @@ import React, { useState } from "react";
 // import { Link, withRouter } from "react-router-dom";
 import axios from "../helpers/axios";
 import { useFormEval } from "../helpers/customHooks";
+import { Link } from "react-router-dom";
 
 export default function Reset() {
     const [step, setStep] = useState(1);
@@ -146,6 +147,11 @@ export default function Reset() {
                 <h3>Reset your password...</h3>
             </div>
             {renderedStep}
+            <div className="welcome-footnote">
+                <p>
+                    Go back to Log In Page. <Link to="/login">click here</Link>
+                </p>
+            </div>
         </div>
     );
 }

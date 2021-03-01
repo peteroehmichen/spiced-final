@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getLocationData } from "../helpers/actions";
+import { getLocationData, toggleUploadModal } from "../helpers/actions";
 import Chat from "./Chat";
+import PhotoUploader from "./PhotoUploader";
 
 export default function User(props) {
     const dispatch = useDispatch();
-    const loc = useSelector((store) => store.location);
+    const { location: loc, activateUploadModal } = useSelector(
+        (store) => store
+    );
 
     useEffect(async () => {
         dispatch(getLocationData(props.match.params.id));
@@ -14,11 +17,26 @@ export default function User(props) {
     if (!loc.name && !loc.error) return null;
 
     const LocDetails = (
-        <div className="central location">
-            <h1>
-                {loc.name} {loc.name}
-            </h1>
-            <p>...</p>
+        <div
+            className="central location"
+            style={{
+                backgroundImage: `url(${loc.picture})`,
+                backgroundSize: "cover",
+            }}
+        >
+            <div
+                className="uploadBtn"
+                onClick={() => dispatch(toggleUploadModal())}
+            >
+                UPLOADER
+            </div>
+            {activateUploadModal && (
+                <PhotoUploader type="location" id={props.match.params.id} />
+            )}
+            <h1>{loc.name}</h1>
+            <p>
+                {loc.country} ({loc.continent})
+            </p>
             <Chat type="location" location={props.match.params.id} />
         </div>
     );

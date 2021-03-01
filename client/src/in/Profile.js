@@ -6,6 +6,7 @@ Rate Locations
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { getTrips, toggleTripForm } from "../helpers/actions";
 import NewTrip from "./NewTrip";
 
@@ -61,33 +62,56 @@ export default function Profile() {
                 </div>
             )}
             <h1>Your Trips</h1>
-            <ul>
+            <div className="card-container wrapped">
+                <div className="card medium start">
+                    {!activeTripForm && (
+                        <h1
+                            onClick={() => {
+                                dispatch(toggleTripForm());
+                            }}
+                        >
+                            ✚
+                        </h1>
+                    )}
+                    {activeTripForm && <NewTrip />}
+                </div>
                 {trips &&
                     locations &&
                     user &&
                     trips
                         .filter((trip) => trip.person == user.id)
                         .map((elem, i) => (
-                            <li key={i}>
-                                {getLocationName(elem.location_id)} --{" "}
-                                {new Date(elem.from_min).toLocaleDateString()} -{" "}
-                                {new Date(elem.until_max).toLocaleDateString()}:
-                                ({elem.comment})
-                            </li>
+                            <Link to="/" key={i}>
+                                <div className="card medium">
+                                    <div className="card-image">
+                                        <img src="/default.svg" />
+                                    </div>
+                                    <div className="card-text">
+                                        <h4>
+                                            {getLocationName(elem.location_id)}
+                                        </h4>
+                                        <p>
+                                            {new Date(
+                                                elem.from_min
+                                            ).toLocaleDateString()}{" "}
+                                            -{" "}
+                                            {new Date(
+                                                elem.until_max
+                                            ).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    <div className="card-foot">
+                                        <div>{elem.comment}</div>
+                                    </div>
+                                </div>
+                            </Link>
                         ))}
-            </ul>
-            <div className="new">
-                {!activeTripForm && (
-                    <button
-                        onClick={() => {
-                            dispatch(toggleTripForm());
-                        }}
-                    >
-                        Add new Trip
-                    </button>
-                )}
-                {activeTripForm && <NewTrip />}
             </div>
         </div>
     );
 }
+
+// <div className="new">
+
+//                 {activeTripForm && <NewTrip />}
+//             </div>
