@@ -213,24 +213,68 @@ app.get("/in/userData.json", async (req, res) => {
 
 app.post("/in/updateUserData.json", async (req, res) => {
     // console.log("updating: ", req.body);
-    const {
-        age,
-        location,
-        grade_comfort,
-        grade_max,
-        experience,
-        description,
-    } = req.body;
-    const result = await db.updateUserData(
-        age,
-        location,
-        grade_comfort,
-        grade_max,
-        description,
-        experience,
-        req.session.userId
-    );
-    res.json(result);
+
+    // let user = await db.getUserById(req.session.userId, req.session.userId);
+    // console.log("old data:", user.rows[0]);
+    try {
+        for (let element in req.body) {
+            await db.updateUserData(
+                element,
+                req.body[element],
+                req.session.userId
+            );
+        }
+        const results = await db.getUserById(
+            req.session.userId,
+            req.session.userId
+        );
+        if (results.rowCount > 0) {
+            delete results.rows[0].id;
+            delete results.rows[0].confirmed;
+            delete results.rows[0].created_at;
+            delete results.rows[0].recipient;
+            delete results.rows[0].sender;
+            delete results.rows[0].password;
+            return res.json({ success: results.rows[0], error: false });
+        } else {
+            res.json({ success: false, error: "formatting Error" });
+        }
+    } catch (err) {
+        console.log("Error in user-Update:", err);
+        res.json({ error: "Failed Connection to Database" });
+    }
+    // console.log("new data:", user.rows[0]);
+
+    // const result = await db.updateUserData(
+    //     age,
+    //     location,
+    //     grade_comfort,
+    //     grade_max,
+    //     description,
+    //     experience,
+    //     req.session.userId
+    // );
+});
+
+app.post("/in/updateTripData.json", async (req, res) => {
+    const tripId = req.body.id;
+    delete req.body.id;
+    console.log("tripID", tripId);
+    console.log("body:", req.body);
+    try {
+        for (let element in req.body) {
+            await db.updateTripData(element, req.body[element], tripId);
+        }
+        const results = await db.getTripById(tripId);
+        if (results.rowCount > 0) {
+            return res.json({ success: results.rows[0], error: false });
+        } else {
+            res.json({ success: false, error: "formatting Error" });
+        }
+    } catch (err) {
+        console.log("Error in trip-Update:", err);
+        res.json({ error: "Failed Connection to Database" });
+    }
 });
 
 app.get("/in/addLocation.json", async (req, res) => {
@@ -703,6 +747,8 @@ app.post("/in/picture.json", aws.uploader.single("file"), async (req, res) => {
         if (awsAdd.url && awsDelete.success) {
             if (req.body.location_id) {
                 sql = await db.addLocationPic(awsAdd.url, req.body.location_id);
+            } else if (req.body.trip_id) {
+                sql = await db.addTripPic(awsAdd.url, req.body.trip_id);
             } else {
                 sql = await db.addProfilePic(awsAdd.url, req.session.userId);
             }

@@ -13,6 +13,9 @@ export default function reducer(store = {}, action) {
         rating: {
             ...store.rating,
         },
+        tripEdit: {
+            ...store.tripEdit,
+        },
         locations: store.locations && [...store.locations],
         trips: store.trips && [...store.trips],
         grades: store.grades && [...store.grades],
@@ -57,12 +60,35 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "UPDATE_USER_DATA") {
-        console.log("reducer - updating...");
+        // console.log("reducer - updating...");
+        // console.log(action.payload.success);
         // FIXME Error Handling
-        store.user = {
-            ...store.user,
-            ...action.payload,
-        };
+        store.updateError = action.payload.error;
+        if (action.payload.success) {
+            // console.log("adding to user...");
+            store.user = {
+                ...store.user,
+                ...action.payload.success,
+            };
+            // console.log("new user:", store.user);
+        }
+    }
+
+    if (action.type == "UPDATE_TRIP_DATA") {
+        console.log("reducer - updating...");
+        console.log(action.payload.success);
+        store.updateError = action.payload.error;
+        if (action.payload.success) {
+            store.trips = store.trips.map((elem) => {
+                console.log(elem.id, action.payload.success.id);
+                if (elem.id == action.payload.success.id) {
+                    console.log("reducer adding to trip...");
+                    elem = action.payload;
+                }
+                return elem;
+            });
+            // console.log("new user:", store.user);
+        }
     }
 
     if (action.type == "TOGGLE_LOCATION_FORM") {
@@ -73,11 +99,30 @@ export default function reducer(store = {}, action) {
         store.activeTripForm = !store.activeTripForm;
     }
 
+    if (action.type == "TOGGLE_TRIP_EDIT") {
+        console.log("reducer: toggling", action.index);
+        store.tripEdit[action.index] = !store.tripEdit[action.index];
+
+        // store.tripEdit = !store.tripEdit;
+    }
+
     if (action.type == "TOGGLE_UPLOAD_MODAL") {
         store.activateUploadModal =
             store.activateUploadModal == null
                 ? true
                 : !store.activateUploadModal;
+    }
+
+    if (action.type == "TOGGLE_TRIP_UPLOAD_MODAL") {
+        store.activateTripUploadModal = action.payload;
+    }
+
+    if (action.type == "TOGGLE_PROFILE_EDIT") {
+        store.profileEdit = !store.profileEdit;
+    }
+
+    if (action.type == "TOGGLE_DESCRIPTION_EDIT") {
+        store.descriptionEdit = !store.descriptionEdit;
     }
 
     if (action.type == "UPDATE_LOCATION_PICTURE") {
@@ -93,6 +138,19 @@ export default function reducer(store = {}, action) {
             store.user.picture = action.payload;
         } else {
             store.user.profilePicError = action.error;
+        }
+    }
+
+    if (action.type == "UPDATE_TRIP_PICTURE") {
+        if (action.payload) {
+            store.trips = store.trips.map((elem) => {
+                if (elem.id == action.id) {
+                    elem.picture = action.payload;
+                }
+                return elem;
+            });
+        } else {
+            store.trip.profilePicError = action.error;
         }
     }
 

@@ -26,7 +26,7 @@ header {
 }
 
 .central {
-    padding: 30px;
+    padding: 30px 0;
     position: relative;
     height: 100%;
     width: 100%;
@@ -60,6 +60,11 @@ footer {
 /* Basic rulesets */
 select {
     /* max-width: 100%; */
+}
+
+textarea {
+    width: 95%;
+    height: 70%;
 }
 
 img {
@@ -112,6 +117,7 @@ a {
 }
 
 .card-image {
+    position: relative;
     width: 100%;
     height: 50%;
 }
@@ -159,6 +165,28 @@ a {
     height: 230px;
 }
 
+.wide {
+    width: 360px;
+}
+
+.split {
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.card-left {
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 180px;
+    height: 100%;
+}
+.card-right {
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 180px;
+    padding: 5px 5px 5px 15px;
+}
+
 .start {
     justify-content: center;
     background-color: rgba(255, 255, 255, 0.523);
@@ -204,12 +232,35 @@ a {
     align-items: center;
 }
 
-/* end of basic rulesets */
-
-.uploadBtn {
+.upload {
     position: absolute;
     top: 0;
     right: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+/* end of basic rulesets */
+
+.profile-frame {
+    width: 100%;
+    height: 200px;
+    /* min-height: 500px; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: stretch;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.profile {
+    position: relative;
+    width: 30%;
+    margin: 10px 20px;
+    overflow: auto;
+    white-space: pre-wrap;
+}
+
+.profile.picture {
+    overflow: hidden;
 }
 
 input[type="date"] {

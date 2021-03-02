@@ -61,18 +61,35 @@ export async function getLocationData(id) {
     }
 }
 
+export async function updateTripData(values, id) {
+    values.id = id;
+    try {
+        const { data } = await axios.post("/in/updateTripData.json", values);
+        console.log("data from axios:", data);
+        return {
+            type: "UPDATE_TRIP_DATA",
+            payload: data,
+        };
+    } catch (error) {
+        return {
+            type: "UPDATE_TRIP_DATA",
+            payload: { error: "Unknown Error" },
+        };
+    }
+}
+
 export async function updateUserData(values) {
     try {
         const { data } = await axios.post("/in/updateUserData.json", values);
-        // console.log("reveived:", data);
+        // console.log(data);
         return {
             type: "UPDATE_USER_DATA",
-            payload: values,
+            payload: data,
         };
     } catch (error) {
         return {
             type: "UPDATE_USER_DATA",
-            payload: error,
+            payload: { error: "Unknown Error" },
         };
     }
 }
@@ -85,10 +102,35 @@ export function toggleTripForm() {
     return { type: "TOGGLE_TRIP_FORM" };
 }
 
+export async function toggleTripEdit(i) {
+    return {
+        type: "TOGGLE_TRIP_EDIT",
+        index: i,
+    };
+}
+
 export async function toggleUploadModal() {
-    // console.log("Going to fetch user data:");
     return {
         type: "TOGGLE_UPLOAD_MODAL",
+    };
+}
+
+export async function toggleTripUploadModal(id) {
+    return {
+        type: "TOGGLE_TRIP_UPLOAD_MODAL",
+        payload: id,
+    };
+}
+
+export async function toggleProfileEdit() {
+    return {
+        type: "TOGGLE_PROFILE_EDIT",
+    };
+}
+
+export async function toggleDescriptionEdit() {
+    return {
+        type: "TOGGLE_DESCRIPTION_EDIT",
     };
 }
 
@@ -104,6 +146,19 @@ export async function updateProfilePicture(response) {
     return obj;
 }
 
+export async function updateTripPicture(response, id) {
+    const obj = {
+        type: "UPDATE_TRIP_PICTURE",
+        id: id,
+    };
+    if (response.url) {
+        obj.payload = response.url;
+    } else {
+        obj.tripPicError = response.error;
+    }
+    return obj;
+}
+
 export async function updateLocationPicture(response) {
     const obj = {
         type: "UPDATE_LOCATION_PICTURE",
@@ -111,7 +166,7 @@ export async function updateLocationPicture(response) {
     if (response.url) {
         obj.payload = response.url;
     } else {
-        obj.profilePicError = response.error;
+        obj.locationPicError = response.error;
     }
     return obj;
 }

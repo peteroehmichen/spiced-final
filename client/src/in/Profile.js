@@ -1,16 +1,23 @@
-/*
-Add new Locations
-Edit Locations
-Rate Locations
-*/
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { getTrips, toggleTripForm } from "../helpers/actions";
+import Upload from "../graphComp/Upload";
+import {
+    getTrips,
+    toggleTripForm,
+    toggleProfileEdit,
+    toggleDescriptionEdit,
+    toggleTripEdit,
+    toggleTripUploadModal,
+} from "../helpers/actions";
+import DescriptionEdit from "./DescriptionEdit";
 import NewTrip from "./NewTrip";
+import PhotoUploader from "./PhotoUploader";
+import ProfileEdit from "./ProfileEdit";
+import TripEdit from "./TripEdit";
 
 export default function Profile() {
+    const { activateUploadModal } = useSelector((store) => store);
     const dispatch = useDispatch();
     const {
         trips,
@@ -19,6 +26,10 @@ export default function Profile() {
         user,
         grades,
         experience,
+        profileEdit,
+        descriptionEdit,
+        tripEdit,
+        activateTripUploadModal,
     } = useSelector((store) => store);
 
     useEffect(() => {
@@ -33,37 +44,65 @@ export default function Profile() {
     // if (!user || !trips) return null;
     // console.log(trips);
     return (
-        <div className="central trips">
-            <h1>Your Profile Data</h1>
-            {user && grades && experience && (
-                <div>
-                    <p>
-                        <b>Your Name:</b> {user.first} {user.last}
-                    </p>
-                    <p>
-                        <b>Your Age:</b> {user.age}
-                    </p>
-                    <p>
-                        <b>Your E-Mail:</b> {user.email}
-                    </p>
-                    <p>
-                        <b>Your Location:</b> {user.location}
-                    </p>
-                    <p>
-                        <b>Your Climbing Grade:</b> {grades[user.grade_comfort]}{" "}
-                        up to {grades[user.grade_max]}
-                    </p>
-                    <p>
-                        <b>Your Experience:</b> {experience[user.experience]}
-                    </p>
-                    <p>
-                        <b>Brief Description:</b> {user.description}
-                    </p>
+        <div className="central">
+            {activateUploadModal && <PhotoUploader type="profile" />}
+            {activateTripUploadModal && (
+                <PhotoUploader type="trip" id={activateTripUploadModal} />
+            )}
+            <h1>Your Public Profile</h1>
+            {user && (
+                <div className="profile-frame">
+                    <div className="profile picture">
+                        <Upload />
+                        <img src={user.picture || "/default.svg"} />
+                    </div>
+                    {grades && experience && !profileEdit && (
+                        <div className="profile data">
+                            <p>
+                                <b>Name:</b> {user.first} {user.last}
+                            </p>
+                            <p>
+                                <b>Age:</b> {user.age}
+                            </p>
+                            <p>
+                                <b>Climbing Grade:</b>{" "}
+                                {grades[user.grade_comfort]} up to{" "}
+                                {grades[user.grade_max]}
+                            </p>
+                            <p>
+                                <b>Experience:</b> {experience[user.experience]}
+                            </p>
+                            <button
+                                onClick={() => {
+                                    dispatch(toggleProfileEdit());
+                                }}
+                            >
+                                edit
+                            </button>
+                        </div>
+                    )}
+                    {grades && experience && profileEdit && <ProfileEdit />}
+                    {!descriptionEdit && (
+                        <div className="profile description">
+                            <p>
+                                <b>Brief Description:</b>
+                            </p>
+                            <p>{user.description}</p>
+                            <button
+                                onClick={() => {
+                                    dispatch(toggleDescriptionEdit());
+                                }}
+                            >
+                                edit
+                            </button>
+                        </div>
+                    )}
+                    {descriptionEdit && <DescriptionEdit />}
                 </div>
             )}
             <h1>Your Trips</h1>
             <div className="card-container wrapped">
-                <div className="card medium start">
+                <div className="card medium start wide">
                     {!activeTripForm && (
                         <h1
                             onClick={() => {
@@ -81,13 +120,17 @@ export default function Profile() {
                     trips
                         .filter((trip) => trip.person == user.id)
                         .map((elem, i) => (
-                            <Link to="/" key={i}>
-                                <div className="card medium">
+                            <div key={i} className="card medium wide split">
+                                <div className="card-left">
                                     <div className="card-image">
-                                        <img src="/default.svg" />
+                                        <Upload trip={elem.id} />
+                                        <img
+                                            src={elem.picture || "/default.svg"}
+                                        />
                                     </div>
                                     <div className="card-text">
                                         <h4>
+                                            #{elem.id}, {i}{" "}
                                             {getLocationName(elem.location_id)}
                                         </h4>
                                         <p>
@@ -100,11 +143,35 @@ export default function Profile() {
                                             ).toLocaleDateString()}
                                         </p>
                                     </div>
-                                    <div className="card-foot">
-                                        <div>{elem.comment}</div>
-                                    </div>
                                 </div>
-                            </Link>
+
+                                {!tripEdit[i] && (
+                                    <div className="card-right">
+                                        <div>
+                                            <p>
+                                                <b>Description</b>
+                                            </p>
+                                            <p>{elem.comment}</p>
+                                        </div>
+                                        <div>
+                                            <button
+                                                onClick={() => {
+                                                    console.log(
+                                                        `toggling ON index: ${i} with ID ${elem.id}`
+                                                    );
+                                                    dispatch(toggleTripEdit(i));
+                                                }}
+                                            >
+                                                edit
+                                            </button>
+                                            <button>delete</button>
+                                        </div>
+                                    </div>
+                                )}
+                                {tripEdit[i] && (
+                                    <TripEdit trip={elem} index={i} />
+                                )}
+                            </div>
                         ))}
             </div>
         </div>

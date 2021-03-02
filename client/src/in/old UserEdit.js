@@ -2,7 +2,6 @@ import { formatDistance, parseISO } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData, updateUserData } from "../helpers/actions";
-import UserEdit from "./UserEdit";
 
 export default function userEdit() {
     const grades = [

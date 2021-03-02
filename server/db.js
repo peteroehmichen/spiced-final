@@ -46,6 +46,10 @@ module.exports.addProfilePic = function (url, id) {
     return sql.query(`UPDATE users SET picture = $1 WHERE id = $2;`, [url, id]);
 };
 
+module.exports.addTripPic = function (url, id) {
+    return sql.query(`UPDATE trips SET picture = $1 WHERE id = $2;`, [url, id]);
+};
+
 module.exports.getLocations = function () {
     // console.log("DB query fetching Locations:");
     // return sql.query(`SELECT * FROM locations;`);
@@ -64,7 +68,7 @@ module.exports.getTripsbyUser = async function (id) {
     // console.log("id of friends:", friendIds);
     // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
     return sql.query(
-        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1);`,
+        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1);`,
         [friendIds]
     );
 };
@@ -159,19 +163,24 @@ module.exports.getLocationById = function (id) {
     return sql.query(`SELECT * FROM locations WHERE id=${id};`);
 };
 
-module.exports.updateUserData = function (
-    age,
-    location,
-    grade_comfort,
-    grade_max,
-    description,
-    experience,
-    id
-) {
-    return sql.query(
-        `UPDATE users SET age=$1, location=$2, grade_comfort=$3, grade_max=$4, description=$5, experience=$6 WHERE id = $7;`,
-        [age, location, grade_comfort, grade_max, description, experience, id]
-    );
+module.exports.updateUserData = function (property, value, id) {
+    // console.log("setting:", property, value, id);
+    return sql.query(`UPDATE users SET ${property}=$1 WHERE id=$2;`, [
+        value,
+        id,
+    ]);
+};
+
+module.exports.updateTripData = function (property, value, id) {
+    console.log("setting:", property, value, id);
+    return sql.query(`UPDATE trips SET ${property}=$1 WHERE id=$2;`, [
+        value,
+        id,
+    ]);
+};
+
+module.exports.getTripById = function (id) {
+    return sql.query(`SELECT * FROM trips WHERE id=${id};`);
 };
 
 module.exports.safeFriendRequest = function (userId, friendId) {

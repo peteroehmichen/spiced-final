@@ -4,11 +4,13 @@ import { useState } from "react";
 import {
     updateLocationPicture,
     updateProfilePicture,
+    updateTripPicture,
     toggleUploadModal,
+    toggleTripUploadModal,
 } from "../helpers/actions";
 
 export default function Uploader(props) {
-    const { user, location } = useSelector((store) => store);
+    const { user, location, trips } = useSelector((store) => store);
     const dispatch = useDispatch();
     const [file, setFile] = useState("");
     const [filename, setFilename] = useState("");
@@ -47,6 +49,11 @@ export default function Uploader(props) {
         if (props.type == "location") {
             picture.append("old", location.picture);
             picture.append("location_id", props.id);
+        } else if (props.type == "trip") {
+            let element = trips.filter((elem) => elem.id == props.id);
+            console.log("found old picture:", element);
+            picture.append("old", element.picture);
+            picture.append("trip_id", props.id);
         } else {
             picture.append("old", user.picture);
         }
@@ -67,11 +74,17 @@ export default function Uploader(props) {
         }
         if (props.type == "location") {
             dispatch(updateLocationPicture(response));
+        } else if (props.type == "trip") {
+            dispatch(updateTripPicture(response, props.id));
         } else {
             dispatch(updateProfilePicture(response));
         }
         setLoading(false);
-        dispatch(toggleUploadModal());
+        if (props.type == "trip") {
+            dispatch(toggleTripUploadModal(false));
+        } else {
+            dispatch(toggleUploadModal());
+        }
     }
 
     return (
@@ -80,14 +93,21 @@ export default function Uploader(props) {
                 <div
                     className="close"
                     onClick={() => {
-                        dispatch(toggleUploadModal());
+                        if (props.type == "trip") {
+                            dispatch(toggleTripUploadModal(false));
+                        } else {
+                            dispatch(toggleUploadModal());
+                        }
                     }}
                 >
                     X
                 </div>
                 <div className="uploader-body">
                     <div className="pane two">
-                        <h2>Upload a new {props.type} picture</h2>
+                        <h2>
+                            Upload a new {props.type} picture{" "}
+                            {props.type == "trip" ? `for id ${props.id}` : " "}
+                        </h2>
                         <input
                             type="file"
                             name="file"

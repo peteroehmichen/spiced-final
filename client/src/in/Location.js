@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Upload from "../graphComp/Upload";
 import { getLocationData, toggleUploadModal } from "../helpers/actions";
 import Chat from "./Chat";
 import PhotoUploader from "./PhotoUploader";
@@ -24,12 +25,8 @@ export default function User(props) {
                 backgroundSize: "cover",
             }}
         >
-            <div
-                className="uploadBtn"
-                onClick={() => dispatch(toggleUploadModal())}
-            >
-                UPLOADER
-            </div>
+            <Upload />
+
             {activateUploadModal && (
                 <PhotoUploader type="location" id={props.match.params.id} />
             )}

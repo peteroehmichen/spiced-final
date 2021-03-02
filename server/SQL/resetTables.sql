@@ -59,6 +59,7 @@ CREATE TABLE trips (
       until_min DATE,
       until_max DATE,
       comment TEXT,
+      picture TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
