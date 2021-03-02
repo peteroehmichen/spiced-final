@@ -180,6 +180,11 @@ a {
     width: 180px;
     height: 100%;
 }
+
+.card-left .card-image {
+    height: 70%;
+}
+
 .card-right {
     flex-direction: column;
     justify-content: flex-start;

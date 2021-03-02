@@ -68,7 +68,7 @@ module.exports.getTripsbyUser = async function (id) {
     // console.log("id of friends:", friendIds);
     // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
     return sql.query(
-        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1);`,
+        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,
         [friendIds]
     );
 };
@@ -180,7 +180,9 @@ module.exports.updateTripData = function (property, value, id) {
 };
 
 module.exports.getTripById = function (id) {
-    return sql.query(`SELECT * FROM trips WHERE id=${id};`);
+    return sql.query(
+        `SELECT * FROM trips WHERE id=${id} ORDER BY from_min ASC;`
+    );
 };
 
 module.exports.safeFriendRequest = function (userId, friendId) {
@@ -278,7 +280,7 @@ module.exports.getFriendInfo = function (userId, friendId) {
 
 module.exports.getLocationMatches = function (userId) {
     return sql.query(
-        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
+        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
         [userId]
     );
 };

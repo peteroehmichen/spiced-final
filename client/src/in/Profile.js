@@ -130,7 +130,6 @@ export default function Profile() {
                                     </div>
                                     <div className="card-text">
                                         <h4>
-                                            #{elem.id}, {i}{" "}
                                             {getLocationName(elem.location_id)}
                                         </h4>
                                         <p>

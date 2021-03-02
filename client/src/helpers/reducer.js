@@ -83,7 +83,7 @@ export default function reducer(store = {}, action) {
                 console.log(elem.id, action.payload.success.id);
                 if (elem.id == action.payload.success.id) {
                     console.log("reducer adding to trip...");
-                    elem = action.payload;
+                    elem = action.payload.success;
                 }
                 return elem;
             });
