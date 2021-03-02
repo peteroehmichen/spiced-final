@@ -20,6 +20,8 @@ export default function Chat(props) {
     const input = useRef(null);
     const [value, setValue] = useState("");
     const [group, setGroup] = useState("");
+    const [searchInput, setSearchInput] = useState("");
+
     // const [reply, setReply] = useState("0");
     // const [placeholder, setPlaceholder] = useState("");
     const dispatch = useDispatch();
@@ -113,7 +115,8 @@ export default function Chat(props) {
                 return true;
             } else if (
                 props.type == "location" &&
-                props.location == message.location_id
+                props.location == message.location_id &&
+                message.text.includes(searchInput)
             ) {
                 return true;
             } else {
@@ -162,7 +165,17 @@ export default function Chat(props) {
                     </label>
                 )}
                 {props.type == "location" && (
-                    <LocationRating id={props.location} />
+                    <input
+                        type="text"
+                        name="searchContent"
+                        placeholder="search through past messages"
+                        id="searchContent"
+                        key="searchContent"
+                        onChange={(e) => {
+                            setSearchInput(e.target.value);
+                            // console.log(e.target.value);
+                        }}
+                    />
                 )}
             </div>
             <div ref={chatRef} className="messages">
@@ -171,18 +184,20 @@ export default function Chat(props) {
                 )) ||
                     (Array.isArray(messages) &&
                         messages.map((msg, i) => (
-                            <div key={i}>
-                                <p>
+                            <div key={i} className="message">
+                                <p className="message-head">
                                     <b>
                                         {msg.first} {msg.last}
                                     </b>
-                                    ,{" "}
+                                    ,{"  "}
                                     {formatDistance(
                                         parseISO(msg.created_at),
                                         Date.now()
-                                    )}
+                                    )}{" "}
+                                    ago
                                 </p>
-                                <p>{msg.text}</p>
+
+                                <p className="message-body">{msg.text}</p>
                             </div>
                         )))}
             </div>

@@ -280,6 +280,70 @@ input[type="date"] {
     border-radius: 15px;
 }
 
+#searchContent {
+    width: 80%;
+    min-width: 300px;
+    padding: 5px;
+    font-size: 1.1rem;
+    border-radius: 15px;
+    margin: 15px;
+}
+
+.location {
+    width: 100%;
+    height: 100%;
+}
+
+.location-head {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.location-head h1,
+.location-head p {
+    display: inline;
+    padding: 0 10px;
+}
+
+.location-body {
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    height: 100%;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.646);
+}
+
+.location-left,
+.location-right {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
+    padding: 30px;
+    /* border: 1px solid black; */
+}
+
+.info-block {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+}
+
+.infos {
+    margin: 5px;
+    padding: 10px;
+    width: 95%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
 .getting-started {
     background-color: white;
     width: 60%;
@@ -308,8 +372,8 @@ input[type="date"] {
 }
 
 .chat {
-    height: 350px;
-    width: 400px;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -330,11 +394,26 @@ input[type="date"] {
 }
 
 .messages {
-    height: 250px;
+    height: 100%;
     width: 100%;
     overflow: auto;
+    border-bottom: 1px solid black;
+}
+
+.message {
+    background-color: wheat;
+    width: 95%;
+    padding: 5px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.message-head {
+    text-align: right;
+    padding: 5px;
 }
 
 .new-message {
-    height: 50px;
+    height: 100px;
+    padding: 15px;
 }

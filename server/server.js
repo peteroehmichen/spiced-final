@@ -277,6 +277,28 @@ app.post("/in/updateTripData.json", async (req, res) => {
     }
 });
 
+app.post("/in/addLocationSection.json", async (req, res) => {
+    console.log("body:", req.body);
+    try {
+        const result = await db.addLocationSection(
+            req.body.title,
+            req.body.content,
+            req.body.id,
+            req.body.prev
+        );
+        // console.log("before", result.rows[0]);
+        // console.log("after", JSON.parse(result.rows[0].infos));
+        if (result.rowCount > 0) {
+            return res.json({ success: result.rows[0], error: false });
+        } else {
+            res.json({ success: false, error: "formatting Error" });
+        }
+    } catch (err) {
+        console.log("Error in trip-Update:", err);
+        res.json({ error: "Failed Connection to Database" });
+    }
+});
+
 app.get("/in/addLocation.json", async (req, res) => {
     // console.log("receiving:", req.query);
     const { continent, country, name } = req.query;

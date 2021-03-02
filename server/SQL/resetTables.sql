@@ -29,6 +29,7 @@ CREATE TABLE locations (
       country VARCHAR(255) NOT NULL,
       name VARCHAR(255) NOT NULL UNIQUE,
       picture text,
+      infos text,
       sport BOOLEAN,
       trad BOOLEAN,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

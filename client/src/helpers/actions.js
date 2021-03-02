@@ -78,6 +78,30 @@ export async function updateTripData(values, id) {
     }
 }
 
+export async function addLocationSection(values, id, prev) {
+    values.id = id;
+    if (prev.title) {
+        values.prev = prev.title;
+    }
+    // console.log("sending:", values);
+    try {
+        const { data } = await axios.post(
+            "/in/addLocationSection.json",
+            values
+        );
+        console.log("data from axios:", data);
+        return {
+            type: "ADD_LOCATION_SECTION",
+            payload: data,
+        };
+    } catch (error) {
+        return {
+            type: "ADD_LOCATION_SECTION",
+            payload: { error: "Unknown Error" },
+        };
+    }
+}
+
 export async function updateUserData(values) {
     try {
         const { data } = await axios.post("/in/updateUserData.json", values);

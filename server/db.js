@@ -42,6 +42,29 @@ module.exports.addLocationPic = function (url, id) {
     ]);
 };
 
+module.exports.addLocationSection = async function (title, content, id, prev) {
+    let entry;
+    const old = await sql.query(`SELECT infos FROM locations WHERE id=${id}`);
+    entry = {
+        [title]: content,
+    };
+    if (old.rows[0].infos) {
+        entry = JSON.parse(old.rows[0].infos);
+        let keys = Object.keys(entry);
+        // console.log("old:", entry);
+        if (keys.includes(prev)) {
+            console.log("updating the section:", prev);
+            delete entry[prev];
+        }
+        entry[title] = content;
+    }
+    entry = JSON.stringify(entry);
+    return sql.query(
+        `UPDATE locations SET infos=$1 WHERE id=$2 RETURNING infos, id;`,
+        [entry, id]
+    );
+};
+
 module.exports.addProfilePic = function (url, id) {
     return sql.query(`UPDATE users SET picture = $1 WHERE id = $2;`, [url, id]);
 };

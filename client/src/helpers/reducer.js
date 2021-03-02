@@ -133,6 +133,22 @@ export default function reducer(store = {}, action) {
         }
     }
 
+    if (action.type == "ADD_LOCATION_SECTION") {
+        if (action.payload.success) {
+            // store.locations = store.locations.map((elem) => {
+            //     if (elem.id == action.payload.success.id) {
+            //         elem.infos = action.payload.success.infos;
+            //     }
+            //     return elem;
+            // });
+            if (store.location.id == action.payload.success.id) {
+                store.location.infos = action.payload.success.infos;
+            }
+        } else {
+            store.locations.infosError = action.error;
+        }
+    }
+
     if (action.type == "UPDATE_PROFILE_PICTURE") {
         if (action.payload) {
             store.user.picture = action.payload;
