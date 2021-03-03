@@ -100,39 +100,28 @@ export default function Uploader(props) {
                         }
                     }}
                 >
-                    X
+                    <h2>x</h2>
                 </div>
-                <div className="uploader-body">
-                    <div className="pane two">
-                        <h2>
-                            Upload a new {props.type} picture{" "}
-                            {props.type == "trip" ? `for id ${props.id}` : " "}
-                        </h2>
-                        <input
-                            type="file"
-                            name="file"
-                            id="file"
-                            accept="image/*"
-                            onChange={selectHandler}
-                            key={4}
-                        />
-                        <label htmlFor="file">
-                            <img src="/upload_black.svg" />
-                            <span>{filename || "Please select an image"}</span>
-                        </label>
-                        <button
-                            className={(error && "error-btn") || " "}
-                            disabled={!file || error || loading}
-                            onClick={() => uploadPicture()}
-                        >
-                            {error
-                                ? error
-                                : loading
-                                ? "loading"
-                                : "Upload Picture"}
-                        </button>
-                    </div>
-                </div>
+                <h2>Upload a new {props.type} picture</h2>
+                <input
+                    type="file"
+                    name="file"
+                    id="file"
+                    accept="image/*"
+                    onChange={selectHandler}
+                    key={4}
+                />
+                <label htmlFor="file">
+                    <img src="/upload_black.svg" />
+                    <span>{filename || "Click to select an image"}</span>
+                </label>
+                <button
+                    className={(error && "error-btn") || " "}
+                    disabled={!file || error || loading}
+                    onClick={() => uploadPicture()}
+                >
+                    {error ? error : loading ? "loading" : "Upload Picture"}
+                </button>
             </div>
         </div>
     );

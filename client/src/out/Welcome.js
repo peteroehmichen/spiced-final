@@ -14,7 +14,10 @@ export default function Welcome() {
     return (
         <Fragment>
             <div className="central out">
-                <h1>NAME OF PAGE</h1>
+                <div className="logoStartFrame">
+                    <img className="logoStart" src="/noun_Rope_61701.png" />
+                    <h1>THE SHARP END</h1>
+                </div>
                 <HashRouter>
                     <Route exact path="/" component={GettingStarted} />
                     <Route path="/register" component={Register} />

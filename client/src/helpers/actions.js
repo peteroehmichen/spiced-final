@@ -183,6 +183,12 @@ export async function updateTripPicture(response, id) {
     return obj;
 }
 
+export async function updateFriendshipStatus() {
+    return {
+        type: "UPDATE_FRIENDSHIP_STATUS",
+    };
+}
+
 export async function updateLocationPicture(response) {
     const obj = {
         type: "UPDATE_LOCATION_PICTURE",
@@ -271,8 +277,8 @@ export async function getLocations() {
 export async function getTrips() {
     // console.log("getting all Trips");
     try {
-        const { data } = await axios.get(`in/getTrips.json`);
-        console.log("response from getTrips:", data);
+        const { data } = await axios.get(`/in/getTrips.json`);
+        // console.log("response from getTrips:", data);
         if (data.success) {
             return {
                 type: "GET_TRIPS",

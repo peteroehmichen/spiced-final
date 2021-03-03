@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { submitFriendAction } from "../helpers/actions";
+import { submitFriendAction, updateFriendshipStatus } from "../helpers/actions";
 
 export default function FriendButton(props) {
     // const [loading, setLoading] = useState(false);
@@ -11,6 +11,10 @@ export default function FriendButton(props) {
 
     const request = async function (task) {
         dispatch(submitFriendAction(props.friendId, task));
+        // console.log(task);
+        if (task == "Cancel Friendship" || task == "Accept Request") {
+            dispatch(updateFriendshipStatus());
+        }
     };
 
     useEffect(() => {
@@ -23,13 +27,25 @@ export default function FriendButton(props) {
     if (!nextFriendAction) return null;
 
     return (
-        <button
-            className={(dbError && "error-btn") || " "}
-            onClick={() => {
-                request(nextFriendAction);
-            }}
-        >
-            {nextFriendAction}
-        </button>
+        <div className="friendBtn">
+            <button
+                onClick={() => {
+                    request(nextFriendAction);
+                }}
+            >
+                {nextFriendAction}
+            </button>
+            {nextFriendAction == "Accept Request" && (
+                <button
+                    onClick={() => {
+                        dispatch(
+                            submitFriendAction(props.friendId, "Deny Request")
+                        );
+                    }}
+                >
+                    Deny Request
+                </button>
+            )}
+        </div>
     );
 }

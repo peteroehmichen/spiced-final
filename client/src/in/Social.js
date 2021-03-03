@@ -45,7 +45,11 @@ export default function Social() {
         );
 
         if (!friends.length) {
-            friends = <div>There are none</div>;
+            friends = (
+                <div className="noFriendMsg">
+                    <h3>You are not connected to anybody so far</h3>
+                </div>
+            );
         } else {
             friends = friends.map((elem, i) => (
                 <div key={i} className="card small wide-small split">
@@ -141,7 +145,7 @@ export default function Social() {
                     <div>
                         <h3>Friend-Requests to you</h3>
                         <div className="container-frame">
-                            <div className="card-container inprofile horizontal">
+                            <div className="card-container wrapped">
                                 {requests}
                             </div>
                         </div>
@@ -150,7 +154,7 @@ export default function Social() {
                     <div>
                         <h3>Friend-Request from you</h3>
                         <div className="container-frame">
-                            <div className="card-container inprofile horizontal">
+                            <div className="card-container wrapped">
                                 {pending}
                             </div>
                         </div>

@@ -24,21 +24,28 @@ export default function App() {
     return (
         <BrowserRouter>
             <header>
-                <Link to="/">
-                    <div className="nav-element">Dashboard</div>
-                </Link>
-                <Link to="/locations">
-                    <div className="nav-element">All Locations</div>
-                </Link>
-                <Link to="/profile">
-                    <div className="nav-element">My Profile & Trips</div>
-                </Link>
-                <Link to="/social">
-                    <div className="nav-element">My Friends</div>
-                </Link>
-                <a href="/logout">
-                    <div className="nav-element grey">Logout</div>
-                </a>
+                <div className="nav-element logo">
+                    <img src="/noun_Rope_61701.png" /> THE SHARP END
+                </div>
+                <div className="nav-bar">
+                    <Link to="/">
+                        <div className="nav-element">Dashboard</div>
+                    </Link>
+                    <Link to="/locations">
+                        <div className="nav-element">All Locations</div>
+                    </Link>
+                    <Link to="/profile">
+                        <div className="nav-element">My Profile & Trips</div>
+                    </Link>
+                    <Link to="/social">
+                        <div className="nav-element">My Friends</div>
+                    </Link>
+                </div>
+                <div className="nav-element logout">
+                    <a href="/logout">
+                        <img src="/logOut.svg" />
+                    </a>
+                </div>
             </header>
             <Fragment>
                 <Route exact path="/" render={() => <Dashboard />} />

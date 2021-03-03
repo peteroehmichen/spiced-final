@@ -16,21 +16,20 @@ export default function User(props) {
         experience,
         matches,
         trips,
+        locations,
     } = useSelector((store) => store);
 
     useEffect(async () => {
         dispatch(getUserData(props.match.params.id));
-        // dispatch(getTrips());
+        dispatch(getTrips());
     }, []);
 
-    if (!other.first && !other.error) return null;
+    const getLocationName = function (id) {
+        const obj = locations.find((loc) => loc.id == id);
+        return obj.name;
+    };
 
-    let allTrips;
-    // if (Array.isArray(trips)) {
-    //     allTrips = trips
-    //         .filter((elem) => elem.person == props.params.id)
-    //         .map((elem) => <h1>found a trip</h1>);
-    // }
+    if (!other.first && !other.error) return null;
 
     const otherUser = (
         <div className="central user">
@@ -72,26 +71,51 @@ export default function User(props) {
                                     <b>Description:</b> {other.description}
                                 </p>
                             )}
-                            <p className="todo">
-                                sum of trips in future # of Friends snd
-                                friendbtn
-                            </p>
+
                             <FriendButton friendId={props.match.params.id} />
                         </div>
                     </div>
                     <h1>
-                        <span
-                            onClick={() => {
-                                setActiveMatches(true);
-                            }}
-                        >
-                            Matches
-                        </span>{" "}
-                        <span
-                            onClick={() => {
-                                setActiveMatches(false);
-                            }}
-                        ></span>
+                        {(other.confirmed &&
+                            (
+                                <span
+                                    style={
+                                        (activeMatches && {
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }) || {
+                                            textDecoration: "none",
+                                            fontWeight: "normal",
+                                            cursor: "pointer",
+                                        }
+                                    }
+                                    onClick={() => {
+                                        setActiveMatches(true);
+                                    }}
+                                >
+                                    Matches
+                                </span>
+                            ) |
+                                (
+                                    <span
+                                        style={
+                                            (!activeMatches && {
+                                                textDecoration: "underline",
+                                                fontWeight: "bold",
+                                            }) || {
+                                                textDecoration: "none",
+                                                fontWeight: "normal",
+                                                cursor: "pointer",
+                                            }
+                                        }
+                                        onClick={() => {
+                                            setActiveMatches(false);
+                                        }}
+                                    >
+                                        all Trips
+                                    </span>
+                                )) ||
+                            "Matches"}
                     </h1>
                     <div className="card-container wrapped">
                         {activeMatches && (
@@ -100,7 +124,43 @@ export default function User(props) {
                                 limit={props.match.params.id}
                             />
                         )}
-                        {!activeMatches && allTrips}
+                        {!activeMatches &&
+                            trips &&
+                            trips
+                                .filter(
+                                    (elem) =>
+                                        elem.person == props.match.params.id &&
+                                        Date.now() < new Date(elem.from_min)
+                                )
+                                .map((elem, i) => (
+                                    <div key={i} className="card medium">
+                                        <div className="card-image">
+                                            <img
+                                                src={
+                                                    elem.picture ||
+                                                    "/default.svg"
+                                                }
+                                            />
+                                        </div>
+                                        <div className="card-text">
+                                            <h4>
+                                                {getLocationName(
+                                                    elem.location_id
+                                                )}
+                                            </h4>
+                                            <p>
+                                                {new Date(
+                                                    elem.from_min
+                                                ).toLocaleDateString()}{" "}
+                                                -{" "}
+                                                {new Date(
+                                                    elem.until_max
+                                                ).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <div className="card-foot"></div>
+                                    </div>
+                                ))}
                     </div>
                 </div>
             )}
@@ -114,6 +174,17 @@ export default function User(props) {
                 {other && !other.confirmed && matches && matches.length > 0 && (
                     <Chat type="trip" user={props.match.params.id} />
                 )}
+                {other &&
+                    !other.confirmed &&
+                    (!matches || matches.length == 0) && (
+                        <div key={1} className="noChat">
+                            <h3>chat functionality disabled</h3>
+                            <p>
+                                it is active for friends and/or in case of a
+                                match
+                            </p>
+                        </div>
+                    )}
             </div>
         </div>
     );

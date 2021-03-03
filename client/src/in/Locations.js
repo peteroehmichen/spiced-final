@@ -18,16 +18,16 @@ export default function Locations() {
     // useEffect(() => {
     //     console.log()
     // }, [searchInput]);
-
-    if (!locations) return null;
-    // console.log(locations);
+    let filteredLocations = [];
+    if (locations) {
+        filteredLocations = locations.filter(
+            (element) =>
+                element.name.includes(searchInput) ||
+                element.continent.includes(searchInput) ||
+                element.country.includes(searchInput)
+        );
+    }
     // FIXME case sensitive!!
-    const filteredLocations = locations.filter(
-        (element) =>
-            element.name.includes(searchInput) ||
-            element.continent.includes(searchInput) ||
-            element.country.includes(searchInput)
-    );
 
     return (
         <div className="central locations">
@@ -43,45 +43,50 @@ export default function Locations() {
                 }}
             />
 
-            <div className="card-container wrapped">
-                <div className="card medium start">
-                    {!activeLocationForm && (
-                        <h1
-                            style={{ cursor: "pointer" }}
-                            onClick={() => {
-                                dispatch(toggleLocationForm());
-                            }}
-                        >
-                            ✚
-                        </h1>
-                    )}
-                    {activeLocationForm && <NewLocation />}
+            {filteredLocations && (
+                <div className="card-container wrapped">
+                    <div className="card medium start">
+                        {!activeLocationForm && (
+                            <h1
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                    dispatch(toggleLocationForm());
+                                }}
+                            >
+                                ✚
+                            </h1>
+                        )}
+                        {activeLocationForm && <NewLocation />}
+                    </div>
+                    {filteredLocations &&
+                        filteredLocations.map((elem, i) => (
+                            <Link to={`/location/${elem.id}`} key={i}>
+                                <div className="card medium">
+                                    <div className="card-image">
+                                        <img
+                                            src={elem.picture || "/default.svg"}
+                                        />
+                                    </div>
+                                    <div className="card-text">
+                                        <h4>{elem.name}</h4>
+                                        <p>{elem.country}</p>
+                                        <p>{elem.continent}</p>
+                                    </div>
+                                    <div className="card-foot">
+                                        {elem.rate_avg && (
+                                            <div>
+                                                Solo-Rating: ⭐️{" "}
+                                                {Math.round(
+                                                    elem.rate_avg * 10
+                                                ) / 10}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
                 </div>
-                {filteredLocations &&
-                    filteredLocations.map((elem, i) => (
-                        <Link to={`/location/${elem.id}`} key={i}>
-                            <div className="card medium">
-                                <div className="card-image">
-                                    <img src={elem.picture || "/default.svg"} />
-                                </div>
-                                <div className="card-text">
-                                    <h4>{elem.name}</h4>
-                                    <p>{elem.country}</p>
-                                    <p>{elem.continent}</p>
-                                </div>
-                                <div className="card-foot">
-                                    {elem.rate_avg && (
-                                        <div>
-                                            Solo-Rating: ⭐️{" "}
-                                            {Math.round(elem.rate_avg * 10) /
-                                                10}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
-            </div>
+            )}
         </div>
     );
 }

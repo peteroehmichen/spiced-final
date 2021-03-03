@@ -165,7 +165,9 @@ app.get("/in/essentialData.json", async (req, res) => {
     try {
         const results = await db.getEssentialData(req.session.userId);
         // results.tripsRaw.rowCount > 0
-        if (results.userRaw.rowCount > 0 && results.locationsRaw.rowCount > 0) {
+        // console.log(results.userRaw);
+        // console.log(results.locationsRaw);
+        if (results.userRaw.rowCount > 0) {
             const obj = {
                 user: results.userRaw.rows[0],
                 locations: results.locationsRaw.rows,
@@ -371,10 +373,10 @@ app.get("/in/locationData.json", async (req, res) => {
 });
 
 app.get("/in/getTrips.json", async (req, res) => {
-    console.log("fetching trips");
+    // console.log("fetching trips");
     try {
         const result = await db.getTripsbyUser(req.session.userId);
-        console.log("from DB:", result.rows);
+        // console.log("from DB:", result.rows);
         if (result.rows) {
             res.json({
                 success: result.rows,

@@ -96,6 +96,10 @@ export default function reducer(store = {}, action) {
         store.activeLocationForm = !store.activeLocationForm;
     }
 
+    if (action.type == "UPDATE_FRIENDSHIP_STATUS") {
+        store.otherUser.confirmed = !store.otherUser.confirmed;
+    }
+
     if (action.type == "TOGGLE_TRIP_FORM") {
         store.activeTripForm = !store.activeTripForm;
     }
@@ -129,6 +133,11 @@ export default function reducer(store = {}, action) {
     if (action.type == "UPDATE_LOCATION_PICTURE") {
         if (action.payload) {
             store.location.picture = action.payload;
+            for (let i = 0; i < store.locations.length; i++) {
+                if (store.location.id == store.locations[i].id) {
+                    store.locations[i].picture = action.payload;
+                }
+            }
         } else {
             store.location.profilePicError = action.error;
         }
@@ -191,7 +200,7 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "GET_TRIPS") {
-        console.log(("writing all Trips to store", action.payload));
+        // console.log(("writing all Trips to store", action.payload));
         if (action.payload) {
             store.trips = action.payload;
         } else {
@@ -200,7 +209,7 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "ADD_NEW_TRIP") {
-        console.log("writing new trip to store");
+        // console.log("writing new trip to store");
         if (action.payload) {
             store.trips.unshift(action.payload);
         } else {
