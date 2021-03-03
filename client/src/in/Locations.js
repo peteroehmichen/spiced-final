@@ -47,6 +47,7 @@ export default function Locations() {
                 <div className="card medium start">
                     {!activeLocationForm && (
                         <h1
+                            style={{ cursor: "pointer" }}
                             onClick={() => {
                                 dispatch(toggleLocationForm());
                             }}

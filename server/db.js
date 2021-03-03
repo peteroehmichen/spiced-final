@@ -82,13 +82,13 @@ module.exports.getLocations = function () {
 };
 
 module.exports.getTripsbyUser = async function (id) {
-    // console.log("DB query fetching Locations:");
+    console.log("DB query fetching TRips:");
     const friends = await sql.query(
         `SELECT users.id FROM friendships JOIN users ON (recipient=${id} AND sender=users.id) OR (sender=${id} AND recipient=users.id) WHERE confirmed=true;`
     );
     const friendIds = friends.rows.map((friend) => friend.id);
     friendIds.push(id);
-    // console.log("id of friends:", friendIds);
+    console.log("id of friends:", friendIds);
     // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
     return sql.query(
         `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,

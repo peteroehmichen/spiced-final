@@ -25,9 +25,13 @@ export default function Chat(props) {
     // const [reply, setReply] = useState("0");
     // const [placeholder, setPlaceholder] = useState("");
     const dispatch = useDispatch();
-    let { chat: messages, chatError, otherUser: other, matches } = useSelector(
-        (store) => store
-    );
+    let {
+        chat: messages,
+        chatError,
+        otherUser: other,
+        matches,
+        locations,
+    } = useSelector((store) => store);
     // const chatError = useSelector((store) => store.chatError);
     // const msgError = useSelector((store) => store.msgError);
     // const activeUsers = useSelector((store) => store.activeUsers || []);
@@ -92,6 +96,11 @@ export default function Chat(props) {
     };
     // console.log("active Users:", activeUsers);
 
+    const getLocationName = function (id) {
+        const obj = locations.find((loc) => loc.id == id);
+        return obj.name;
+    };
+
     const selectGroup = function (e) {
         // console.log(e.target.innerText)
         setGroup(e.target.innerText);
@@ -154,10 +163,12 @@ export default function Chat(props) {
                                             key={i}
                                             value={`T${elem.id}T${elem.match_id}T${elem.person}`}
                                         >
-                                            trip on{" "}
+                                            {getLocationName(elem.location_id)}{" "}
+                                            (
                                             {new Date(
                                                 elem.from_min
-                                            ).toDateString()}
+                                            ).toLocaleDateString()}
+                                            )
                                         </option>
                                     );
                                 })}

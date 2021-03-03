@@ -106,6 +106,7 @@ export default function Profile() {
                     <div className="card medium start wide">
                         {!activeTripForm && (
                             <h1
+                                style={{ cursor: "pointer" }}
                                 onClick={() => {
                                     dispatch(toggleTripForm());
                                 }}

@@ -1,22 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDistance, parseISO } from "date-fns";
-import { getUserData } from "../helpers/actions";
+import { getTrips, getUserData } from "../helpers/actions";
 import FriendButton from "./FriendBtn";
 import Matches from "./Matches";
 import Chat from "./Chat";
 
 export default function User(props) {
+    const [activeMatches, setActiveMatches] = useState(true);
+
     const dispatch = useDispatch();
-    const { otherUser: other, grades, experience, matches } = useSelector(
-        (store) => store
-    );
+    const {
+        otherUser: other,
+        grades,
+        experience,
+        matches,
+        trips,
+    } = useSelector((store) => store);
 
     useEffect(async () => {
         dispatch(getUserData(props.match.params.id));
+        // dispatch(getTrips());
     }, []);
 
     if (!other.first && !other.error) return null;
+
+    let allTrips;
+    // if (Array.isArray(trips)) {
+    //     allTrips = trips
+    //         .filter((elem) => elem.person == props.params.id)
+    //         .map((elem) => <h1>found a trip</h1>);
+    // }
 
     const otherUser = (
         <div className="central user">
@@ -65,7 +79,29 @@ export default function User(props) {
                             <FriendButton friendId={props.match.params.id} />
                         </div>
                     </div>
-                    <Matches mode="user" limit={props.match.params.id} />
+                    <h1>
+                        <span
+                            onClick={() => {
+                                setActiveMatches(true);
+                            }}
+                        >
+                            Matches
+                        </span>{" "}
+                        <span
+                            onClick={() => {
+                                setActiveMatches(false);
+                            }}
+                        ></span>
+                    </h1>
+                    <div className="card-container wrapped">
+                        {activeMatches && (
+                            <Matches
+                                mode="user"
+                                limit={props.match.params.id}
+                            />
+                        )}
+                        {!activeMatches && allTrips}
+                    </div>
                 </div>
             )}
             <div className="location-right">

@@ -34,6 +34,7 @@ export default function reducer(store = {}, action) {
             store.experience = action.payload.success.experience;
             store.countries = action.payload.success.countries;
             store.continents = action.payload.success.continents;
+            // store.trips = action.payload.success.trips;
         } else {
             store.appError = action.error;
         }
@@ -190,7 +191,7 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "GET_TRIPS") {
-        // console.log("writing all Trips to store");
+        console.log(("writing all Trips to store", action.payload));
         if (action.payload) {
             store.trips = action.payload;
         } else {

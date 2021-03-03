@@ -173,6 +173,7 @@ app.get("/in/essentialData.json", async (req, res) => {
                 continents,
                 grades,
                 experience,
+                // trips: results.tripsRaw[0],
             };
             // FIXME change userDataSQL and select all fields manually so that the id wont be overwritten by the friendshipstatus
             obj.user.id = req.session.userId;
@@ -370,10 +371,10 @@ app.get("/in/locationData.json", async (req, res) => {
 });
 
 app.get("/in/getTrips.json", async (req, res) => {
-    // console.log("fetching trips");
+    console.log("fetching trips");
     try {
         const result = await db.getTripsbyUser(req.session.userId);
-        // console.log("from DB:", result.rows);
+        console.log("from DB:", result.rows);
         if (result.rows) {
             res.json({
                 success: result.rows,
@@ -394,6 +395,32 @@ app.get("/in/getTrips.json", async (req, res) => {
         });
     }
 });
+
+// app.get("/in/getOtherTrips.json", async (req, res) => {
+//     // console.log("fetching trips");
+//     try {
+//         const result = await db.getTripsbyUser(req.body.q);
+//         // console.log("from DB:", result.rows);
+//         if (result.rows) {
+//             res.json({
+//                 success: result.rows,
+//                 error: false,
+//             });
+//         } else {
+//             console.log("DB-Rejection:", result);
+//             res.json({
+//                 success: false,
+//                 error: "DB rejected command",
+//             });
+//         }
+//     } catch (error) {
+//         console.log("DB-Error:", error);
+//         res.json({
+//             success: false,
+//             error: "Failed Connection to DB",
+//         });
+//     }
+// });
 
 app.post("/in/addTrip.json", async (req, res) => {
     // console.log("receiving:", req.body);

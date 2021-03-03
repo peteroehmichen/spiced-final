@@ -272,7 +272,7 @@ export async function getTrips() {
     // console.log("getting all Trips");
     try {
         const { data } = await axios.get(`in/getTrips.json`);
-        // console.log("response:", data);
+        console.log("response from getTrips:", data);
         if (data.success) {
             return {
                 type: "GET_TRIPS",
