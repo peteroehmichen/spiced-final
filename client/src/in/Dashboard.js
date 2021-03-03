@@ -37,7 +37,7 @@ export default function Dashboard() {
                 <li>view pinned friends trips</li>
                 <li>(maybe notifications)</li>
             </ul>
-            <Matches limit="0" size="medium" alignment="horiontal" />
+            <Matches limit="0" mode="dashboard" />
 
             <h1>Your Friends Trips</h1>
             <div className="card-container">

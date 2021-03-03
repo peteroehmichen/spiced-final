@@ -1,15 +1,28 @@
-<Link to={`/user/${elem.id}`}>
-    <div key={i} className="card small wide split">
+<Link to={`/user/${elem.person}`} key={i}>
+    <div className={`card medium wide split`}>
         <div className="card-left">
-            <img src={elem.picture || "/default.svg"} />
+            <div className="card-thumb">
+                <img src="/default.svg" />
+            </div>
+            <div className="card-image">
+                <img src="/default.svg" />
+            </div>
+            <div className="card-text">
+                <h4>{getLocationName(elem.location_id)}</h4>
+            </div>
         </div>
+
         <div className="card-right">
             <div>
-                <h4>
-                    {elem.first} {elem.last}
-                </h4>
+                <p>
+                    {new Date(elem.from_min).toLocaleDateString()} -{" "}
+                    {new Date(elem.until_max).toLocaleDateString()}
+                </p>
+                <p>
+                    <b>Description</b>
+                </p>
+                <p>{elem.comment}</p>
             </div>
-            <div className="summary">Trips friends Matches</div>
         </div>
     </div>
 </Link>;

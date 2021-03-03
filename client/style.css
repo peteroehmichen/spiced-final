@@ -127,6 +127,14 @@ input[name="searchFriend"] {
     border-radius: 15px;
     background-color: #fff;
 }
+input[name="filterFriend"] {
+    width: 50%;
+    /* min-width: 300px; */
+    padding: 10px 15px;
+    font-size: 1.05rem;
+    border-radius: 15px;
+    background-color: #fff;
+}
 
 input[name="first"],
 input[name="last"],
@@ -268,6 +276,10 @@ textarea[name="comment"] {
     width: 360px;
 }
 
+.extrawide {
+    width: 500px;
+}
+
 .wide-small {
     width: 250px;
 }
@@ -282,19 +294,40 @@ textarea[name="comment"] {
     justify-content: flex-start;
     width: 180px;
     height: 100%;
+    position: relative;
 }
 
 .card-left .card-image {
     height: 70%;
 }
 
+.card-left-XL {
+    height: 100%;
+    width: 250px;
+}
+
 .card-right {
+    position: relative;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     width: 180px;
     height: 100%;
     padding: 5px 5px 5px 15px;
+}
+
+.card-right-match {
+    width: 250px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.card-right-match div {
+    width: 100%;
 }
 
 .start {
@@ -457,7 +490,27 @@ textarea[name="comment"] {
 
 .social {
     justify-content: space-evenly;
+    align-items: center;
 }
+
+.social > div {
+    /* display: flex; */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+/* 
+.friend-one {
+}
+.friend-two {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+} */
 
 .grow-split {
     width: 100%;
@@ -505,6 +558,12 @@ textarea[name="comment"] {
     overflow: hidden;
 }
 
+.friend-arrow {
+    margin-top: 50px;
+    width: 30px;
+    height: 30px;
+}
+
 .friend-function {
     position: absolute;
     width: 250px;
@@ -522,12 +581,16 @@ textarea[name="comment"] {
 
 .friend-function img {
     cursor: pointer;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
 }
 
 .friend-function:hover {
     /* transform: translateX(-50px); */
+}
+
+.social h1 {
+    margin: 10px 0;
 }
 
 .add {
@@ -659,4 +722,28 @@ textarea[name="comment"] {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+}
+
+.user {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-infos {
+    height: 90%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.user-image {
+    /* heights: 30%; */
+    width: 40%;
+}
+
+.user-description {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }

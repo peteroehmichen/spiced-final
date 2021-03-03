@@ -13,6 +13,7 @@ import Finder from "./Finder";
 export default function Social() {
     const dispatch = useDispatch();
     const all = useSelector((store) => store.friendships);
+    const [searchInput, setSearchInput] = useState("");
 
     useEffect(() => {
         dispatch(getFriendships());
@@ -31,6 +32,11 @@ export default function Social() {
         error = all.error;
     } else if (all.length > 0) {
         friends = all.filter((elem) => elem.confirmed);
+        friends = friends.filter(
+            (element) =>
+                element.first.includes(searchInput) ||
+                element.last.includes(searchInput)
+        );
         requests = all.filter(
             (elem) => !elem.confirmed && elem.sender == elem.id
         );
@@ -42,21 +48,23 @@ export default function Social() {
             friends = <div>There are none</div>;
         } else {
             friends = friends.map((elem, i) => (
-                <Link key={i} to={`/user/${elem.id}`}>
-                    <div className="card small wide-small split">
-                        <div className="card-left">
-                            <img src={elem.picture || "/default.svg"} />
+                <div key={i} className="card small wide-small split">
+                    <div className="card-left">
+                        <img src={elem.picture || "/default.svg"} />
+                    </div>
+                    <div className="card-right">
+                        <div>
+                            <h4>
+                                {elem.first} {elem.last}
+                            </h4>
                         </div>
-                        <div className="card-right">
-                            <div>
-                                <h4>
-                                    {elem.first} {elem.last}
-                                </h4>
-                            </div>
-                            <div className="summary">Trips friends Matches</div>
+                        <div className="friend-arrow">
+                            <Link to={`/user/${elem.id}`}>
+                                <img src="/arrow_black.png" />
+                            </Link>
                         </div>
                     </div>
-                </Link>
+                </div>
             ));
         }
 
@@ -110,33 +118,46 @@ export default function Social() {
 
     return (
         <div className="central social">
-            <h1>Your Friends</h1>
-            <div className="container-frame">
-                <div className="card-container inprofile horizontal">
-                    {friends}
+            <div className="friend-one">
+                <h1>Your Friends</h1>
+                <input
+                    type="text"
+                    name="filterFriend"
+                    placeholder="Filter for a friend"
+                    key="searchLocation"
+                    onChange={(e) => {
+                        setSearchInput(e.target.value);
+                    }}
+                />
+                <div className="container-frame">
+                    <div className="card-container inprofile horizontal">
+                        {friends}
+                    </div>
                 </div>
             </div>
-            <h1>Grow your Community</h1>
-            <div className="grow-split">
-                <div>
-                    <h3>Friend-Requests to you</h3>
-                    <div className="container-frame">
-                        <div className="card-container inprofile horizontal">
-                            {requests}
+            <div className="friend-two">
+                <h1>Grow your Community</h1>
+                <div className="grow-split">
+                    <div>
+                        <h3>Friend-Requests to you</h3>
+                        <div className="container-frame">
+                            <div className="card-container inprofile horizontal">
+                                {requests}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div>
-                    <h3>Friend-Request from you</h3>
-                    <div className="container-frame">
-                        <div className="card-container inprofile horizontal">
-                            {pending}
+                    <div>
+                        <h3>Friend-Request from you</h3>
+                        <div className="container-frame">
+                            <div className="card-container inprofile horizontal">
+                                {pending}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <Finder />
+                    <Finder />
+                </div>
             </div>
         </div>
     );
