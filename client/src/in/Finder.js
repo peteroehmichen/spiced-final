@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { Link } from "react-router-dom";
 
 import axios from "../helpers/axios";
@@ -32,8 +32,6 @@ export default function Finder() {
                 setSearchError(data.error);
             } else if (data.empty) {
                 setMsg(data.empty);
-            } else if (data.search) {
-                setMsg(`We found ${data.result.length} matches for you`);
             }
         } catch (err) {
             setSearchError("We encountered an unknown error");
@@ -56,7 +54,7 @@ export default function Finder() {
                 }}
             />
             <h4>{msg}</h4>
-            <ul>
+            <div>
                 {users.map((elem, index) => {
                     let name = elem.first + " " + elem.last;
                     const regex = new RegExp(searchInput, "gi");
@@ -69,19 +67,31 @@ export default function Finder() {
                         name.search(regex) + searchInput.length
                     );
                     name = (
-                        <h3>
+                        <Fragment>
                             {one}
                             <u>{tag}</u>
                             {rest}
-                        </h3>
+                        </Fragment>
                     );
                     return (
-                        <li key={index}>
-                            <Link to={`/user/${elem.id}`}>{name}</Link>
-                        </li>
+                        <div key={index} className="found-friend">
+                            <div className="friend-pic-small">
+                                <img src={elem.picture || "/default.svg"} />
+                            </div>
+                            <div className="friend-summary">
+                                <div className="friend-name">
+                                    <h4>{name}</h4>
+                                </div>
+                            </div>
+                            <div className="friend-function">
+                                <Link to={`/user/${elem.id}`}>
+                                    <img src="/arrow_black.png" />
+                                </Link>
+                            </div>
+                        </div>
                     );
                 })}
-            </ul>
+            </div>
         </div>
     );
 }

@@ -52,7 +52,7 @@ export function useFormEval() {
     const handleChangeEval = (e) => {
         const emailFormat = new RegExp("^[^@]+@[^@]+.[^@]+$", "gi");
 
-        e.target.style.borderBottom = "3px solid orangered";
+        e.target.style.borderBottom = "4px solid orangered";
 
         let value = e.target.value;
 
@@ -76,7 +76,7 @@ export function useFormEval() {
                 ...values,
                 [e.target.name]: value,
             });
-            e.target.style.borderBottom = "3px solid green";
+            e.target.style.borderBottom = "4px solid green";
         } else {
             setValues({
                 ...values,

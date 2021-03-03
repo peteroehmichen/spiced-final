@@ -9,11 +9,11 @@ export default function Register() {
     );
 
     return (
-        <div className="register">
+        <div className="out-main register">
             <div className="title">
                 <h3>Please sign up with your personal information</h3>
             </div>
-            <div className="form">
+            <div className="form-out">
                 <input
                     onChange={handleChangeEval}
                     type="text"

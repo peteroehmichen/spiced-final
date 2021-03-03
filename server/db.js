@@ -53,7 +53,7 @@ module.exports.addLocationSection = async function (title, content, id, prev) {
         let keys = Object.keys(entry);
         // console.log("old:", entry);
         if (keys.includes(prev)) {
-            console.log("updating the section:", prev);
+            // console.log("updating the section:", prev);
             delete entry[prev];
         }
         entry[title] = content;
@@ -245,7 +245,7 @@ module.exports.getFriendInfo = function (userId, friendId) {
 
 module.exports.getFriendships = function (userId) {
     return sql.query(
-        `SELECT users.id, first, last, sender, recipient, confirmed FROM friendships JOIN users ON (recipient = $1 AND sender = users.id) OR (sender = $1 AND recipient = users.id);`,
+        `SELECT users.id, first, last, users.picture, sender, recipient, confirmed FROM friendships JOIN users ON (recipient = $1 AND sender = users.id) OR (sender = $1 AND recipient = users.id);`,
         [userId]
     );
 };

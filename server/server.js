@@ -259,8 +259,8 @@ app.post("/in/updateUserData.json", async (req, res) => {
 app.post("/in/updateTripData.json", async (req, res) => {
     const tripId = req.body.id;
     delete req.body.id;
-    console.log("tripID", tripId);
-    console.log("body:", req.body);
+    // console.log("tripID", tripId);
+    // console.log("body:", req.body);
     try {
         for (let element in req.body) {
             await db.updateTripData(element, req.body[element], tripId);
@@ -278,7 +278,7 @@ app.post("/in/updateTripData.json", async (req, res) => {
 });
 
 app.post("/in/addLocationSection.json", async (req, res) => {
-    console.log("body:", req.body);
+    // console.log("body:", req.body);
     try {
         const result = await db.addLocationSection(
             req.body.title,

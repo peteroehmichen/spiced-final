@@ -180,7 +180,9 @@ export default function Chat(props) {
             </div>
             <div ref={chatRef} className="messages">
                 {((!messages || messages.length == 0) && (
-                    <h3>No Messages found</h3>
+                    <div className="messages-no">
+                        <p>No Messages found</p>
+                    </div>
                 )) ||
                     (Array.isArray(messages) &&
                         messages.map((msg, i) => (

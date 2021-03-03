@@ -75,7 +75,7 @@ export default function Reset() {
     let renderedStep;
     if (step == 1) {
         renderedStep = (
-            <div className="form">
+            <div className="form-out">
                 <input
                     onChange={handleChangeEval}
                     type="email"
@@ -95,7 +95,7 @@ export default function Reset() {
         );
     } else if (step == 2) {
         renderedStep = (
-            <div className="form">
+            <div className="form-out">
                 <h3>
                     Please enter code before{" "}
                     {new Date(codeValidUntil).toTimeString()}
@@ -130,11 +130,11 @@ export default function Reset() {
     } else if (step == 3) {
         if (error) {
             renderedStep = (
-                <div className="form error">{error && <p>{error}</p>}</div>
+                <div className="form-out error">{error && <p>{error}</p>}</div>
             );
         } else {
             renderedStep = (
-                <div className="form">
+                <div className="form-out">
                     <h1>✔︎</h1>
                 </div>
             );
@@ -142,7 +142,7 @@ export default function Reset() {
     }
 
     return (
-        <div className="reset">
+        <div className="out-main reset">
             <div className="title">
                 <h3>Reset your password...</h3>
             </div>

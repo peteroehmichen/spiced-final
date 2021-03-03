@@ -41,63 +41,103 @@ export default function Social() {
         if (!friends.length) {
             friends = <div>There are none</div>;
         } else {
-            friends = friends.map((elem) => (
-                <div key={elem.id}>
-                    <Link to={`/user/${elem.id}`}>
-                        <h3>
-                            {elem.first} {elem.last}
-                        </h3>
-                    </Link>
-                    <h2 onClick={() => dispatch(unfriend(elem.id))}>✘</h2>
-                </div>
+            friends = friends.map((elem, i) => (
+                <Link key={i} to={`/user/${elem.id}`}>
+                    <div className="card small wide-small split">
+                        <div className="card-left">
+                            <img src={elem.picture || "/default.svg"} />
+                        </div>
+                        <div className="card-right">
+                            <div>
+                                <h4>
+                                    {elem.first} {elem.last}
+                                </h4>
+                            </div>
+                            <div className="summary">Trips friends Matches</div>
+                        </div>
+                    </div>
+                </Link>
             ));
         }
 
-        requests = requests.map((elem) => (
-            <div key={elem.id}>
-                <Link to={`/user/${elem.id}`}>
-                    <h3>
-                        {elem.first} {elem.last}
-                    </h3>
-                </Link>
-                <h2 onClick={() => dispatch(acceptRequest(elem.id))}>✓</h2>
-                <h2 onClick={() => dispatch(denyRequest(elem.id))}>✘</h2>
-            </div>
-        ));
-
-        pending = pending.map((elem) => (
-            <div key={elem.id}>
-                <Link to={`/user/${elem.id}`}>
-                    <h3>
-                        {elem.first} {elem.last}
-                    </h3>
-                </Link>
-                <h2 onClick={() => dispatch(cancelRequest(elem.id))}>✘</h2>
-            </div>
-        ));
+        if (!requests.length) {
+            requests = <div>There are none</div>;
+        } else {
+            requests = requests.map((elem, i) => (
+                <div key={i} className="found-friend">
+                    <div className="friend-pic-small">
+                        <img src={elem.picture || "/default.svg"} />
+                    </div>
+                    <div className="friend-summary">
+                        <div className="friend-name">
+                            <h4>
+                                {elem.first} {elem.last}
+                            </h4>
+                        </div>
+                    </div>
+                    <div className="friend-function">
+                        <Link to={`/user/${elem.id}`}>
+                            <img src="/arrow_black.png" />
+                        </Link>
+                    </div>
+                </div>
+            ));
+        }
+        if (!pending.length) {
+            pending = <div>There are none</div>;
+        } else {
+            pending = pending.map((elem, i) => (
+                <div key={i} className="found-friend">
+                    <div className="friend-pic-small">
+                        <img src={elem.picture || "/default.svg"} />
+                    </div>
+                    <div className="friend-summary">
+                        <div className="friend-name">
+                            <h4>
+                                {elem.first} {elem.last}
+                            </h4>
+                        </div>
+                    </div>
+                    <div className="friend-function">
+                        <Link to={`/user/${elem.id}`}>
+                            <img src="/arrow_black.png" />
+                        </Link>
+                    </div>
+                </div>
+            ));
+        }
     }
 
     return (
         <div className="central social">
-            <h1>Social</h1>
-            <div>
-                <h3>Your Friends</h3>
-                <div>{friends}</div>
+            <h1>Your Friends</h1>
+            <div className="container-frame">
+                <div className="card-container inprofile horizontal">
+                    {friends}
+                </div>
             </div>
-            {requests && requests.length > 0 && (
+            <h1>Grow your Community</h1>
+            <div className="grow-split">
                 <div>
-                    <h3>Friend-Requests awaiting your answer</h3>
-                    <div>{requests}</div>
+                    <h3>Friend-Requests to you</h3>
+                    <div className="container-frame">
+                        <div className="card-container inprofile horizontal">
+                            {requests}
+                        </div>
+                    </div>
                 </div>
-            )}
-            {pending && pending.length > 0 && (
+
                 <div>
-                    <h3>Unanswered Friend-Request from you</h3>
-                    <div>{pending}</div>
+                    <h3>Friend-Request from you</h3>
+                    <div className="container-frame">
+                        <div className="card-container inprofile horizontal">
+                            {pending}
+                        </div>
+                    </div>
                 </div>
-            )}
-            <p>------------------------------</p>
-            <Finder />
+
+                <Finder />
+            </div>
         </div>
     );
 }

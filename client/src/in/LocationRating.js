@@ -24,16 +24,18 @@ export default function LocationRating(props) {
 
     const avg = rating && (
         <p>
-            Rating: {Math.round(rating.avg * 10) / 10}* ({rating.sum} reviews)
+            Solo-Rating: {Math.round(rating.avg * 10) / 10}* ({rating.sum}{" "}
+            reviews)
         </p>
     );
     let own;
     if (rating && rating.your_rating) {
         own = (
             <p>
+                <br />
                 your Rating on{" "}
                 {new Date(rating.your_rating_date).toLocaleDateString()}:{" "}
-                {rating.your_rating} <span onClick={submit}>delete</span>
+                {rating.your_rating} <button onClick={submit}>delete</button>
             </p>
         );
     } else if (rating) {

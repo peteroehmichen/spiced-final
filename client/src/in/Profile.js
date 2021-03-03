@@ -44,7 +44,7 @@ export default function Profile() {
     // if (!user || !trips) return null;
     // console.log(trips);
     return (
-        <div className="central">
+        <div className="central prof">
             {activateUploadModal && <PhotoUploader type="profile" />}
             {activateTripUploadModal && (
                 <PhotoUploader type="trip" id={activateTripUploadModal} />
@@ -101,77 +101,86 @@ export default function Profile() {
                 </div>
             )}
             <h1>Your Trips</h1>
-            <div className="card-container wrapped">
-                <div className="card medium start wide">
-                    {!activeTripForm && (
-                        <h1
-                            onClick={() => {
-                                dispatch(toggleTripForm());
-                            }}
-                        >
-                            ✚
-                        </h1>
-                    )}
-                    {activeTripForm && <NewTrip />}
-                </div>
-                {trips &&
-                    locations &&
-                    user &&
-                    trips
-                        .filter((trip) => trip.person == user.id)
-                        .map((elem, i) => (
-                            <div key={i} className="card medium wide split">
-                                <div className="card-left">
-                                    <div className="card-image">
-                                        <Upload trip={elem.id} />
-                                        <img
-                                            src={elem.picture || "/default.svg"}
-                                        />
-                                    </div>
-                                    <div className="card-text">
-                                        <h4>
-                                            {getLocationName(elem.location_id)}
-                                        </h4>
-                                        <p>
-                                            {new Date(
-                                                elem.from_min
-                                            ).toLocaleDateString()}{" "}
-                                            -{" "}
-                                            {new Date(
-                                                elem.until_max
-                                            ).toLocaleDateString()}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {!tripEdit[i] && (
-                                    <div className="card-right">
-                                        <div>
+            <div className="container-frame">
+                <div className="card-container inprofile horizontal">
+                    <div className="card medium start wide">
+                        {!activeTripForm && (
+                            <h1
+                                onClick={() => {
+                                    dispatch(toggleTripForm());
+                                }}
+                            >
+                                ✚
+                            </h1>
+                        )}
+                        {activeTripForm && <NewTrip />}
+                    </div>
+                    {trips &&
+                        locations &&
+                        user &&
+                        trips
+                            .filter((trip) => trip.person == user.id)
+                            .map((elem, i) => (
+                                <div key={i} className="card medium wide split">
+                                    <div className="card-left">
+                                        <div className="card-image">
+                                            <Upload trip={elem.id} />
+                                            <img
+                                                src={
+                                                    elem.picture ||
+                                                    "/default.svg"
+                                                }
+                                            />
+                                        </div>
+                                        <div className="card-text">
+                                            <h4>
+                                                {getLocationName(
+                                                    elem.location_id
+                                                )}
+                                            </h4>
                                             <p>
-                                                <b>Description</b>
+                                                {new Date(
+                                                    elem.from_min
+                                                ).toLocaleDateString()}{" "}
+                                                -{" "}
+                                                {new Date(
+                                                    elem.until_max
+                                                ).toLocaleDateString()}
                                             </p>
-                                            <p>{elem.comment}</p>
-                                        </div>
-                                        <div>
-                                            <button
-                                                onClick={() => {
-                                                    console.log(
-                                                        `toggling ON index: ${i} with ID ${elem.id}`
-                                                    );
-                                                    dispatch(toggleTripEdit(i));
-                                                }}
-                                            >
-                                                edit
-                                            </button>
-                                            <button>delete</button>
                                         </div>
                                     </div>
-                                )}
-                                {tripEdit[i] && (
-                                    <TripEdit trip={elem} index={i} />
-                                )}
-                            </div>
-                        ))}
+
+                                    {!tripEdit[i] && (
+                                        <div className="card-right">
+                                            <div>
+                                                <p>
+                                                    <b>Description</b>
+                                                </p>
+                                                <p>{elem.comment}</p>
+                                            </div>
+                                            <div className="btn">
+                                                <button
+                                                    onClick={() => {
+                                                        console.log(
+                                                            `toggling ON index: ${i} with ID ${elem.id}`
+                                                        );
+                                                        dispatch(
+                                                            toggleTripEdit(i)
+                                                        );
+                                                    }}
+                                                >
+                                                    edit
+                                                </button>
+                                                <button>delete</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {tripEdit[i] && (
+                                        <TripEdit trip={elem} index={i} />
+                                    )}
+                                </div>
+                            ))}
+                </div>
             </div>
         </div>
     );

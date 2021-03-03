@@ -69,7 +69,7 @@ export default function User(props) {
             </div>
             <div className="location-body">
                 <div className="location-left">
-                    <h2>Useful information</h2>
+                    <h2>Useful information for solo climbers</h2>
                     <div className="info-block">
                         {(!loc.infos && <p>no infos yet</p>) ||
                             infos.map((elem, i) => (
@@ -77,134 +77,147 @@ export default function User(props) {
                                     {!secEdit[i] && (
                                         <div className="infos">
                                             <h3>{elem.title}</h3>
-                                            <p>{elem.content}</p>
-                                            <button
-                                                disabled={editing}
-                                                onClick={() => {
-                                                    setValues({
-                                                        title: elem.title,
-                                                        content: elem.content,
-                                                    });
-                                                    setEditing(true);
-                                                    setSecEdit({
-                                                        ...secEdit,
-                                                        [i]: true,
-                                                    });
-                                                }}
-                                            >
-                                                edit
-                                            </button>
+                                            <div className="infos-content">
+                                                <p>{elem.content}</p>
+                                            </div>
+                                            <div>
+                                                <button
+                                                    disabled={editing}
+                                                    onClick={() => {
+                                                        setValues({
+                                                            title: elem.title,
+                                                            content:
+                                                                elem.content,
+                                                        });
+                                                        setEditing(true);
+                                                        setSecEdit({
+                                                            ...secEdit,
+                                                            [i]: true,
+                                                        });
+                                                    }}
+                                                >
+                                                    edit
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                     {secEdit[i] && (
                                         <div key={i} className="infos">
-                                            <input
-                                                type="text"
-                                                name="title"
-                                                defaultValue={elem.title}
-                                                onChange={fillNew}
-                                            />
-                                            <textarea
-                                                defaultValue={elem.content}
-                                                name="content"
-                                                onChange={fillNew}
-                                            />
-                                            <button
-                                                onClick={() => {
-                                                    setValues(null);
-                                                    setEditing(false);
-                                                    setSecEdit({
-                                                        ...secEdit,
-                                                        [i]: false,
-                                                    });
-                                                }}
-                                            >
-                                                cancel
-                                            </button>
-                                            <button
-                                                disabled={
-                                                    !values ||
-                                                    !values.title ||
-                                                    !values.content
-                                                }
-                                                onClick={() => {
-                                                    setEditing(false);
-                                                    setSecEdit({
-                                                        ...secEdit,
-                                                        [i]: false,
-                                                    });
-                                                    dispatch(
-                                                        addLocationSection(
-                                                            values,
-                                                            loc.id,
-                                                            {
-                                                                title:
-                                                                    elem.title,
-                                                            }
-                                                        )
-                                                    );
-                                                }}
-                                            >
-                                                submit
-                                            </button>
+                                            <div className="infos-content">
+                                                <input
+                                                    type="text"
+                                                    name="title"
+                                                    defaultValue={elem.title}
+                                                    onChange={fillNew}
+                                                />
+                                                <textarea
+                                                    defaultValue={elem.content}
+                                                    name="content"
+                                                    onChange={fillNew}
+                                                />
+                                            </div>
+                                            <div>
+                                                <button
+                                                    onClick={() => {
+                                                        setValues(null);
+                                                        setEditing(false);
+                                                        setSecEdit({
+                                                            ...secEdit,
+                                                            [i]: false,
+                                                        });
+                                                    }}
+                                                >
+                                                    cancel
+                                                </button>
+                                                <button
+                                                    disabled={
+                                                        !values ||
+                                                        !values.title ||
+                                                        !values.content
+                                                    }
+                                                    onClick={() => {
+                                                        setEditing(false);
+                                                        setSecEdit({
+                                                            ...secEdit,
+                                                            [i]: false,
+                                                        });
+                                                        dispatch(
+                                                            addLocationSection(
+                                                                values,
+                                                                loc.id,
+                                                                {
+                                                                    title:
+                                                                        elem.title,
+                                                                }
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    submit
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
                             ))}
                         {!newSection && (
-                            <button
-                                disabled={editing}
+                            <div
+                                className="infos add"
                                 onClick={() => {
                                     setEditing(true);
                                     setNewSection(true);
                                     setValues(null);
                                 }}
                             >
-                                Add new section
-                            </button>
+                                ✚
+                            </div>
                         )}
                         {newSection && (
-                            <div className="newSection">
+                            <div className="infos">
                                 <input
                                     type="text"
                                     placeholder="title of section"
                                     name="title"
                                     onChange={fillNew}
                                 />
-                                <textarea
-                                    placeholder="content"
-                                    name="content"
-                                    onChange={fillNew}
-                                />
-                                <button
-                                    onClick={() => {
-                                        setValues(null);
-                                        setEditing(false);
-                                        setNewSection(false);
-                                    }}
-                                >
-                                    cancel
-                                </button>
-                                <button
-                                    disabled={
-                                        !values ||
-                                        !values.title ||
-                                        !values.content
-                                    }
-                                    onClick={() => {
-                                        setEditing(false);
-                                        setNewSection(false);
-                                        dispatch(
-                                            addLocationSection(
-                                                values,
-                                                loc.id,
-                                                {}
-                                            )
-                                        );
-                                    }}
-                                >
-                                    Submit
-                                </button>
+                                <div className="infos-content">
+                                    <textarea
+                                        placeholder="content"
+                                        name="content"
+                                        onChange={fillNew}
+                                    />
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={() => {
+                                            setValues(null);
+                                            setEditing(false);
+                                            setNewSection(false);
+                                        }}
+                                    >
+                                        cancel
+                                    </button>
+                                    <button
+                                        disabled={
+                                            !values ||
+                                            !values.title ||
+                                            !values.content
+                                        }
+                                        onClick={() => {
+                                            setEditing(false);
+                                            setNewSection(false);
+                                            dispatch(
+                                                addLocationSection(
+                                                    values,
+                                                    loc.id,
+                                                    {}
+                                                )
+                                            );
+                                        }}
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
