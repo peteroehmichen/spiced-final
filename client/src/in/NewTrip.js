@@ -26,13 +26,19 @@ export default function NewTrip() {
                             Choose...
                         </option>
                         {locations &&
-                            locations.map((elem) => (
-                                <option key={elem.id} value={elem.id}>
-                                    {elem.name.length > 16
-                                        ? elem.name.slice(0, 14) + "..."
-                                        : elem.name}
-                                </option>
-                            ))}
+                            locations
+                                .sort((e1, e2) =>
+                                    e1.name
+                                        .toLowerCase()
+                                        .localeCompare(e2.name.toLowerCase())
+                                )
+                                .map((elem) => (
+                                    <option key={elem.id} value={elem.id}>
+                                        {elem.name.length > 16
+                                            ? elem.name.slice(0, 14) + "..."
+                                            : elem.name}
+                                    </option>
+                                ))}
                     </select>
                 </label>
                 <label>

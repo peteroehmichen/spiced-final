@@ -144,7 +144,7 @@ export default function Reset() {
     return (
         <div className="out-main reset">
             <div className="title">
-                <h3>Reset your password...</h3>
+                <h3>Reset your password</h3>
             </div>
             {renderedStep}
             <div className="welcome-footnote">

@@ -36,7 +36,7 @@ export default function Register() {
                     onChange={handleChangeEval}
                     type="password"
                     name="password"
-                    placeholder="password"
+                    placeholder="Password"
                 />
                 <button
                     className={(status.error && "error-btn") || " "}

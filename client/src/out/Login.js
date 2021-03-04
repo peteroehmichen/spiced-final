@@ -10,7 +10,7 @@ export default function Login() {
     return (
         <div className="out-main login">
             <div className="title">
-                <h3>please log in with your email address</h3>
+                <h3>Please log in with your email address</h3>
             </div>
             <div className="form-out">
                 <input
@@ -23,7 +23,7 @@ export default function Login() {
                     onChange={handleChangeEval}
                     type="password"
                     name="password"
-                    placeholder="password"
+                    placeholder="Password"
                 />
                 <button
                     className={(status.error && "error-btn") || " "}

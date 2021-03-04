@@ -527,7 +527,7 @@ textarea[name="comment"] {
 .location-left,
 .location-right {
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.646);
+    background-color: rgba(255, 255, 255, 0.75);
     margin: 10px;
     display: flex;
     flex-direction: column;
@@ -748,7 +748,7 @@ textarea[name="comment"] {
     padding: 15px;
     margin: 15px;
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgb(127 164 164);
 }
 
 .grey {
