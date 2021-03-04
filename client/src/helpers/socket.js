@@ -12,12 +12,15 @@ export const init = (store) => {
         socket = io.connect();
     }
     socket.on("newFriendMsg", (obj) => {
+        console.log("new FriendMSG", obj);
         return store.dispatch(newFriendMessage(obj));
     });
     socket.on("newTripMsg", (obj) => {
+        console.log("new TripMSG", obj);
         return store.dispatch(newTripMessage(obj));
     });
     socket.on("newLocationMsg", (obj) => {
+        console.log("new LocationMSG", obj);
         return store.dispatch(newLocationMessage(obj));
     });
 

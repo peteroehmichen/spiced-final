@@ -31,6 +31,7 @@ export default function Chat(props) {
         otherUser: other,
         matches,
         locations,
+        user,
     } = useSelector((store) => store);
     // const chatError = useSelector((store) => store.chatError);
     // const msgError = useSelector((store) => store.msgError);
@@ -197,10 +198,21 @@ export default function Chat(props) {
                 )) ||
                     (Array.isArray(messages) &&
                         messages.map((msg, i) => (
-                            <div key={i} className="message">
+                            <div
+                                key={i}
+                                className={
+                                    msg.first == user.first &&
+                                    msg.last == user.last
+                                        ? "message-own"
+                                        : "message"
+                                }
+                            >
                                 <p className="message-head">
                                     <b>
-                                        {msg.first} {msg.last}
+                                        {msg.first == user.first &&
+                                        msg.last == user.last
+                                            ? "you"
+                                            : msg.first + " " + msg.last}
                                     </b>
                                     ,{"  "}
                                     {formatDistance(

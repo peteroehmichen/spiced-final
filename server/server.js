@@ -51,6 +51,8 @@ const { getCountries } = require("./countryAPI");
 const { match } = require("assert");
 const { activeUsers } = require("./socketHelper");
 
+let userId;
+
 app.get("/welcome", (req, res) => {
     if (req.session.userId) {
         res.redirect("/");
@@ -153,6 +155,7 @@ app.post("/welcome/code.json", async (req, res) => {
 });
 
 app.get("/in/essentialData.json", async (req, res) => {
+    userId = req.session.userId;
     let result = await getCountries();
     const { Response: countries } = JSON.parse(result.body);
     const continents = [];
@@ -730,11 +733,19 @@ app.get("/in/matches.json", async (req, res) => {
 });
 
 app.get("/in/chat.json", async (req, res) => {
+    userId = req.session.userId;
+
     // console.log("requested chat", req.query);
     const { about, id } = req.query;
     try {
         const { rows } = await db.getLastChats(about, id, req.session.userId);
-        // console.log("sending back Chats:", rows.length);
+        console.log("sending back Chats:", rows.length);
+        for (let i = 0; i < rows.length; i++) {
+            console.log("message:", rows[i].sender, req.session.userId);
+            if (rows[i].sender == req.session.userId) {
+                rows[i].from_me = true;
+            }
+        }
         res.json(rows.reverse());
     } catch (error) {
         console.log("error in loading chat:", error);
@@ -833,6 +844,8 @@ server.listen(process.env.PORT || 3001, function () {
 
 io.on("connection", (socket) => {
     activeSockets[socket.id] = socket.request.session.userId;
+    // console.log("userid:", userId);
+    // console.log("userid from Socket", socket.request.session.userId);
 
     socket.on("newFriendMessage", async (msg) => {
         // console.log("Friend-Chat:", msg);
@@ -850,7 +863,6 @@ io.on("connection", (socket) => {
         } catch (error) {
             status = { error: "Server Error" };
         }
-        socket.emit("newFriendMsg", status);
         let recipientSocket = Object.entries(activeSockets);
         for (let i = 0; i < recipientSocket.length; i++) {
             if (recipientSocket[i][1] == msg.recipient) {
@@ -858,6 +870,10 @@ io.on("connection", (socket) => {
                 io.to(recipientSocket[i][0]).emit("newFriendMsg", status);
             }
         }
+        if (status.sender == socket.request.session.userId) {
+            status.from_me = true;
+        }
+        socket.emit("newFriendMsg", status);
     });
     socket.on("newTripMessage", async (msg) => {
         // console.log("received Trip-Chat:", msg);
@@ -881,7 +897,6 @@ io.on("connection", (socket) => {
             console.log("Problem:", error);
             status = { error: "Server Error" };
         }
-        socket.emit("newTripMsg", status);
         let recipientSocket = Object.entries(activeSockets);
         for (let i = 0; i < recipientSocket.length; i++) {
             if (recipientSocket[i][1] == msg.recipient) {
@@ -889,6 +904,10 @@ io.on("connection", (socket) => {
                 io.to(recipientSocket[i][0]).emit("newTripMsg", status);
             }
         }
+        if (status.sender == socket.request.session.userId) {
+            status.from_me = true;
+        }
+        socket.emit("newTripMsg", status);
     });
     socket.on("newLocationMessage", async (msg) => {
         // console.log("received Location-Chat:", msg);
@@ -904,6 +923,9 @@ io.on("connection", (socket) => {
                 ...result.user.rows[0],
                 ...result.chat.rows[0],
             };
+            if (status.sender == socket.request.session.userId) {
+                status.from_me = true;
+            }
             // console.log("status:", status);
             // console.log("result:", result);
         } catch (error) {

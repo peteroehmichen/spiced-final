@@ -761,7 +761,15 @@ textarea[name="comment"] {
 }
 
 .message {
-    background-color: wheat;
+    background-color: rgb(103, 127, 247);
+    width: 95%;
+    padding: 5px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.message-own {
+    background-color: rgb(194, 204, 252);
     width: 95%;
     padding: 5px;
     margin: 10px;
