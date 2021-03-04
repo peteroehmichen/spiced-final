@@ -49,7 +49,6 @@ export default function Profile() {
             {activateTripUploadModal && (
                 <PhotoUploader type="trip" id={activateTripUploadModal} />
             )}
-            <h1>Your Public Profile</h1>
             {user && (
                 <div className="profile-frame">
                     <div className="profile picture">
@@ -85,9 +84,11 @@ export default function Profile() {
                     {!descriptionEdit && (
                         <div className="profile description">
                             <p>
-                                <b>Brief Description:</b>
+                                <b>About Me:</b>
                             </p>
-                            <p>{user.description}</p>
+                            <p>
+                                <i>{user.description}</i>
+                            </p>
                             <button
                                 onClick={() => {
                                     dispatch(toggleDescriptionEdit());
@@ -100,10 +101,10 @@ export default function Profile() {
                     {descriptionEdit && <DescriptionEdit />}
                 </div>
             )}
-            <h1>Your Trips</h1>
+            <h1>Your current and upcomming trips</h1>
             <div className="container-frame">
                 <div className="card-container inprofile horizontal">
-                    <div className="card medium start wide">
+                    <div className="card medium start">
                         {!activeTripForm && (
                             <h1
                                 style={{ cursor: "pointer" }}
@@ -120,7 +121,11 @@ export default function Profile() {
                         locations &&
                         user &&
                         trips
-                            .filter((trip) => trip.person == user.id)
+                            .filter(
+                                (trip) =>
+                                    trip.person == user.id &&
+                                    Date.now() < new Date(trip.until_max)
+                            )
                             .map((elem, i) => (
                                 <div key={i} className="card medium wide split">
                                     <div className="card-left">
@@ -155,9 +160,8 @@ export default function Profile() {
                                         <div className="card-right">
                                             <div>
                                                 <p>
-                                                    <b>Description</b>
+                                                    <i>{elem.comment}</i>
                                                 </p>
-                                                <p>{elem.comment}</p>
                                             </div>
                                             <div className="btn">
                                                 <button

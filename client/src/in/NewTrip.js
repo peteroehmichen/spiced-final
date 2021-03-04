@@ -16,7 +16,7 @@ export default function NewTrip() {
             </div>
             <div>
                 <label>
-                    Location
+                    Crag
                     <select
                         defaultValue={"DEFAULT"}
                         name="location_id"
@@ -28,7 +28,9 @@ export default function NewTrip() {
                         {locations &&
                             locations.map((elem) => (
                                 <option key={elem.id} value={elem.id}>
-                                    {elem.name}
+                                    {elem.name.length > 16
+                                        ? elem.name.slice(0, 14) + "..."
+                                        : elem.name}
                                 </option>
                             ))}
                     </select>

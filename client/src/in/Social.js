@@ -141,7 +141,7 @@ export default function Social() {
                 </div>
             </div>
             <div className="friend-two">
-                <h1>Grow your Community</h1>
+                <h1>Grow your Community of Climbers</h1>
                 <div className="grow-split">
                     <div>
                         <h3>Friend-Requests to you</h3>

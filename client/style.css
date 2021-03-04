@@ -379,7 +379,7 @@ textarea[name="comment"] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     width: 180px;
     height: 100%;
     padding: 5px 5px 5px 15px;
@@ -422,7 +422,7 @@ textarea[name="comment"] {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -455,7 +455,7 @@ textarea[name="comment"] {
 
 .profile-frame {
     width: 100%;
-    height: 200px;
+    height: 250px;
     /* min-height: 500px; */
     display: flex;
     flex-direction: row;
@@ -475,9 +475,18 @@ textarea[name="comment"] {
     overflow: auto;
     white-space: pre-wrap;
 }
+.profile p {
+    margin: 5px 0;
+}
 
 .profile.picture {
     overflow: hidden;
+}
+.profile.data {
+    padding: 10px;
+}
+.profile.description {
+    padding: 10px;
 }
 
 #searchContent {
@@ -680,6 +689,10 @@ textarea[name="comment"] {
 
 .add {
     align-items: center;
+    width: 20%;
+    align-self: center;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .out-main {
@@ -936,6 +949,9 @@ label span {
     padding: 30px;
     /* border-radius: 40px; */
     /* border: 6px solid black; */
+}
+.logoStartFrame h1 {
+    margin: 0;
 }
 
 .rating {

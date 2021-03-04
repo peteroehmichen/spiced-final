@@ -35,8 +35,10 @@ export default function Dashboard() {
 
     return (
         <div className="central social">
-            <div className="friend-one">
-                {user && <h1>Welcome, {user.first}</h1>}
+            <div className="logoStartFrame">
+                <img className="logoStart" src="/noun_Rope_61701.png" />
+                <h1>THE SHARP END</h1>
+                <h4>a network for travelling climbers</h4>
             </div>
             <div className="friend-two">
                 <div className="grow-split">
@@ -90,7 +92,7 @@ export default function Dashboard() {
                     </div>
 
                     <div>
-                        <h3>Matching Trips</h3>
+                        <h3>Trips that match your plans </h3>
                         <div className="container-frame">
                             <div className="card-container wrapped">
                                 <Matches mode="dashboard" />

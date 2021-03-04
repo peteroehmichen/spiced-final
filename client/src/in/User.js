@@ -75,7 +75,7 @@ export default function User(props) {
                             <FriendButton friendId={props.match.params.id} />
                         </div>
                     </div>
-                    <h1>
+                    <h2>
                         {(other.confirmed && (
                             <Fragment>
                                 <span
@@ -93,7 +93,7 @@ export default function User(props) {
                                         setActiveMatches(true);
                                     }}
                                 >
-                                    Matches
+                                    MATCHES
                                 </span>
                                 {"  "}|{"  "}
                                 <span
@@ -111,12 +111,12 @@ export default function User(props) {
                                         setActiveMatches(false);
                                     }}
                                 >
-                                    all Trips
+                                    ALL TRIPS
                                 </span>
                             </Fragment>
                         )) ||
-                            "Matches"}
-                    </h1>
+                            "MATCHES"}
+                    </h2>
                     <div
                         className="card-container wrapped"
                         id="user-detail-matches"

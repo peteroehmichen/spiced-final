@@ -46,7 +46,7 @@ export default function Finder() {
             <input
                 type="text"
                 name="searchFriend"
-                placeholder="Search through our Users"
+                placeholder="Search for other Climbers"
                 id="searchFriend"
                 key="searchFriend"
                 onChange={(e) => {

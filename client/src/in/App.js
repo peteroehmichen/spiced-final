@@ -38,13 +38,13 @@ export default function App() {
                         <div className="nav-element">Dashboard</div>
                     </Link>
                     <Link to="/locations">
-                        <div className="nav-element">All Locations</div>
+                        <div className="nav-element">Crags</div>
                     </Link>
                     <Link to="/profile">
-                        <div className="nav-element">My Profile & Trips</div>
+                        <div className="nav-element">Profile & Trips</div>
                     </Link>
                     <Link to="/social">
-                        <div className="nav-element">My Friends</div>
+                        <div className="nav-element">Climbers</div>
                     </Link>
                 </div>
                 <div className="nav-element logout">

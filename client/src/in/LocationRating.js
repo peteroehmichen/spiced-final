@@ -31,11 +31,7 @@ export default function LocationRating(props) {
     );
     let own;
     if (rating && rating.your_rating) {
-        own = (
-            <span onClick={submit}>
-                remove your {rating.your_rating} * rating
-            </span>
-        );
+        own = <span onClick={submit}>remove your rating</span>;
     } else if (rating) {
         own = (
             <label>

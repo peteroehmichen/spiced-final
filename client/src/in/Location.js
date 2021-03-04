@@ -69,9 +69,9 @@ export default function User(props) {
             </div>
             <div className="location-body">
                 <div className="location-left">
-                    <h2>Useful information for solo climbers</h2>
+                    <h2>Tips and Trick for Solo Climbers</h2>
                     <div className="info-block">
-                        {(!loc.infos && <p>no infos yet</p>) ||
+                        {loc.infos &&
                             infos.map((elem, i) => (
                                 <div key={i}>
                                     {!secEdit[i] && (

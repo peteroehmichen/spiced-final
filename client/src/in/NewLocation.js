@@ -19,7 +19,7 @@ export default function NewLocation() {
     return (
         <div className="form new-locations">
             <div>
-                <h2>Basic information</h2>
+                <h2>Add a new crag</h2>
             </div>
             <div>
                 <label>
@@ -29,7 +29,7 @@ export default function NewLocation() {
                         onChange={handleChangeEval}
                     >
                         <option value="DEFAULT" disabled>
-                            CONTINENT
+                            Continent
                         </option>
                         {continents.map((elem, i) => (
                             <option key={i} value={elem}>
@@ -48,7 +48,7 @@ export default function NewLocation() {
                         onChange={handleChangeEval}
                     >
                         <option value="DEFAULT" disabled>
-                            COUNTRY
+                            Country
                         </option>
                         {countries
                             .filter((elem) => elem.Region == values.continent)
@@ -65,7 +65,7 @@ export default function NewLocation() {
                     disabled={!values.country}
                     type="text"
                     name="name"
-                    placeholder="Crag / Site"
+                    placeholder="Name of the Crag"
                     onChange={handleChangeEval}
                 />
             </div>
