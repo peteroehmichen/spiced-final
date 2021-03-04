@@ -34,12 +34,18 @@ export default function User(props) {
     const otherUser = (
         <div className="central user">
             {other && grades && experience && (
-                <div className="location-left">
-                    <div className="user-infos">
-                        <div className="user-image">
+                <div className="xxxlocation-left" id="user-detail-left">
+                    <div className="xxxuser-infos" id="user-detail-head">
+                        <div
+                            className="xxxuser-image"
+                            id="user-detail-image-frame"
+                        >
                             <img src={other.picture || "/default.svg"} />
                         </div>
-                        <div className="user-description">
+                        <div
+                            className="xxxuser-description"
+                            id="user-detail-description"
+                        >
                             <h1>
                                 {other.first} {other.last}
                             </h1>
@@ -117,7 +123,10 @@ export default function User(props) {
                                 )) ||
                             "Matches"}
                     </h1>
-                    <div className="card-container wrapped">
+                    <div
+                        className="card-container wrapped"
+                        id="user-detail-matches"
+                    >
                         {activeMatches && (
                             <Matches
                                 mode="user"

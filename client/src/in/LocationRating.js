@@ -13,7 +13,7 @@ export default function LocationRating(props) {
     }, []);
 
     const submit = function (e) {
-        if (e.target.innerText == "delete") {
+        if (e.target.innerText.includes("remove")) {
             dispatch(changeMyRating("delete", props.id));
             // console.log("deleting my rateing");
         } else if (e.target.value) {
@@ -23,20 +23,18 @@ export default function LocationRating(props) {
     };
 
     const avg = rating && (
-        <p>
-            Solo-Rating: {Math.round(rating.avg * 10) / 10}* ({rating.sum}{" "}
-            reviews)
-        </p>
+        <b>
+            Solo-Rating:{" "}
+            {rating.sum > 0 && `${Math.round(rating.avg * 10) / 10}*`} (
+            {rating.sum} reviews)
+        </b>
     );
     let own;
     if (rating && rating.your_rating) {
         own = (
-            <p>
-                <br />
-                your Rating on{" "}
-                {new Date(rating.your_rating_date).toLocaleDateString()}:{" "}
-                {rating.your_rating} <button onClick={submit}>delete</button>
-            </p>
+            <span onClick={submit}>
+                remove your {rating.your_rating} * rating
+            </span>
         );
     } else if (rating) {
         own = (
@@ -61,9 +59,9 @@ export default function LocationRating(props) {
     }
 
     return (
-        <h5>
-            {avg}
-            {own}
-        </h5>
+        <div className="rating">
+            <p>{avg}</p>
+            <p>{own}</p>
+        </div>
     );
 }

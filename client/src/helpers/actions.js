@@ -477,6 +477,7 @@ export async function changeMyRating(value, id) {
         return {
             type: "GET_LOCATION_RATING",
             payload: data.success,
+            id,
         };
     } else {
         return {

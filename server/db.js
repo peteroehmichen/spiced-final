@@ -91,7 +91,7 @@ module.exports.getTripsbyUser = async function (id) {
     // console.log("id of friends:", friendIds);
     // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
     return sql.query(
-        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,
+        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,
         [friendIds]
     );
 };

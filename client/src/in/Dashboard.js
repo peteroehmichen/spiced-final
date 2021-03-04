@@ -30,47 +30,74 @@ export default function Dashboard() {
 
     // if (!user || !grades || !experience) return null;
 
-    return (
-        <div className="central dashboard">
-            <ul className="todo">
-                <li>view my trips</li>
-                <li>view pinned friends trips</li>
-                <li>(maybe notifications)</li>
-            </ul>
-            <Matches limit="0" mode="dashboard" />
+    // <Matches limit="0" mode="dashboard" />
 
-            <h1>Your Friends Trips</h1>
-            <div className="card-container">
-                {trips &&
-                    locations &&
-                    user &&
-                    trips
-                        .filter((trip) => trip.person != user.id)
-                        .map((elem, i) => (
-                            <div className="card small" key={i}>
-                                <div className="card-thumb">
-                                    <img src="/default.svg" />
-                                </div>
-                                <div className="card-image">
-                                    <img src="/default.svg" />
-                                </div>
-                                <div className="card-text">
-                                    <h4>
-                                        {elem.first} {elem.last[0]}.
-                                    </h4>
-                                    <p>
-                                        {new Date(
-                                            elem.from_min
-                                        ).toLocaleDateString()}{" "}
-                                        -{" "}
-                                        {new Date(
-                                            elem.until_max
-                                        ).toLocaleDateString()}
-                                    </p>
-                                </div>
-                                <div className="card-foot"></div>
+    return (
+        <div className="central social">
+            <div className="friend-one">
+                <h1>Welcome, PPPPP</h1>
+            </div>
+            <div className="friend-two">
+                <div className="grow-split">
+                    <div>
+                        <h3>What your friends are planning</h3>
+                        <div className="container-frame">
+                            <div className="card-container wrapped">
+                                {trips &&
+                                    locations &&
+                                    user &&
+                                    trips
+                                        .filter(
+                                            (trip) => trip.person != user.id
+                                        )
+                                        .map((elem, i) => (
+                                            <div className="card small" key={i}>
+                                                <div className="card-image">
+                                                    <img
+                                                        src={
+                                                            elem.picture ||
+                                                            elem.user_pic ||
+                                                            "/default.svg"
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className="card-text">
+                                                    <h4>
+                                                        {elem.first}{" "}
+                                                        {elem.last[0]}.
+                                                    </h4>
+                                                    <p>
+                                                        {new Date(
+                                                            elem.from_min
+                                                        ).toLocaleDateString()}{" "}
+                                                        -{" "}
+                                                        {new Date(
+                                                            elem.until_max
+                                                        ).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                                <div className="card-foot"></div>
+                                            </div>
+                                        ))}
                             </div>
-                        ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3>Matching Trips</h3>
+                        <div className="container-frame">
+                            <div className="card-container wrapped">
+                                <Matches mode="dashboard" />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Notifications</h3>
+                        <div className="container-frame">
+                            <div className="card-container wrapped">...</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

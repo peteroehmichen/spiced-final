@@ -6,10 +6,6 @@ import Login from "./Login";
 import Reset from "./Reset";
 import GettingStarted from "./GettingStarted";
 
-// Welcome component to render register or login (full not logged-in experience)
-// sole purpose is to create the pane for registration component
-
-// called "dumb" or "presentational" components (because they dont have much functionaility. - "Pre-hooks")
 export default function Welcome() {
     return (
         <Fragment>
@@ -28,10 +24,3 @@ export default function Welcome() {
         </Fragment>
     );
 }
-
-// <Link to="/login">
-//                             <div className="link-out">LogIn</div>
-//                         </Link>
-//                         <Link to="reset">
-//                             <div className="link-out">Reset</div>
-//                         </Link>

@@ -301,6 +301,16 @@ export default function reducer(store = {}, action) {
         } else {
             store.rating = action.payload;
             store.ratingError = null;
+            for (let i = 0; i < store.locations.length; i++) {
+                if (action.id == store.locations[i].id) {
+                    // console.log("one found");
+                    store.locations[i].rate_avg =
+                        action.payload.sum > 0
+                            ? action.payload.your_rating
+                            : null;
+                }
+            }
+            // rate_avg überschreiben - nicht aber bei 0
         }
     }
     // if (action.type == "CHANGE_LOCATION_RATING") {

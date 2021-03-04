@@ -106,43 +106,7 @@ export default function Matches(props) {
                                 </div>
                             );
                         } else {
-                            return (
-                                <Link to={`/user/${elem.person}`} key={i}>
-                                    <div className={`card ${cardCSS}`}>
-                                        <div className="card-thumb">
-                                            <img src="/default.svg" />
-                                        </div>
-                                        <div className="card-image">
-                                            <img src="/default.svg" />
-                                        </div>
-                                        <div className="card-text">
-                                            <h4>
-                                                {(props.limit == "0" &&
-                                                    elem.first) ||
-                                                    elem.first}
-                                                s trip to{" "}
-                                                {getLocationName(
-                                                    elem.location_id
-                                                )}
-                                            </h4>
-                                            <p>
-                                                (
-                                                {new Date(
-                                                    elem.from_min
-                                                ).toLocaleDateString()}{" "}
-                                                -{" "}
-                                                {new Date(
-                                                    elem.until_max
-                                                ).toLocaleDateString()}
-                                                )
-                                            </p>
-                                        </div>
-                                        <div className="card-foot">
-                                            {elem.match_overlap_percent}% match
-                                        </div>
-                                    </div>
-                                </Link>
-                            );
+                            return <h1>todo</h1>;
                         }
                     })}
         </Fragment>
