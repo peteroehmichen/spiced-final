@@ -24,14 +24,12 @@ if (location.pathname === "/welcome") {
     elem = (
         <Provider store={store}>
             <App />
+            <footer>Made with 🍐 by Peter Oehmichen, 2021</footer>
         </Provider>
     );
 }
 
 ReactDOM.render(
-    <React.Fragment>
-        {elem}
-        <footer>Made with 🍐 by Peter Oehmichen, 2021</footer>
-    </React.Fragment>,
+    <React.Fragment>{elem}</React.Fragment>,
     document.querySelector("main")
 );

@@ -133,7 +133,7 @@ export default function User(props) {
                                 .filter(
                                     (elem) =>
                                         elem.person == props.match.params.id &&
-                                        Date.now() < new Date(elem.from_min)
+                                        Date.now() < new Date(elem.until_max)
                                 )
                                 .map((elem, i) => (
                                     <div key={i} className="card medium">

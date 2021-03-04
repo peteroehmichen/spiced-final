@@ -26,7 +26,9 @@ header {
     width: 100%;
     height: 60px;
     padding: 0 10px;
-    background-color: bisque;
+    background-color: rgb(157 183 183);
+    border-bottom: 3px solid black;
+
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -39,11 +41,28 @@ header {
 }
 
 .logout {
-    /* position: absolute; */
+    position: relative;
     /* right: 20px; */
     /* top: 15px; */
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.logout div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.logout_off {
+    z-index: 100;
+}
+.logout_off:hover {
+    display: none;
 }
 
 .nav-bar {
@@ -66,7 +85,7 @@ header {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background-color: rgb(48, 103, 68);
+    background-color: rgb(127 164 164);
 }
 
 label {
@@ -78,9 +97,11 @@ label {
 footer {
     width: 100%;
     height: 50px;
-    background-color: rgb(4, 97, 38);
-    color: white;
+    background-color: rgb(157 183 183);
+    border-top: 3px solid black;
+    color: black;
     font-weight: 500;
+    padding-right: 10px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -116,7 +137,7 @@ p {
 input,
 textarea {
     font-family: sans-serif;
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.5);
     outline: none;
     margin: 8px;
 }
@@ -136,7 +157,7 @@ textarea {
 
 input[type="date"] {
     width: 120px;
-    background-color: #fff;
+    /* background-color: #fff; */
 }
 
 input[name="searchLocation"] {
@@ -145,7 +166,7 @@ input[name="searchLocation"] {
     padding: 15px;
     font-size: 1.1rem;
     border-radius: 15px;
-    background-color: #fff;
+    /* background-color: #fff; */
 }
 input[name="searchFriend"] {
     width: 95%;
@@ -153,7 +174,7 @@ input[name="searchFriend"] {
     padding: 5px 15px;
     font-size: 1rem;
     border-radius: 15px;
-    background-color: #fff;
+    /* background-color: #fff; */
 }
 input[name="filterFriend"] {
     width: 50%;
@@ -161,7 +182,7 @@ input[name="filterFriend"] {
     padding: 10px 15px;
     font-size: 1.05rem;
     border-radius: 15px;
-    background-color: #fff;
+    /* background-color: #fff; */
 }
 
 input[name="first"],
@@ -174,6 +195,7 @@ input[type="email"] {
     border: 0;
     border-bottom: 4px solid orangered;
     font-size: 1.1em;
+    background-color: transparent;
 }
 
 input[name="age"],
@@ -184,14 +206,14 @@ input[name="name"] {
     /* width: 250px; */
     /* padding-top: 5px; */
     border: 0;
-    background-color: #fff;
+    /* background-color: #fff; */
     /* border-bottom: 4px solid orangered; */
     font-size: 1em;
 }
 
 textarea[name="description"] {
     height: 50%;
-    background-color: #fff;
+    /* background-color: #fff; */
 }
 
 textarea[name="comment"] {
@@ -542,7 +564,7 @@ textarea[name="comment"] {
 }
 
 .social > div {
-    /* display: flex; */
+    display: flex;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -595,10 +617,14 @@ textarea[name="comment"] {
     flex-direction: row;
     justify-content: flex-start;
     overflow: hidden;
-    background-color: white;
+    background-color: #ffffffa6;
     /* color: rgba(255, 255, 255, 0.87); */
     border-radius: 5px;
     position: relative;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+.found-friend:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
 }
 
 .friend-pic-small {
@@ -663,7 +689,7 @@ textarea[name="comment"] {
     min-width: 550px;
     height: 65%;
     min-height: 400px;
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.8);
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -672,7 +698,7 @@ textarea[name="comment"] {
 }
 
 .out h1 {
-    color: #fff;
+    color: black;
 }
 
 .form-out {
@@ -697,7 +723,7 @@ textarea[name="comment"] {
 }
 
 .getting-started {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.8);
     border-radius: 15px;
     margin: 20px;
     padding: 20px;
@@ -761,7 +787,7 @@ textarea[name="comment"] {
 }
 
 .message {
-    background-color: rgb(103, 127, 247);
+    background-color: rgb(9 130 85 / 75%);
     width: 95%;
     padding: 5px;
     margin: 10px;
@@ -769,7 +795,7 @@ textarea[name="comment"] {
 }
 
 .message-own {
-    background-color: rgb(194, 204, 252);
+    background-color: rgb(9 130 85 / 35%);
     width: 95%;
     padding: 5px;
     margin: 10px;
@@ -906,6 +932,10 @@ label span {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    /* background-color: #bb883c63; */
+    padding: 30px;
+    /* border-radius: 40px; */
+    /* border: 6px solid black; */
 }
 
 .rating {
@@ -913,7 +943,7 @@ label span {
     flex-direction: column;
     width: 100%;
     padding: 5px;
-    background-color: rgba(255, 255, 255, 0.646);
+    /* background-color: rgba(255, 255, 255, 0.646); */
     align-items: center;
 }
 
@@ -963,4 +993,8 @@ label span {
     justify-content: center;
     align-items: center;
     color: red;
+}
+
+.activeTitle {
+    text-transform: uppercase;
 }

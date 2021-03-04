@@ -34,8 +34,9 @@ export default function Social() {
         friends = all.filter((elem) => elem.confirmed);
         friends = friends.filter(
             (element) =>
-                element.first.includes(searchInput) ||
-                element.last.includes(searchInput)
+                `${element.first} ${element.last}`.includes(searchInput)
+            // element.first.includes(searchInput) ||
+            //     element.last.includes(searchInput)
         );
         requests = all.filter(
             (elem) => !elem.confirmed && elem.sender == elem.id
@@ -128,7 +129,7 @@ export default function Social() {
                     type="text"
                     name="filterFriend"
                     placeholder="Filter for a friend"
-                    key="searchLocation"
+                    key="filterFriend"
                     onChange={(e) => {
                         setSearchInput(e.target.value);
                     }}

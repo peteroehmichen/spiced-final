@@ -1,7 +1,13 @@
 import { formatDistance, parseISO } from "date-fns";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter, Link, Route } from "react-router-dom";
+import {
+    BrowserRouter,
+    Link,
+    Route,
+    useHistory,
+    useLocation,
+} from "react-router-dom";
 import {
     getEssentialData,
     getUserData,
@@ -13,9 +19,9 @@ import Social from "./Social";
 import Profile from "./Profile";
 import User from "./User";
 import Location from "./Location";
-// actually need to get the store-data for location, etc already here!
 
 export default function App() {
+    const { picture } = useSelector((store) => store.user);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getEssentialData());
@@ -25,7 +31,7 @@ export default function App() {
         <BrowserRouter>
             <header>
                 <div className="nav-element logo">
-                    <img src="/noun_Rope_61701.png" /> THE SHARP END
+                    <img src="/noun_Rope_61701.png" />
                 </div>
                 <div className="nav-bar">
                     <Link to="/">
@@ -43,7 +49,15 @@ export default function App() {
                 </div>
                 <div className="nav-element logout">
                     <a href="/logout">
-                        <img src="/logOut.svg" />
+                        <div className="logout_on">
+                            <img src={"/logOut.svg"} title="log out" />
+                        </div>
+                        <div className="logout_off">
+                            <img
+                                src={picture || "/logOut.svg"}
+                                title="log out"
+                            />
+                        </div>
                     </a>
                 </div>
             </header>

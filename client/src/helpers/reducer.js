@@ -105,7 +105,7 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "TOGGLE_TRIP_EDIT") {
-        console.log("reducer: toggling", action.index);
+        // console.log("reducer: toggling", action.index);
         store.tripEdit[action.index] = !store.tripEdit[action.index];
 
         // store.tripEdit = !store.tripEdit;
@@ -133,7 +133,7 @@ export default function reducer(store = {}, action) {
     if (action.type == "UPDATE_LOCATION_PICTURE") {
         if (action.payload) {
             store.location.picture = action.payload;
-            for (let i = 0; i < store.locations.length; i++) {
+            for (let i = 0; i < store.locations?.length; i++) {
                 if (store.location.id == store.locations[i].id) {
                     store.locations[i].picture = action.payload;
                 }
@@ -301,7 +301,7 @@ export default function reducer(store = {}, action) {
         } else {
             store.rating = action.payload;
             store.ratingError = null;
-            for (let i = 0; i < store.locations.length; i++) {
+            for (let i = 0; i < store.locations?.length; i++) {
                 if (action.id == store.locations[i].id) {
                     // console.log("one found");
                     store.locations[i].rate_avg =

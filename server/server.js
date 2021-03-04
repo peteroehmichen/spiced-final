@@ -739,9 +739,9 @@ app.get("/in/chat.json", async (req, res) => {
     const { about, id } = req.query;
     try {
         const { rows } = await db.getLastChats(about, id, req.session.userId);
-        console.log("sending back Chats:", rows.length);
+        // console.log("sending back Chats:", rows.length);
         for (let i = 0; i < rows.length; i++) {
-            console.log("message:", rows[i].sender, req.session.userId);
+            // console.log("message:", rows[i].sender, req.session.userId);
             if (rows[i].sender == req.session.userId) {
                 rows[i].from_me = true;
             }

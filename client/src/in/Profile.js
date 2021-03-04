@@ -162,9 +162,6 @@ export default function Profile() {
                                             <div className="btn">
                                                 <button
                                                     onClick={() => {
-                                                        console.log(
-                                                            `toggling ON index: ${i} with ID ${elem.id}`
-                                                        );
                                                         dispatch(
                                                             toggleTripEdit(i)
                                                         );
