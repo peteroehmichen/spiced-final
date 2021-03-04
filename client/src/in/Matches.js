@@ -7,16 +7,6 @@ export default function Matches(props) {
     const { matches, locations, user } = useSelector((store) => store);
     const dispatch = useDispatch();
 
-    let containerCSS = "";
-    let cardCSS = "";
-    if (props.mode == "user") {
-        cardCSS = "medium wide split";
-        containerCSS = "";
-    } else if (props.mode == "dashboard") {
-        cardCSS = "";
-        containerCSS = "";
-    }
-
     useEffect(() => {
         dispatch(findMatchingTrips());
     }, []);
@@ -47,68 +37,92 @@ export default function Matches(props) {
             {matches &&
                 user &&
                 locations &&
+                props.mode == "user" &&
                 matches
                     .filter((elem) =>
                         props.limit == "0" ? true : elem.person == props.limit
                     )
-                    .map((elem, i) => {
-                        if (props.mode == "user") {
-                            return (
-                                <div
-                                    key={i}
-                                    className="card medium extrawide split"
-                                    style={{
-                                        border: `4px solid ${perc2color(
-                                            elem.match_overlap_percent
-                                        )}`,
-                                    }}
-                                >
-                                    <div className="card-left-XL">
-                                        <div className="percent">
-                                            <h1
-                                                style={{
-                                                    color: perc2color(
-                                                        elem.match_overlap_percent
-                                                    ),
-                                                }}
-                                            >
-                                                {elem.match_overlap_percent}%
-                                            </h1>
-                                        </div>
-                                        <img
-                                            src={elem.picture || "/default.svg"}
-                                        />
-                                    </div>
-
-                                    <div className="card-right-match">
-                                        <div>
-                                            <h3>
-                                                {getLocationName(
-                                                    elem.location_id
-                                                )}
-                                            </h3>
-                                            <p>
-                                                {new Date(
-                                                    elem.from_min
-                                                ).toLocaleDateString()}{" "}
-                                                -{" "}
-                                                {new Date(
-                                                    elem.until_max
-                                                ).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <i>{elem.comment}</i>
-                                            </p>
-                                        </div>
-                                    </div>
+                    .map((elem, i) => (
+                        <div
+                            key={i}
+                            className="card medium extrawide split"
+                            style={{
+                                border: `4px solid ${perc2color(
+                                    elem.match_overlap_percent
+                                )}`,
+                            }}
+                        >
+                            <div className="card-left-XL">
+                                <div className="percent">
+                                    <h1
+                                        style={{
+                                            color: perc2color(
+                                                elem.match_overlap_percent
+                                            ),
+                                        }}
+                                    >
+                                        {elem.match_overlap_percent}%
+                                    </h1>
                                 </div>
-                            );
-                        } else {
-                            return <h1>todo</h1>;
-                        }
-                    })}
+                                <img src={elem.picture || "/default.svg"} />
+                            </div>
+
+                            <div className="card-right-match">
+                                <div>
+                                    <h3>{getLocationName(elem.location_id)}</h3>
+                                    <p>
+                                        {new Date(
+                                            elem.from_min
+                                        ).toLocaleDateString()}{" "}
+                                        -{" "}
+                                        {new Date(
+                                            elem.until_max
+                                        ).toLocaleDateString()}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p>
+                                        <i>{elem.comment}</i>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+            {matches &&
+                user &&
+                locations &&
+                props.mode == "dashboard" &&
+                matches.map((elem, i) => (
+                    <Link to={`/user/${elem.person}`} key={i}>
+                        <div
+                            className="card small"
+                            style={{
+                                border: `4px solid ${perc2color(
+                                    elem.match_overlap_percent
+                                )}`,
+                            }}
+                        >
+                            <div className="card-image">
+                                <img src={elem.picture || "/default.svg"} />
+                            </div>
+                            <div className="card-text">
+                                <h4>{getLocationName(elem.location_id)}</h4>
+                                <p>
+                                    {new Date(
+                                        elem.from_min
+                                    ).toLocaleDateString()}{" "}
+                                    -{" "}
+                                    {new Date(
+                                        elem.until_max
+                                    ).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <div className="percent-small">
+                                {elem.match_overlap_percent}%
+                            </div>
+                        </div>
+                    </Link>
+                ))}
         </Fragment>
     );
 }

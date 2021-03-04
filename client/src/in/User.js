@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDistance, parseISO } from "date-fns";
 import { getTrips, getUserData } from "../helpers/actions";
@@ -34,18 +34,12 @@ export default function User(props) {
     const otherUser = (
         <div className="central user">
             {other && grades && experience && (
-                <div className="xxxlocation-left" id="user-detail-left">
-                    <div className="xxxuser-infos" id="user-detail-head">
-                        <div
-                            className="xxxuser-image"
-                            id="user-detail-image-frame"
-                        >
+                <div id="user-detail-left">
+                    <div id="user-detail-head">
+                        <div id="user-detail-image-frame">
                             <img src={other.picture || "/default.svg"} />
                         </div>
-                        <div
-                            className="xxxuser-description"
-                            id="user-detail-description"
-                        >
+                        <div id="user-detail-description">
                             <h1>
                                 {other.first} {other.last}
                             </h1>
@@ -82,8 +76,8 @@ export default function User(props) {
                         </div>
                     </div>
                     <h1>
-                        {(other.confirmed &&
-                            (
+                        {(other.confirmed && (
+                            <Fragment>
                                 <span
                                     style={
                                         (activeMatches && {
@@ -101,26 +95,26 @@ export default function User(props) {
                                 >
                                     Matches
                                 </span>
-                            ) |
-                                (
-                                    <span
-                                        style={
-                                            (!activeMatches && {
-                                                textDecoration: "underline",
-                                                fontWeight: "bold",
-                                            }) || {
-                                                textDecoration: "none",
-                                                fontWeight: "normal",
-                                                cursor: "pointer",
-                                            }
+                                {"  "}|{"  "}
+                                <span
+                                    style={
+                                        (!activeMatches && {
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }) || {
+                                            textDecoration: "none",
+                                            fontWeight: "normal",
+                                            cursor: "pointer",
                                         }
-                                        onClick={() => {
-                                            setActiveMatches(false);
-                                        }}
-                                    >
-                                        all Trips
-                                    </span>
-                                )) ||
+                                    }
+                                    onClick={() => {
+                                        setActiveMatches(false);
+                                    }}
+                                >
+                                    all Trips
+                                </span>
+                            </Fragment>
+                        )) ||
                             "Matches"}
                     </h1>
                     <div

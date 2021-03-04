@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { getTrips, getUserData } from "../helpers/actions";
 import axios from "../helpers/axios";
 import Matches from "./Matches";
@@ -35,7 +36,7 @@ export default function Dashboard() {
     return (
         <div className="central social">
             <div className="friend-one">
-                <h1>Welcome, PPPPP</h1>
+                {user && <h1>Welcome, {user.first}</h1>}
             </div>
             <div className="friend-two">
                 <div className="grow-split">
@@ -51,33 +52,38 @@ export default function Dashboard() {
                                             (trip) => trip.person != user.id
                                         )
                                         .map((elem, i) => (
-                                            <div className="card small" key={i}>
-                                                <div className="card-image">
-                                                    <img
-                                                        src={
-                                                            elem.picture ||
-                                                            elem.user_pic ||
-                                                            "/default.svg"
-                                                        }
-                                                    />
+                                            <Link
+                                                key={i}
+                                                to={`/user/${elem.person}`}
+                                            >
+                                                <div className="card small">
+                                                    <div className="card-image">
+                                                        <img
+                                                            src={
+                                                                elem.picture ||
+                                                                elem.user_pic ||
+                                                                "/default.svg"
+                                                            }
+                                                        />
+                                                    </div>
+                                                    <div className="card-text">
+                                                        <h4>
+                                                            {elem.first}{" "}
+                                                            {elem.last[0]}.
+                                                        </h4>
+                                                        <p>
+                                                            {new Date(
+                                                                elem.from_min
+                                                            ).toLocaleDateString()}{" "}
+                                                            -{" "}
+                                                            {new Date(
+                                                                elem.until_max
+                                                            ).toLocaleDateString()}
+                                                        </p>
+                                                    </div>
+                                                    <div className="card-foot"></div>
                                                 </div>
-                                                <div className="card-text">
-                                                    <h4>
-                                                        {elem.first}{" "}
-                                                        {elem.last[0]}.
-                                                    </h4>
-                                                    <p>
-                                                        {new Date(
-                                                            elem.from_min
-                                                        ).toLocaleDateString()}{" "}
-                                                        -{" "}
-                                                        {new Date(
-                                                            elem.until_max
-                                                        ).toLocaleDateString()}
-                                                    </p>
-                                                </div>
-                                                <div className="card-foot"></div>
-                                            </div>
+                                            </Link>
                                         ))}
                             </div>
                         </div>
@@ -93,9 +99,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                         <h3>Notifications</h3>
-                        <div className="container-frame">
-                            <div className="card-container wrapped">...</div>
-                        </div>
+                        <div className="temp">comming soon...</div>
                     </div>
                 </div>
             </div>
