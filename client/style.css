@@ -698,10 +698,8 @@ textarea[name="comment"] {
 .out-main {
     padding: 20px;
     border-radius: 15px;
-    width: 60%;
-    min-width: 550px;
-    height: 65%;
-    min-height: 400px;
+    width: 550px;
+    height: 400px;
     background-color: rgba(255, 255, 255, 0.8);
     display: flex;
     flex-direction: column;
