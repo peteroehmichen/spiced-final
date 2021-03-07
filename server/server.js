@@ -1,9 +1,16 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
+
 const io = require("socket.io")(server, {
     allowRequest: (req, callback) =>
-        callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+        callback(
+            null,
+            req.headers.referer.startsWith("http://localhost:3000") ||
+                req.headers.referer.startsWith(
+                    "http://the-sharp-end.herokuapp.com"
+                )
+        ),
 });
 
 const compression = require("compression");
@@ -21,7 +28,6 @@ const cookieSessionMiddleware = cookieSession({
 const csurf = require("csurf");
 
 const db = require("./db");
-const auth = require("./auth");
 const aws = require("./aws");
 const activeSockets = {};
 app.use(cookieSessionMiddleware);
@@ -42,156 +48,101 @@ app.use(compression());
 
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
-const {
-    CODE_VALIDITY_IN_MINUTES,
-    grades,
-    experience,
-} = require("./config.json");
+const { grades, experience } = require("./config.json");
 const { getCountries } = require("./countryAPI");
-const { match } = require("assert");
 const { activeUsers } = require("./socketHelper");
+const { analyseMatches } = require("./analyseMatches");
 
-let userId;
-
-app.get("/welcome", (req, res) => {
-    if (req.session.userId) {
-        res.redirect("/");
-    } else {
-        res.sendFile(path.join(__dirname, "..", "client", "index.html"));
-    }
-});
-
-app.post("/welcome/register.json", async (req, res) => {
-    const { first, last, email, password } = req.body;
-    if (first == "" || last == "" || !email.includes("@") || password == "") {
-        return res.json({
-            error: "Prohibited input",
-        });
-    }
-    try {
-        const hashedPw = await auth.hash(password);
-        const result = await db.addUser(first, last, email, hashedPw);
-        req.session.userId = result.rows[0].id;
-        res.json({ status: "OK" });
-    } catch (err) {
-        if (err.code == "23505") {
-            res.json({ error: "E-Mail already exists" });
-        } else {
-            res.json({ error: "Server error" });
-        }
-    }
-});
-
-app.post("/welcome/login.json", async (req, res) => {
-    try {
-        const result = await db.getAuthenticatedUser(
-            req.body.email,
-            req.body.password
-        );
-        if (result.id) {
-            req.session.userId = result.id;
-            res.json({
-                status: "OK",
-            });
-        } else {
-            console.log("Login-Error:", result);
-            if (result.error == "Error in DB") {
-                res.json({ error: "No Connection" });
-            } else {
-                res.json({ error: "Invalid user credentials" });
-            }
-        }
-    } catch (err) {
-        res.json({ error: "Log in rejected" });
-    }
-});
-
-app.post("/welcome/reset.json", async (req, res) => {
-    try {
-        const user = await db.getUserByEmail(req.body.email);
-        if (user.rowCount > 0) {
-            const code = await aws.sendEMail(req.body.email);
-            const result = await db.addResetCode(req.body.email, code);
-            if (result.rowCount > 0) {
-                const start = new Date(result.rows[0].created_at);
-                const end = new Date(
-                    start.getTime() + CODE_VALIDITY_IN_MINUTES * 60000
-                ).valueOf();
-                res.json({ codeValidUntil: end });
-            } else {
-                res.json({
-                    error: "Couldn't read DB",
-                });
-            }
-        } else {
-            res.json({ error: "User not found" });
-        }
-    } catch (err) {
-        res.json({ error: "Unknown error in DB" });
-    }
-});
-
-app.post("/welcome/code.json", async (req, res) => {
-    try {
-        const isCodeValid = await db.confirmCode(
-            req.body.code,
-            CODE_VALIDITY_IN_MINUTES.toString(),
-            req.body.email
-        );
-        if (isCodeValid) {
-            const hashedPw = await auth.hash(req.body.password);
-            const result = await db.updateUserPw(req.body.email, hashedPw);
-            if (result.rowCount > 0) {
-                res.json({ update: "ok" });
-            } else {
-                res.json({ error: "Error in password-reset" });
-            }
-        } else {
-            res.json({ error: "Invalid code" });
-        }
-    } catch (err) {
-        res.json({ error: "Unknown error" });
-    }
-});
+//////////////////////////////////////////////////////
+const router = require("./loggedOutRoutes");
+app.use(router);
+//////////////////////////////////////////////////////
 
 app.get("/in/essentialData.json", async (req, res) => {
-    userId = req.session.userId;
-    let result = await getCountries();
-    const { Response: countries } = JSON.parse(result.body);
-    const continents = [];
-    countries.forEach((country) => {
-        if (!continents.includes(country.Region) && country.Region != "") {
-            continents.push(country.Region);
-        }
-    });
-    // console.log("continents:", continents);
     try {
+        let result = await getCountries();
+        const { Response: countries } = JSON.parse(result.body);
+        const continents = [];
+        let countriesPure = countries.map((country) => {
+            if (!continents.includes(country.Region) && country.Region != "") {
+                continents.push(country.Region);
+            }
+            return {
+                Name: country.Name,
+                Region: country.Region,
+            };
+        });
         const results = await db.getEssentialData(req.session.userId);
-        // results.tripsRaw.rowCount > 0
-        // console.log(results.userRaw);
-        // console.log(results.locationsRaw);
-        if (results.userRaw.rowCount > 0) {
+        if (results.user.rowCount > 0) {
             const obj = {
-                user: results.userRaw.rows[0],
-                locations: results.locationsRaw.rows,
-                countries,
+                countries: countriesPure,
                 continents,
                 grades,
                 experience,
-                // trips: results.tripsRaw[0],
+                user: results.user.rows[0],
+                locations: results.locations.rows,
+                trips: results.trips.rows,
+                matches: analyseMatches(results.matches.rows),
             };
-            // FIXME change userDataSQL and select all fields manually so that the id wont be overwritten by the friendshipstatus
-            obj.user.id = req.session.userId;
+
             res.json({ success: obj, error: false });
         } else {
-            console.log("error in Obj:", results);
-            res.json({ success: false, error: "couldn't load necessary data" });
+            console.log("error in essential-obj:", results);
+            res.json({
+                success: false,
+                error: {
+                    type: "essential",
+                    text: "couldn't load necessary data",
+                },
+            });
         }
     } catch (error) {
-        console.log("Error in DB:", error);
-        res.json({ success: false, error: "couldn't access database" });
+        console.log("Error in DB on fetching essentials:", error);
+        res.json({
+            success: false,
+            error: {
+                type: "essential",
+                text: "couldn't load necessary data",
+            },
+        });
     }
 });
+// app.get("/in/essentialData.json", async (req, res) => {
+//     let result = await getCountries();
+//     const { Response: countries } = JSON.parse(result.body);
+//     const continents = [];
+//     countries.forEach((country) => {
+//         if (!continents.includes(country.Region) && country.Region != "") {
+//             continents.push(country.Region);
+//         }
+//     });
+//     // console.log("continents:", continents);
+//     try {
+//         const results = await db.getEssentialData(req.session.userId);
+//         // results.tripsRaw.rowCount > 0
+//         // console.log(results.userRaw);
+//         // console.log(results.locationsRaw);
+//         if (results.userRaw.rowCount > 0) {
+//             const obj = {
+//                 user: results.userRaw.rows[0],
+//                 locations: results.locationsRaw.rows,
+//                 countries,
+//                 continents,
+//                 grades,
+//                 experience,
+//                 // trips: results.tripsRaw[0],
+//             };
+//             obj.user.id = req.session.userId;
+//             res.json({ success: obj, error: false });
+//         } else {
+//             console.log("error in Obj:", results);
+//             res.json({ success: false, error: "couldn't load necessary data" });
+//         }
+//     } catch (error) {
+//         console.log("Error in DB:", error);
+//         res.json({ success: false, error: "couldn't access database" });
+//     }
+// });
 
 app.get("/in/userData.json", async (req, res) => {
     // console.log("receiving:", req.query);
@@ -378,7 +329,7 @@ app.get("/in/locationData.json", async (req, res) => {
 app.get("/in/getTrips.json", async (req, res) => {
     // console.log("fetching trips");
     try {
-        const result = await db.getTripsbyUser(req.session.userId);
+        const result = await db.getOwnAndFriendsFutureTrips(req.session.userId);
         // console.log("from DB:", result.rows);
         if (result.rows) {
             res.json({
@@ -654,9 +605,7 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
 app.get("/in/matches.json", async (req, res) => {
     // console.log("server looking for matches...");
     try {
-        const { rows: matches } = await db.getLocationMatches(
-            req.session.userId
-        );
+        const { rows: matches } = await db.getMatches(req.session.userId);
         const filteredMatches = matches.filter(
             (trip) =>
                 trip.until_max >= trip.match_from_min &&
@@ -733,7 +682,7 @@ app.get("/in/matches.json", async (req, res) => {
 });
 
 app.get("/in/chat.json", async (req, res) => {
-    userId = req.session.userId;
+    // userId = req.session.userId;
 
     // console.log("requested chat", req.query);
     const { about, id } = req.query;

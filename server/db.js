@@ -14,7 +14,7 @@ const client = redis.createClient({
 client.on("error", function (err) {
     console.log(err);
 });
-const rds = {};
+// const rds = {};
 module.exports.rdsSet = promisify(client.set).bind(client);
 module.exports.rdsGet = promisify(client.get).bind(client);
 module.exports.rdsSetex = promisify(client.setex).bind(client);
@@ -71,29 +71,6 @@ module.exports.addProfilePic = function (url, id) {
 
 module.exports.addTripPic = function (url, id) {
     return sql.query(`UPDATE trips SET picture = $1 WHERE id = $2;`, [url, id]);
-};
-
-module.exports.getLocations = function () {
-    // console.log("DB query fetching Locations:");
-    // return sql.query(`SELECT * FROM locations;`);
-    return sql.query(
-        `WITH avg AS (SELECT location_id, AVG(rate) AS rate_avg from location_rating GROUP BY location_id) SELECT * FROM locations FULL JOIN avg ON avg.location_id=locations.id;`
-    );
-};
-
-module.exports.getTripsbyUser = async function (id) {
-    // console.log("DB query fetching TRips:");
-    const friends = await sql.query(
-        `SELECT users.id FROM friendships JOIN users ON (recipient=${id} AND sender=users.id) OR (sender=${id} AND recipient=users.id) WHERE confirmed=true;`
-    );
-    const friendIds = friends.rows.map((friend) => friend.id);
-    friendIds.push(id);
-    // console.log("id of friends:", friendIds);
-    // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
-    return sql.query(
-        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,
-        [friendIds]
-    );
 };
 
 module.exports.addTrip = function (
@@ -162,13 +139,89 @@ module.exports.updateUserPw = function (email, hashedPw) {
     ]);
 };
 
-module.exports.getEssentialData = async function (id) {
+//////////////////////////////////////////////////////
+
+module.exports.getEssentialData = async function (userId) {
     return {
-        userRaw: await this.getUserById(id, id),
-        locationsRaw: await this.getLocations(),
-        tripsRaw: await this.getTripsbyUser(id),
+        user: await this.getProfileData(userId),
+        locations: await this.getLocations(),
+        trips: await this.getOwnAndFriendsFutureTrips(userId),
+        matches: await this.getMatches(userId),
     };
 };
+
+module.exports.getProfileData = function (userId) {
+    return sql.query(
+        `SELECT id, first, last, age, picture, description, experience, grade_comfort, grade_max FROM users WHERE users.id=$1;`,
+        [userId]
+    );
+    //     `SELECT * FROM users WHERE id=${id} FOR UPDATE; UPDATE users SET last_online=now() WHERE id=${id};`
+};
+
+module.exports.getLocations = function () {
+    return sql.query(
+        `WITH avg AS (SELECT location_id, AVG(rate) AS rate_avg from location_rating GROUP BY location_id) SELECT id, continent, country, name, picture, infos, rate_avg FROM locations FULL JOIN avg ON avg.location_id=locations.id;`
+    );
+};
+
+module.exports.getOwnAndFriendsFutureTrips = async function (id) {
+    const friends = await sql.query(
+        `SELECT users.id FROM friendships JOIN users ON (recipient=${id} AND sender=users.id) OR (sender=${id} AND recipient=users.id) WHERE confirmed=true;`
+    );
+    const friendIds = friends.rows.map((friend) => friend.id);
+    friendIds.push(id);
+    return sql.query(
+        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) AND until_max>=now() ORDER BY from_min ASC;`,
+        [friendIds]
+    );
+};
+
+module.exports.getMatches = function (userId) {
+    return sql.query(
+        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
+        [userId]
+    );
+};
+
+//////////////////////////////////////////////////////
+
+// module.exports.getLocationMatches = function (userId) {
+//     return sql.query(
+//         `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
+//         [userId]
+//     );
+// };
+
+// module.exports.getTripsbyUser = async function (id) {
+//     // console.log("DB query fetching TRips:");
+//     const friends = await sql.query(
+//         `SELECT users.id FROM friendships JOIN users ON (recipient=${id} AND sender=users.id) OR (sender=${id} AND recipient=users.id) WHERE confirmed=true;`
+//     );
+//     const friendIds = friends.rows.map((friend) => friend.id);
+//     friendIds.push(id);
+//     // console.log("id of friends:", friendIds);
+//     // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
+//     return sql.query(
+//         `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,
+//         [friendIds]
+//     );
+// };
+
+// module.exports.getLocations = function () {
+//     // console.log("DB query fetching Locations:");
+//     // return sql.query(`SELECT * FROM locations;`);
+//     return sql.query(
+//         `WITH avg AS (SELECT location_id, AVG(rate) AS rate_avg from location_rating GROUP BY location_id) SELECT * FROM locations FULL JOIN avg ON avg.location_id=locations.id;`
+//     );
+// };
+
+// module.exports.getEssentialData = async function (id) {
+//     return {
+//         userRaw: await this.getUserById(id, id),
+//         locationsRaw: await this.getLocations(),
+//         tripsRaw: await this.getTripsbyUser(id),
+//     };
+// };
 
 module.exports.getUserById = function (id, userId) {
     // FIXME is also called when seeing other users so Update is wrong
@@ -301,13 +354,6 @@ module.exports.getFriendInfo = function (userId, friendId) {
     );
 };
 
-module.exports.getLocationMatches = function (userId) {
-    return sql.query(
-        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
-        [userId]
-    );
-};
-
 module.exports.getLastChats = function (about, id, userId) {
     let q;
     if (about == "general") {
@@ -389,178 +435,8 @@ module.exports.changeLocationRating = function (value, location, user) {
     return sql.query(q);
 };
 
-// module.exports.addNewMessage = async function (
-//     about,
-//     sender,
-//     recipient,
-//     msg,
-//     group
-// ) {
-//     let q, params;
-//     if (about == "general") {
-//         q = `INSERT INTO chat (sender, recipient, text) VALUES ($1, $2, $3) RETURNING id, created_at, recipient, text, trip_id, location_id;`;
-//         params = [sender, recipient, msg];
-//         // console.log("we are in the right corner...:", params);
-//     } else if (about == "trip") {
-//         q = `INSERT INTO chat (sender, recipient, text, trip_id) VALUES ($1, $2, $3, $4) RETURNING id, created_at, recipient, text, trip_id, location_id;`;
-//         params = [sender, recipient, msg, group];
-//     } else {
-//         q = ``;
-//         params = [];
-//     }
-
-//     return {
-//         chat: await sql.query(q, params),
-//         user: await sql.query(`SELECT first, last from users WHERE id=$1`, [
-//             sender,
-//         ]),
-//     };
-// };
-
 module.exports.getActiveUsersByIds = function (arrayOfIds) {
     return sql.query(`SELECT id, first, last FROM users WHERE id = ANY($1);`, [
         arrayOfIds,
     ]);
 };
-
-// module.exports.addProfilePic = function (url, id) {
-//     return sql.query(`UPDATE users SET profile_pic_url = $1 WHERE id = $2;`, [
-//         url,
-//         id,
-//     ]);
-// };
-
-// // module.exports.getUserById = function getUserByEmail(id) {
-// //     return sql.query(`SELECT * FROM users WHERE id=$1`, [id]);
-// // };
-
-// module.exports.getUserByTextSearch = async function (text, userId) {
-//     const tag = text.length > 1 ? `%${text}%` : `${text}%`;
-//     return {
-//         first: await sql.query(
-//             `SELECT id, first, last, profile_pic_url, bio FROM users WHERE first ILIKE $1 AND id!=$2;`,
-//             [tag, userId]
-//         ),
-//         last: await sql.query(
-//             `SELECT id, first, last, profile_pic_url, bio FROM users WHERE last ILIKE $1 AND id!=$2;`,
-//             [tag, userId]
-//         ),
-//     };
-//     //
-// };
-
-// module.exports.getMostRecentUsers = function (limit, userId) {
-//     return sql.query(
-//         `SELECT id, first, last, profile_pic_url, bio FROM users WHERE id!=$1 ORDER BY id DESC LIMIT $2;`,
-//         [userId, limit]
-//     );
-// };
-
-// module.exports.safeFriendRequest = function (userId, friendId) {
-//     return sql.query(
-//         `INSERT INTO friendships (sender, recipient) VALUES ($1, $2);`,
-//         [userId, friendId]
-//     );
-// };
-
-// module.exports.confirmFriendRequest = function (userId, friendId) {
-//     return sql.query(
-//         `UPDATE friendships SET confirmed=true WHERE (sender=$1 AND recipient=$2);`,
-//         [friendId, userId]
-//     );
-// };
-
-// module.exports.deleteFriendRequest = function (userId, friendId) {
-//     return sql.query(
-//         `DELETE FROM friendships WHERE (sender=$1 AND recipient=$2);`,
-//         [userId, friendId]
-//     );
-// };
-
-// module.exports.deleteFriendship = function (userId, friendId) {
-//     return sql.query(
-//         `DELETE FROM friendships WHERE (sender=$1 AND recipient=$2) OR (sender=$2 AND recipient=$1);`,
-//         [userId, friendId]
-//     );
-// };
-
-// module.exports.getFriendInfo = function (userId, friendId) {
-//     return sql.query(
-//         `SELECT * FROM friendships WHERE (sender=$1 AND recipient=$2) OR (sender=$2 AND recipient=$1);`,
-//         [userId, friendId]
-//     );
-// };
-
-// module.exports.getAllRelations = function (userId) {
-//     return sql.query(
-//         `SELECT users.id, first, last, profile_pic_url, sender, recipient, confirmed FROM friendships JOIN users ON (recipient = $1 AND sender = users.id) OR (sender = $1 AND recipient = users.id);`,
-//         [userId]
-//     );
-// };
-
-// module.exports.getLastChats = function (userId, recipientId) {
-//     let q;
-//     if (recipientId == 0) {
-//         q = `WITH lowestID AS (SELECT MIN(id) FROM chat WHERE recipient=0 AND response_to=0 LIMIT 10) SELECT chat.id, response_to, text, chat.created_at, first, last, profile_pic_url FROM chat JOIN users ON sender=users.id JOIN lowestID ON chat.id>=lowestId.min WHERE recipient=0 ORDER BY chat.id DESC;`;
-//     } else {
-//         q = `WITH lowestID AS (SELECT MIN(id) FROM chat WHERE (recipient=${userId} AND sender=${recipientId} AND response_to=0) OR (sender=${userId} AND recipient=${recipientId} AND response_to=0) LIMIT 10) SELECT chat.id, response_to, text, chat.created_at, first, last, profile_pic_url FROM chat JOIN users ON sender=users.id JOIN lowestID ON chat.id>=lowestId.min WHERE (recipient=${recipientId} AND sender=${userId}) OR (sender=${recipientId} AND recipient=${userId})ORDER BY chat.id DESC;`;
-//     }
-
-//     // if (recipientId == 0) {
-//     //     q = `SELECT chat.id, response_to, text, chat.created_at, first, last, profile_pic_url FROM chat JOIN users ON sender = users.id WHERE recipient=0 ORDER BY chat.id DESC LIMIT 10;`;
-//     // } else {
-//     //     q = `SELECT chat.id, response_to, text, chat.created_at, first, last, profile_pic_url FROM chat JOIN users ON sender = users.id WHERE (recipient=${userId} AND sender=${recipientId}) OR (sender=${userId} AND recipient=${recipientId}) ORDER BY chat.id DESC LIMIT 10;`;
-//     // }
-
-//     return sql.query(q);
-// };
-
-// module.exports.addNewMessage = async function (
-//     sender,
-//     replyTo,
-//     recipient,
-//     msg
-// ) {
-//     // console.log("new CHAT from", sender);
-//     // console.log("new CHAT for", recipient);
-//     // console.log("with", msg);
-//     return {
-//         chat: await sql.query(
-//             `INSERT INTO chat (response_to, sender, recipient, text) VALUES ($1, $2, $3, $4) RETURNING id, response_to, created_at, recipient, text;`,
-//             [replyTo, sender, recipient, msg]
-//         ),
-//         user: await sql.query(
-//             `SELECT first, last, profile_pic_url from users WHERE id=$1`,
-//             [sender]
-//         ),
-//     };
-// };
-
-// module.exports.deleteAllUserData = async function (id) {
-//     const chat = await sql.query(
-//         `DELETE FROM chat WHERE sender=$1 OR recipient=$1`,
-//         [id]
-//     );
-//     const friendships = await sql.query(
-//         `DELETE FROM friendships WHERE sender=$1 OR recipient=$1`,
-//         [id]
-//     );
-//     const mail = await sql.query(`SELECT email FROM users WHERE id=$1`, [id]);
-//     const codes = await sql.query(`DELETE FROM codes WHERE email=$1`, [
-//         mail.rows[0].email,
-//     ]);
-//     const users = await sql.query(`DELETE FROM users WHERE id=$1`, [id]);
-//     return {
-//         chat: chat,
-//         friendships: friendships,
-//         mail: mail.rows[0].email,
-//         users: users,
-//     };
-// };
-
-// module.exports.getActiveUsersByIds = function (arrayOfIds) {
-//     return sql.query(
-//         `SELECT id, first, last, profile_pic_url FROM users WHERE id = ANY($1);`,
-//         [arrayOfIds]
-//     );
-// };

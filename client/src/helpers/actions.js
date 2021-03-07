@@ -1,13 +1,8 @@
 import axios from "./axios";
 
 export async function getEssentialData() {
-    // console.log("Going to fetch user data:");
     try {
         const { data } = await axios.get(`/in/essentialData.json`);
-        // const countries = await axios.get(
-        //     "http://countryapi.gear.host/v1/Country/getCountries"
-        // );
-        // console.log("received", data);
         return {
             type: "GET_ESSENTIAL_DATA",
             payload: {
@@ -18,7 +13,13 @@ export async function getEssentialData() {
         console.log("Received an error on /app:", err);
         return {
             type: "GET_ESSENTIAL_DATA",
-            error: "No Connection to Database",
+            payload: {
+                success: false,
+                error: {
+                    type: "essential",
+                    text: "couldn't access server",
+                },
+            },
         };
     }
 }

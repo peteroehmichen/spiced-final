@@ -1,3 +1,5 @@
+// import {cloneDeep} from "lodash"
+
 export default function reducer(store = {}, action) {
     store = {
         ...store,
@@ -19,6 +21,9 @@ export default function reducer(store = {}, action) {
         locations: store.locations && [...store.locations],
         trips: store.trips && [...store.trips],
         grades: store.grades && [...store.grades],
+        experience: store.experience && [...store.experience],
+        countries: store.countries && [...store.countries],
+        continents: store.continents && [...store.continents],
         friendships: store.friendships && [...store.friendships],
         matches: store.matches && [...store.matches],
         chat: store.chat && [...store.chat],
