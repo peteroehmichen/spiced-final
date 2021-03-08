@@ -1,6 +1,76 @@
-// import {cloneDeep} from "lodash"
+import { produce } from "immer";
 
-export default function reducer(store = {}, action) {
+export default function reducer(store = { errors: [] }, action) {
+    ///////////////////////////////////////////////////
+    // changing complex and/or nested values with immer
+    ///////////////////////////////////////////////////
+
+    if (action.type == "GET_ESSENTIAL_DATA") {
+        return produce(store, (newStore) => {
+            // newStore.errors = [];
+            if (action.payload.success) {
+                newStore.user = action.payload.success.user;
+                newStore.locations = action.payload.success.locations;
+                newStore.trips = action.payload.success.trips;
+                newStore.matches = action.payload.success.matches;
+                newStore.grades = action.payload.success.grades;
+                newStore.experience = action.payload.success.experience;
+                newStore.countries = action.payload.success.countries;
+                newStore.continents = action.payload.success.continents;
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "ADD_NEW_LOCATION") {
+        return produce(store, (newStore) => {
+            if (action.payload.success) {
+                newStore.locations.unshift(action.payload.success);
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+            newStore.activeLocationForm = !store.activeLocationForm;
+        });
+    }
+
+    if (action.type == "FULL_LOCATION_DATA") {
+        return produce(store, (newStore) => {
+            if (action.payload.success) {
+                newStore.location = action.payload.success;
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "ADD_LOCATION_SECTION") {
+        return produce(store, (newStore) => {
+            if (action.payload.success) {
+                if (newStore.location.id == action.payload.success.id) {
+                    newStore.location.infos = action.payload.success.infos;
+                }
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    ////////////////////////////////////////////////////////
+    // changing primitive values on base level without immer
+    ////////////////////////////////////////////////////////
+
+    store = {
+        ...store,
+    };
+
+    if (action.type == "TOGGLE_LOCATION_FORM") {
+        store.activeLocationForm = !store.activeLocationForm;
+        return store;
+    }
+
+    /// unrevised after here
+
     store = {
         ...store,
         user: {
@@ -29,22 +99,6 @@ export default function reducer(store = {}, action) {
         chat: store.chat && [...store.chat],
     };
 
-    if (action.type == "GET_ESSENTIAL_DATA") {
-        if (action.payload.success) {
-            // console.log("waiting to work...");
-            store.user = action.payload.success.user;
-            store.locations = action.payload.success.locations;
-            // store.trips = action.payload.success.trips;
-            store.grades = action.payload.success.grades;
-            store.experience = action.payload.success.experience;
-            store.countries = action.payload.success.countries;
-            store.continents = action.payload.success.continents;
-            // store.trips = action.payload.success.trips;
-        } else {
-            store.appError = action.error;
-        }
-    }
-
     if (action.type == "FULL_USER_DATA") {
         if (action.id == "0") {
             store.user = action.payload.user;
@@ -54,14 +108,6 @@ export default function reducer(store = {}, action) {
                 ...store.otherUser,
                 ...action.payload,
             };
-        }
-    }
-
-    if (action.type == "FULL_LOCATION_DATA") {
-        if (action.payload.error) {
-            store.location = action.payload;
-        } else {
-            store.location = action.payload.success;
         }
     }
 
@@ -95,10 +141,6 @@ export default function reducer(store = {}, action) {
             });
             // console.log("new user:", store.user);
         }
-    }
-
-    if (action.type == "TOGGLE_LOCATION_FORM") {
-        store.activeLocationForm = !store.activeLocationForm;
     }
 
     if (action.type == "UPDATE_FRIENDSHIP_STATUS") {
@@ -148,22 +190,6 @@ export default function reducer(store = {}, action) {
         }
     }
 
-    if (action.type == "ADD_LOCATION_SECTION") {
-        if (action.payload.success) {
-            // store.locations = store.locations.map((elem) => {
-            //     if (elem.id == action.payload.success.id) {
-            //         elem.infos = action.payload.success.infos;
-            //     }
-            //     return elem;
-            // });
-            if (store.location.id == action.payload.success.id) {
-                store.location.infos = action.payload.success.infos;
-            }
-        } else {
-            store.locations.infosError = action.error;
-        }
-    }
-
     if (action.type == "UPDATE_PROFILE_PICTURE") {
         if (action.payload) {
             store.user.picture = action.payload;
@@ -185,31 +211,12 @@ export default function reducer(store = {}, action) {
         }
     }
 
-    if (action.type == "ADD_NEW_LOCATION") {
-        // console.log("writing new Location to store");
-        if (action.payload) {
-            store.locations.unshift(action.payload);
-        } else {
-            store.locationError = action.error;
-        }
-        store.activeLocationForm = !store.activeLocationForm;
-    }
-
     if (action.type == "GET_LOCATIONS") {
         // console.log("writing all Locations to store");
         if (action.payload) {
             store.locations = action.payload;
         } else {
             store.locationError = action.error;
-        }
-    }
-
-    if (action.type == "GET_TRIPS") {
-        // console.log(("writing all Trips to store", action.payload));
-        if (action.payload) {
-            store.trips = action.payload;
-        } else {
-            store.tripsError = action.error;
         }
     }
 
@@ -328,6 +335,17 @@ export default function reducer(store = {}, action) {
     //         store.ratingError = null;
     //     }
     // }
+
+    ///////////////////////////////////////////////////////
+    // actions that should be irrelevant
+
+    if (action.type == "GET_TRIPS") {
+        if (action.payload) {
+            store.trips = action.payload;
+        } else {
+            store.tripsError = action.error;
+        }
+    }
 
     return store;
 }

@@ -24,6 +24,87 @@ export async function getEssentialData() {
     }
 }
 
+export function toggleLocationForm() {
+    return { type: "TOGGLE_LOCATION_FORM" };
+}
+
+export async function addNewLocation(values) {
+    try {
+        const { data } = await axios.get(
+            `/in/addLocation.json?continent=${values.continent}&country=${values.country}&name=${values.name}`
+        );
+        return {
+            type: "ADD_NEW_LOCATION",
+            payload: data,
+        };
+    } catch (error) {
+        console.log("Received an error on /locations:", error);
+        return {
+            type: "ADD_NEW_LOCATION",
+            payload: {
+                success: false,
+                error: {
+                    type: "notification",
+                    text: "Could not access Server",
+                },
+            },
+        };
+    }
+}
+
+export async function getLocationData(id) {
+    try {
+        const { data } = await axios.get(`/in/locationData.json?id=${id}`);
+        return {
+            type: "FULL_LOCATION_DATA",
+            payload: data,
+        };
+    } catch (error) {
+        console.log("Received an error on /location:", error);
+        return {
+            type: "FULL_LOCATION_DATA",
+            payload: {
+                success: false,
+                error: {
+                    type: "notification",
+                    text: "Could not access Server",
+                },
+            },
+        };
+    }
+}
+
+export async function addLocationSection(values, id, prev) {
+    values.id = id;
+    if (prev.title) {
+        values.prev = prev.title;
+    }
+    try {
+        const { data } = await axios.post(
+            "/in/addLocationSection.json",
+            values
+        );
+        return {
+            type: "ADD_LOCATION_SECTION",
+            payload: data,
+        };
+    } catch (error) {
+        console.log("Received an error on /addLocationSection:", error);
+        return {
+            type: "ADD_LOCATION_SECTION",
+            payload: {
+                success: false,
+                error: {
+                    type: "notification",
+                    text: "Could not access Server",
+                },
+            },
+        };
+    }
+}
+
+////// unrevised actions /////
+
 export async function getUserData(id) {
     // console.log("Going to fetch user data:");
     try {
@@ -40,24 +121,6 @@ export async function getUserData(id) {
             type: "FULL_USER_DATA",
             payload: { error: "No Connection to Database" },
             id: id,
-        };
-    }
-}
-
-export async function getLocationData(id) {
-    // console.log("Going to fetch user data:");
-    try {
-        const { data } = await axios.get(`/in/locationData.json?id=${id}`);
-        // console.log("received", data);
-        return {
-            type: "FULL_LOCATION_DATA",
-            payload: data,
-        };
-    } catch (err) {
-        console.log("Received an error on /location:", err);
-        return {
-            type: "FULL_LOCATION_DATA",
-            payload: { error: "No Connection to Database" },
         };
     }
 }
@@ -79,30 +142,6 @@ export async function updateTripData(values, id) {
     }
 }
 
-export async function addLocationSection(values, id, prev) {
-    values.id = id;
-    if (prev.title) {
-        values.prev = prev.title;
-    }
-    // console.log("sending:", values);
-    try {
-        const { data } = await axios.post(
-            "/in/addLocationSection.json",
-            values
-        );
-        console.log("data from axios:", data);
-        return {
-            type: "ADD_LOCATION_SECTION",
-            payload: data,
-        };
-    } catch (error) {
-        return {
-            type: "ADD_LOCATION_SECTION",
-            payload: { error: "Unknown Error" },
-        };
-    }
-}
-
 export async function updateUserData(values) {
     try {
         const { data } = await axios.post("/in/updateUserData.json", values);
@@ -117,10 +156,6 @@ export async function updateUserData(values) {
             payload: { error: "Unknown Error" },
         };
     }
-}
-
-export function toggleLocationForm() {
-    return { type: "TOGGLE_LOCATION_FORM" };
 }
 
 export function toggleTripForm() {
@@ -200,31 +235,6 @@ export async function updateLocationPicture(response) {
         obj.locationPicError = response.error;
     }
     return obj;
-}
-export async function addNewLocation(values) {
-    // console.log("writing new Location:", values);
-    try {
-        const { data } = await axios.get(
-            `/in/addLocation.json?continent=${values.continent}&country=${values.country}&name=${values.name}`
-        );
-        // console.log("response:", data);
-        if (data.success) {
-            return {
-                type: "ADD_NEW_LOCATION",
-                payload: data.success,
-            };
-        } else {
-            return {
-                type: "ADD_NEW_LOCATION",
-                error: data.error,
-            };
-        }
-    } catch (error) {
-        return {
-            type: "ADD_NEW_LOCATION",
-            error: "Could not access Server",
-        };
-    }
 }
 
 export async function addNewTrip(values) {

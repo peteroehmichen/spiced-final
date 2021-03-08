@@ -235,7 +235,6 @@ app.post("/in/updateTripData.json", async (req, res) => {
 });
 
 app.post("/in/addLocationSection.json", async (req, res) => {
-    // console.log("body:", req.body);
     try {
         const result = await db.addLocationSection(
             req.body.title,
@@ -248,11 +247,11 @@ app.post("/in/addLocationSection.json", async (req, res) => {
         if (result.rowCount > 0) {
             return res.json({ success: result.rows[0], error: false });
         } else {
-            res.json({ success: false, error: "formatting Error" });
+            res.json({ success: false, error: "Formatting Error" });
         }
     } catch (err) {
         console.log("Error in trip-Update:", err);
-        res.json({ error: "Failed Connection to Database" });
+        res.json({ success: false, error: "Failed Connection to Database" });
     }
 });
 
@@ -271,14 +270,20 @@ app.get("/in/addLocation.json", async (req, res) => {
         } else {
             res.json({
                 success: false,
-                error: "Error in writing to DB",
+                error: {
+                    type: "notification",
+                    text: "Error in writing to DB",
+                },
             });
         }
     } catch (err) {
         console.log("checking Error:", err);
         res.json({
             success: false,
-            error: "Failed Connection to Database",
+            error: {
+                type: "notification",
+                text: "Failed Connection to Database",
+            },
         });
     }
 });
@@ -310,19 +315,25 @@ app.get("/in/getLocations.json", async (req, res) => {
 });
 
 app.get("/in/locationData.json", async (req, res) => {
-    // console.log("receiving:", req.query);
-    // const idForDb = req.query.id == 0 ? req.session.userId : req.query.id;
     try {
         const results = await db.getLocationById(req.query.id);
-        // console.log("checking:", results);
         if (results.rowCount > 0) {
-            return res.json({ success: results.rows[0] });
+            return res.json({ success: results.rows[0], error: false });
         } else {
-            res.json({ error: "Location unkown" });
+            res.json({
+                success: false,
+                error: { type: "notification", text: "Location unkown" },
+            });
         }
     } catch (err) {
         // console.log("checking2:", err);
-        res.json({ error: "Failed Connection to Database" });
+        res.json({
+            success: false,
+            error: {
+                type: "notification",
+                text: "Failed Connection to Database",
+            },
+        });
     }
 });
 

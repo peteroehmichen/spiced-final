@@ -15,7 +15,7 @@ const store = createStore(
     reducer,
     composeWithDevTools(applyMiddleware(reduxPromise))
 );
-
+// TODO maybe add a immutability checker... like immutable state invariant
 let elem;
 if (location.pathname === "/welcome") {
     elem = <Welcome />;

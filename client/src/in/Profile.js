@@ -33,7 +33,7 @@ export default function Profile() {
     } = useSelector((store) => store);
 
     useEffect(() => {
-        dispatch(getTrips());
+        // dispatch(getTrips());
     }, []);
 
     const getLocationName = function (id) {

@@ -21,7 +21,7 @@ export default function User(props) {
 
     useEffect(async () => {
         dispatch(getUserData(props.match.params.id));
-        dispatch(getTrips());
+        // dispatch(getTrips());
     }, []);
 
     const getLocationName = function (id) {

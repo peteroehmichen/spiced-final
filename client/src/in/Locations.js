@@ -1,13 +1,7 @@
-/*
-Add new Locations
-Edit Locations
-Rate Locations
-*/
-
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { getLocations, toggleLocationForm } from "../helpers/actions";
+import { toggleLocationForm } from "../helpers/actions";
 import NewLocation from "./NewLocation";
 
 export default function Locations() {
@@ -15,9 +9,6 @@ export default function Locations() {
     const { activeLocationForm, locations } = useSelector((store) => store);
     const [searchInput, setSearchInput] = useState("");
 
-    // useEffect(() => {
-    //     console.log()
-    // }, [searchInput]);
     let filteredLocations = [];
     if (locations) {
         filteredLocations = locations.filter(
@@ -39,7 +30,6 @@ export default function Locations() {
                 key="searchLocation"
                 onChange={(e) => {
                     setSearchInput(e.target.value);
-                    // console.log(e.target.value);
                 }}
             />
 

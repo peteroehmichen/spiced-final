@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Upload from "../graphComp/Upload";
-import {
-    getLocationData,
-    toggleUploadModal,
-    addLocationSection,
-} from "../helpers/actions";
+import { getLocationData, addLocationSection } from "../helpers/actions";
 import Chat from "./Chat";
 import PhotoUploader from "./PhotoUploader";
 import LocationRating from "./LocationRating";
@@ -25,8 +21,6 @@ export default function User(props) {
         dispatch(getLocationData(props.match.params.id));
     }, []);
 
-    if (!loc.name && !loc.error) return null;
-
     const fillNew = function (e) {
         setValues({
             ...values,
@@ -45,9 +39,8 @@ export default function User(props) {
     } else {
         infos = [];
     }
-    // console.log(infos);
 
-    const LocDetails = (
+    const LocDetails = loc.name && (
         <div
             className="central location"
             style={{
@@ -231,10 +224,9 @@ export default function User(props) {
     );
     const errorBlock = (
         <div className="central location">
-            <h4>There was a problem...</h4>
-            <h4>{loc.error}</h4>
+            <h4>Could not load the requested page</h4>
         </div>
     );
 
-    return (loc.error && errorBlock) || LocDetails;
+    return LocDetails || errorBlock;
 }

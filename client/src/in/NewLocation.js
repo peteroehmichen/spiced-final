@@ -8,14 +8,8 @@ export default function NewLocation() {
 
     const dispatch = useDispatch();
 
-    if (!countries || !continents) return null;
-    // const continents = [];
-    // countries.forEach((country) => {
-    //     if (!continents.includes(country.Region) && country.Region != "") {
-    //         continents.push(country.Region);
-    //     }
-    // });
-    // console.log(continents);
+    // if (!countries) return null;
+
     return (
         <div className="form new-locations">
             <div>
@@ -31,13 +25,14 @@ export default function NewLocation() {
                         <option value="DEFAULT" disabled>
                             Continent
                         </option>
-                        {continents.map((elem, i) => (
-                            <option key={i} value={elem}>
-                                {elem.length > 20
-                                    ? elem.slice(0, 17) + "..."
-                                    : elem}
-                            </option>
-                        ))}
+                        {continents &&
+                            continents.map((elem, i) => (
+                                <option key={i} value={elem}>
+                                    {elem.length > 20
+                                        ? elem.slice(0, 17) + "..."
+                                        : elem}
+                                </option>
+                            ))}
                     </select>
                 </label>
                 <label>
@@ -50,15 +45,18 @@ export default function NewLocation() {
                         <option value="DEFAULT" disabled>
                             Country
                         </option>
-                        {countries
-                            .filter((elem) => elem.Region == values.continent)
-                            .map((elem, i) => (
-                                <option key={i} value={elem.Name}>
-                                    {elem.Name.length > 20
-                                        ? elem.Name.slice(0, 17) + "..."
-                                        : elem.Name}
-                                </option>
-                            ))}
+                        {countries &&
+                            countries
+                                .filter(
+                                    (elem) => elem.Region == values.continent
+                                )
+                                .map((elem, i) => (
+                                    <option key={i} value={elem.Name}>
+                                        {elem.Name.length > 20
+                                            ? elem.Name.slice(0, 17) + "..."
+                                            : elem.Name}
+                                    </option>
+                                ))}
                     </select>
                 </label>
                 <input
