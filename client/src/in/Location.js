@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Upload from "../graphComp/Upload";
 import { getLocationData, addLocationSection } from "../helpers/actions";
+
+import Upload from "../graphComp/Upload";
 import Chat from "./Chat";
 import PhotoUploader from "./PhotoUploader";
 import LocationRating from "./LocationRating";

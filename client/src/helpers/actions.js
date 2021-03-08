@@ -74,6 +74,53 @@ export async function getLocationData(id) {
     }
 }
 
+export async function changeMyRating(value, id) {
+    try {
+        const { data } = await axios.get(
+            `/in/changeLocationRating.json?value=${value}&id=${id}`
+        );
+        return {
+            type: "CHANGE_LOCATION_RATING",
+            payload: data,
+        };
+    } catch (error) {
+        console.log("Received an error on /location:", error);
+        return {
+            type: "CHANGE_LOCATION_RATING",
+            payload: {
+                success: false,
+                error: {
+                    type: "notification",
+                    text: "Could not access Server",
+                },
+            },
+        };
+    }
+
+    // console.log("received:", data);
+    // if (data.success) {
+    //     return {
+    //         payload: data.success,
+    //         id,
+    //     };
+}
+
+// export async function getLocationRating(id) {
+//     const { data } = await axios.get(`/in/getLocationRating.json?q=${id}`);
+//     // console.log("received:", data);
+//     if (!data.error) {
+//         return {
+//             type: "GET_LOCATION_RATING",
+//             payload: data.success,
+//         };
+//     } else {
+//         return {
+//             type: "GET_LOCATION_RATING",
+//             error: data.error,
+//         };
+//     }
+// }
+
 export async function addLocationSection(values, id, prev) {
     values.id = id;
     if (prev.title) {
@@ -461,41 +508,6 @@ export function newLocationMessage(obj) {
         type: "NEW_LOCATION_MESSAGE",
         payload: obj,
     };
-}
-
-export async function getLocationRating(id) {
-    const { data } = await axios.get(`/in/getLocationRating.json?q=${id}`);
-    // console.log("received:", data);
-    if (!data.error) {
-        return {
-            type: "GET_LOCATION_RATING",
-            payload: data.success,
-        };
-    } else {
-        return {
-            type: "GET_LOCATION_RATING",
-            error: data.error,
-        };
-    }
-}
-
-export async function changeMyRating(value, id) {
-    const { data } = await axios.get(
-        `/in/changeLocationRating.json?value=${value}&id=${id}`
-    );
-    // console.log("received:", data);
-    if (!data.error) {
-        return {
-            type: "GET_LOCATION_RATING",
-            payload: data.success,
-            id,
-        };
-    } else {
-        return {
-            type: "GET_LOCATION_RATING",
-            error: data.error,
-        };
-    }
 }
 
 /*

@@ -233,8 +233,32 @@ module.exports.getUserById = function (id, userId) {
     // );
 };
 
-module.exports.getLocationById = function (id) {
+module.exports.getLocationById = async function (id) {
     return sql.query(`SELECT * FROM locations WHERE id=${id};`);
+};
+
+module.exports.getLocationRating = async function (id, user) {
+    return {
+        rating: await sql.query(
+            `SELECT COUNT(user_id) AS sum, AVG(rate) AS avg FROM location_rating WHERE (location_id=$1);`,
+            [id]
+        ),
+        user: await sql.query(
+            `SELECT rate AS own FROM location_rating WHERE location_id=${id} AND user_id=${user}`
+        ),
+    };
+};
+
+module.exports.changeLocationRating = function (value, location, user) {
+    let q;
+    if (value == "delete") {
+        // console.log("delete");
+        q = `DELETE FROM location_rating WHERE location_id=${location} AND user_id=${user}`;
+    } else if (value < 6 && value >= 0) {
+        // console.log("number");
+        q = `INSERT INTO location_rating (user_id, location_id, rate) VALUES (${user}, ${location}, ${value})`;
+    }
+    return sql.query(q);
 };
 
 module.exports.updateUserData = function (property, value, id) {
@@ -407,30 +431,6 @@ module.exports.addTripMessage = async function (
             sender,
         ]),
     };
-};
-
-module.exports.getLocationRating = async function (id, user) {
-    return {
-        rating: await sql.query(
-            `SELECT COUNT(user_id) AS sum, AVG(rate) AS avg FROM location_rating WHERE (location_id=$1);`,
-            [id]
-        ),
-        user: await sql.query(
-            `SELECT rate, created_at FROM location_rating WHERE location_id=${id} AND user_id=${user}`
-        ),
-    };
-};
-
-module.exports.changeLocationRating = function (value, location, user) {
-    let q;
-    if (value == "delete") {
-        // console.log("delete");
-        q = `DELETE FROM location_rating WHERE location_id=${location} AND user_id=${user}`;
-    } else if (value < 6 && value >= 0) {
-        // console.log("number");
-        q = `INSERT INTO location_rating (user_id, location_id, rate) VALUES (${user}, ${location}, ${value})`;
-    }
-    return sql.query(q);
 };
 
 module.exports.getActiveUsersByIds = function (arrayOfIds) {

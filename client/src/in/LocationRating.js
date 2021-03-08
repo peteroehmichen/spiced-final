@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getLocationRating, changeMyRating } from "../helpers/actions";
 
 export default function LocationRating(props) {
-    const { rating } = useSelector((store) => store);
+    // const { rating } = useSelector((store) => store);
+    const { location } = useSelector((store) => store);
     // 1) summary value and sum of opinions
     // 2) either function to delete own rating or add new rating
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getLocationRating(props.id));
+        // dispatch(getLocationRating(props.id));
     }, []);
 
     const submit = function (e) {
@@ -22,17 +23,17 @@ export default function LocationRating(props) {
         }
     };
 
-    const avg = rating && (
+    const avg = location && (
         <b>
             Solo-Rating:{" "}
-            {rating.sum > 0 && `${Math.round(rating.avg * 10) / 10}*`} (
-            {rating.sum} reviews)
+            {location.sum > 0 && `${Math.round(location.avg * 10) / 10}*`} (
+            {location.sum} reviews)
         </b>
     );
     let own;
-    if (rating && rating.your_rating) {
+    if (location && location.own) {
         own = <span onClick={submit}>remove your rating</span>;
-    } else if (rating) {
+    } else if (location) {
         own = (
             <label>
                 <select
