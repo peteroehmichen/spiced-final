@@ -158,7 +158,7 @@ module.exports.getProfileData = function (userId) {
 
 module.exports.getLocations = function () {
     return sql.query(
-        `WITH avg AS (SELECT location_id, AVG(rate) AS rate_avg from location_rating GROUP BY location_id) SELECT id, continent, country, name, picture, infos, rate_avg FROM locations FULL JOIN avg ON avg.location_id=locations.id ORDER BY name;`
+        `WITH average AS (SELECT location_id, AVG(rate) AS avg from location_rating GROUP BY location_id) SELECT id, continent, country, name, picture, infos, avg FROM locations FULL JOIN average ON average.location_id=locations.id ORDER BY name;`
     );
 };
 

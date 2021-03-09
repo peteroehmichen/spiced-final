@@ -56,6 +56,25 @@ export default function reducer(store = { errors: [] }, action) {
         });
     }
 
+    if (action.type == "CHANGE_LOCATION_RATING") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            if (success && success.location_id == newStore.location.id) {
+                newStore.location.own = success.own;
+                newStore.location.sum = success.sum;
+                newStore.location.avg = success.avg;
+                newStore.locations.forEach((country) => {
+                    if (country.id == success.location_id) {
+                        country.avg = success.avg;
+                    }
+                    return country;
+                });
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////
     // changing primitive values on base level without immer
     ////////////////////////////////////////////////////////

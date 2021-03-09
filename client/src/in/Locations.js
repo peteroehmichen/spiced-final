@@ -63,12 +63,10 @@ export default function Locations() {
                                         <p>{elem.continent}</p>
                                     </div>
                                     <div className="card-foot">
-                                        {elem.rate_avg && (
+                                        {elem.avg && (
                                             <div>
                                                 Solo-Rating: ⭐️{" "}
-                                                {Math.round(
-                                                    elem.rate_avg * 10
-                                                ) / 10}
+                                                {Math.round(elem.avg * 10) / 10}
                                             </div>
                                         )}
                                     </div>

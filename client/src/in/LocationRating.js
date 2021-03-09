@@ -16,7 +16,7 @@ export default function LocationRating(props) {
     const submit = function (e) {
         if (e.target.innerText.includes("remove")) {
             dispatch(changeMyRating("delete", props.id));
-            // console.log("deleting my rateing");
+            // console.log("deleting my rating");
         } else if (e.target.value) {
             dispatch(changeMyRating(e.target.value, props.id));
             // console.log("adding", e);
@@ -31,7 +31,7 @@ export default function LocationRating(props) {
         </b>
     );
     let own;
-    if (location && location.own) {
+    if (location && location.own !== false) {
         own = <span onClick={submit}>remove your rating</span>;
     } else if (location) {
         own = (
@@ -44,7 +44,7 @@ export default function LocationRating(props) {
                     <option value="DEFAULT" disabled>
                         your Rating...
                     </option>
-                    <option value="0">o</option>
+                    <option value="0">-</option>
                     <option value="1">*</option>
                     <option value="2">* *</option>
                     <option value="3">* * *</option>

@@ -347,7 +347,7 @@ app.get("/in/locationData.json", async (req, res) => {
 });
 
 app.get("/in/changeLocationRating.json", async (req, res) => {
-    // console.log(req.query);
+    console.log("rating query", req.query);
     try {
         await db.changeLocationRating(
             req.query.value,
@@ -359,8 +359,12 @@ app.get("/in/changeLocationRating.json", async (req, res) => {
             req.session.userId
         );
         let rating = results.rating.rows[0];
-        rating.location_id = req.query.q;
-        rating.own = results.user.rows[0]?.own || false;
+        rating.location_id = req.query.id;
+        rating.own = results.user.rows.length
+            ? results.user.rows[0].own
+            : false;
+        //  results.user.rows[0]?.own || false;
+        console.log("rating:", rating);
         res.json({ success: rating, error: false });
     } catch (error) {
         console.log("Error in updating rating:", error);
