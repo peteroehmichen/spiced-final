@@ -754,9 +754,12 @@ app.get("/in/chat.json", async (req, res) => {
 app.post("/in/picture.json", aws.uploader.single("file"), async (req, res) => {
     try {
         const awsAdd = await aws.uploadToAWS(req);
-        const awsDelete = await aws.deleteFromAWS(req.body.old);
         let sql;
-        if (awsAdd.url && awsDelete.success) {
+        if (awsAdd.url) {
+            const awsDelete = await aws.deleteFromAWS(req.body.old);
+            if (!awsDelete.success) {
+                console.log("could not delete image", req.body.old);
+            }
             if (req.body.location_id) {
                 sql = await db.addLocationPic(awsAdd.url, req.body.location_id);
             } else if (req.body.trip_id) {
@@ -766,12 +769,12 @@ app.post("/in/picture.json", aws.uploader.single("file"), async (req, res) => {
             }
         }
         if (sql.rowCount > 0) {
-            res.json(awsAdd);
+            res.json({ success: awsAdd, error: false });
         } else {
-            res.json({ error: "DB rejected new picture" });
+            res.json({ success: false, error: "DB rejected new picture" });
         }
     } catch (error) {
-        res.json({ error: "Upload failed - try again later" });
+        res.json({ success: false, error: "Server denied upload" });
     }
 });
 

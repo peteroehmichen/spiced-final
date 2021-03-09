@@ -28,6 +28,12 @@ export function toggleLocationForm() {
     return { type: "TOGGLE_LOCATION_FORM" };
 }
 
+export async function toggleUploadModal() {
+    return {
+        type: "TOGGLE_UPLOAD_MODAL",
+    };
+}
+
 export async function addNewLocation(values) {
     try {
         const { data } = await axios.get(
@@ -150,6 +156,16 @@ export async function addLocationSection(values, id, prev) {
     }
 }
 
+export async function updateLocationPicture(response, location_id) {
+    return {
+        type: "UPDATE_LOCATION_PICTURE",
+        payload: {
+            ...response,
+            location_id,
+        },
+    };
+}
+
 ////// unrevised actions /////
 
 export async function getUserData(id) {
@@ -216,12 +232,6 @@ export async function toggleTripEdit(i) {
     };
 }
 
-export async function toggleUploadModal() {
-    return {
-        type: "TOGGLE_UPLOAD_MODAL",
-    };
-}
-
 export async function toggleTripUploadModal(id) {
     return {
         type: "TOGGLE_TRIP_UPLOAD_MODAL",
@@ -270,18 +280,6 @@ export async function updateFriendshipStatus() {
     return {
         type: "UPDATE_FRIENDSHIP_STATUS",
     };
-}
-
-export async function updateLocationPicture(response) {
-    const obj = {
-        type: "UPDATE_LOCATION_PICTURE",
-    };
-    if (response.url) {
-        obj.payload = response.url;
-    } else {
-        obj.locationPicError = response.error;
-    }
-    return obj;
 }
 
 export async function addNewTrip(values) {

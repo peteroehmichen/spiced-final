@@ -24,7 +24,10 @@ if (location.pathname === "/welcome") {
     elem = (
         <Provider store={store}>
             <App />
-            <footer>Made with 🍐 by Peter Oehmichen, 2021</footer>
+            <footer>
+                Made with 🍐 by Peter Oehmichen, 2021 || Logo “Rope” by Icons,
+                RU, from the Noun Project.
+            </footer>
         </Provider>
     );
 }

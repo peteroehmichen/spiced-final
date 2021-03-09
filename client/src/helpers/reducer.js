@@ -75,6 +75,23 @@ export default function reducer(store = { errors: [] }, action) {
         });
     }
 
+    if (action.type == "UPDATE_LOCATION_PICTURE") {
+        const { success, location_id } = action.payload;
+        return produce(store, (newStore) => {
+            if (success && location_id == newStore.location.id) {
+                newStore.location.picture = success.url;
+                newStore.locations.forEach((country) => {
+                    if (country.id == location_id) {
+                        country.picture = success.url;
+                    }
+                    return country;
+                });
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////
     // changing primitive values on base level without immer
     ////////////////////////////////////////////////////////
@@ -85,6 +102,14 @@ export default function reducer(store = { errors: [] }, action) {
 
     if (action.type == "TOGGLE_LOCATION_FORM") {
         store.activeLocationForm = !store.activeLocationForm;
+        return store;
+    }
+
+    if (action.type == "TOGGLE_UPLOAD_MODAL") {
+        store.activateUploadModal =
+            store.activateUploadModal == null
+                ? true
+                : !store.activateUploadModal;
         return store;
     }
 
@@ -177,13 +202,6 @@ export default function reducer(store = { errors: [] }, action) {
         // store.tripEdit = !store.tripEdit;
     }
 
-    if (action.type == "TOGGLE_UPLOAD_MODAL") {
-        store.activateUploadModal =
-            store.activateUploadModal == null
-                ? true
-                : !store.activateUploadModal;
-    }
-
     if (action.type == "TOGGLE_TRIP_UPLOAD_MODAL") {
         store.activateTripUploadModal = action.payload;
     }
@@ -194,19 +212,6 @@ export default function reducer(store = { errors: [] }, action) {
 
     if (action.type == "TOGGLE_DESCRIPTION_EDIT") {
         store.descriptionEdit = !store.descriptionEdit;
-    }
-
-    if (action.type == "UPDATE_LOCATION_PICTURE") {
-        if (action.payload) {
-            store.location.picture = action.payload;
-            for (let i = 0; i < store.locations?.length; i++) {
-                if (store.location.id == store.locations[i].id) {
-                    store.locations[i].picture = action.payload;
-                }
-            }
-        } else {
-            store.location.profilePicError = action.error;
-        }
     }
 
     if (action.type == "UPDATE_PROFILE_PICTURE") {

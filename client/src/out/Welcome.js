@@ -28,6 +28,9 @@ export default function Welcome() {
                     <Route path="/reset" component={Reset} />
                 </HashRouter>
             </div>
+            <div className="photocredit-out">
+                Logo “Rope” by Icons, RU, from the Noun Project.
+            </div>
         </Fragment>
     );
 }

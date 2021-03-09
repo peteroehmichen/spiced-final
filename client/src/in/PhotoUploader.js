@@ -58,22 +58,16 @@ export default function Uploader(props) {
             picture.append("old", user.picture);
         }
 
-        const response = {};
+        let response = {};
         try {
             const { data } = await axios.post(`/in/picture.json`, picture);
-            if (!data.error) {
-                response.url = data.url;
-            } else {
-                response.error = data.error;
-                setError(data.error);
-            }
+            response = data;
         } catch (err) {
             console.log("error in Upload Post:", err);
-            response.error = "unknown server error";
-            setError("unknown server error");
+            response.error = "Unknown server error";
         }
         if (props.type == "location") {
-            dispatch(updateLocationPicture(response));
+            dispatch(updateLocationPicture(response, props.id));
         } else if (props.type == "trip") {
             dispatch(updateTripPicture(response, props.id));
         } else {
