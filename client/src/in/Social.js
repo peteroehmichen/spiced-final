@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-    acceptRequest,
-    cancelRequest,
-    denyRequest,
-    getFriendships,
-    unfriend,
-} from "../helpers/actions";
+import { getFriendships } from "../helpers/actions";
 import Finder from "./Finder";
 
 export default function Social() {
@@ -22,21 +16,11 @@ export default function Social() {
     let friends = <div>There are none</div>;
     let requests;
     let pending;
-    let error;
 
-    if (!all) {
-        // console.log("exiting");
-        return null;
-    } else if (all.error) {
-        console.log("We hit an error:", all.error);
-        error = all.error;
-    } else if (all.length > 0) {
+    if (all && all.length > 0) {
         friends = all.filter((elem) => elem.confirmed);
-        friends = friends.filter(
-            (element) =>
-                `${element.first} ${element.last}`.includes(searchInput)
-            // element.first.includes(searchInput) ||
-            //     element.last.includes(searchInput)
+        friends = friends.filter((element) =>
+            `${element.first} ${element.last}`.includes(searchInput)
         );
         requests = all.filter(
             (elem) => !elem.confirmed && elem.sender == elem.id
@@ -160,7 +144,6 @@ export default function Social() {
                             </div>
                         </div>
                     </div>
-
                     <Finder />
                 </div>
             </div>

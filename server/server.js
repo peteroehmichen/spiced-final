@@ -145,26 +145,39 @@ app.get("/in/essentialData.json", async (req, res) => {
 // });
 
 app.get("/in/userData.json", async (req, res) => {
-    // console.log("receiving:", req.query);
     if (req.query.id == req.session.userId) {
-        return res.json({ error: "Cannot display YOU" });
+        return res.json({
+            success: false,
+            error: { type: "essential", text: "Cannot display YOU" },
+        });
     }
-    const idForDb = req.query.id == 0 ? req.session.userId : req.query.id;
     try {
-        const results = await db.getUserById(idForDb, req.session.userId);
-        // console.log("checking:", results);
+        const results = await db.getUserById(req.query.id, req.session.userId);
         if (results.rowCount > 0) {
-            results.rows[0].id = idForDb;
-            delete results.rows[0].password;
-            delete results.rows[0].sender;
-            delete results.rows[0].recipient;
-            return res.json({ ...results.rows[0] });
+            return res.json({
+                success: {
+                    ...results.rows[0],
+                },
+                error: false,
+            });
         } else {
-            res.json({ error: "User unkown - please log in again" });
+            res.json({
+                success: false,
+                error: {
+                    type: "essential",
+                    text: "User unkown",
+                },
+            });
         }
     } catch (err) {
         console.log("checking2:", err);
-        res.json({ error: "Failed Connection to Database" });
+        res.json({
+            success: false,
+            error: {
+                type: "essential",
+                text: "Error in Connecting to DB",
+            },
+        });
     }
 });
 
@@ -437,10 +450,16 @@ app.get("/api/friends.json", async (req, res) => {
     // console.log("fetching friends for user:", req.session.userId);
     try {
         const { rows } = await db.getFriendships(req.session.userId);
-        res.json(rows);
+        res.json({ success: rows, error: false });
     } catch (error) {
         console.log("error in fetching friends:", error);
-        res.json({ error: "Error in Loading Friends" });
+        res.json({
+            success: false,
+            error: {
+                type: "notification",
+                text: "Failed Connection to Database",
+            },
+        });
     }
 });
 

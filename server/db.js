@@ -222,15 +222,10 @@ module.exports.getMatches = function (userId) {
 // };
 
 module.exports.getUserById = function (id, userId) {
-    // FIXME is also called when seeing other users so Update is wrong
-    // console.log("Hello");
     return sql.query(
-        `WITH relations as (SELECT * FROM friendships WHERE (recipient=$1 AND sender=$2) OR (sender=$1 AND recipient=$2)) SELECT * FROM users LEFT OUTER JOIN relations ON users.id=relations.recipient OR users.id=relations.sender WHERE users.id=$1;`,
+        `WITH relations as (SELECT * FROM friendships WHERE (recipient=$1 AND sender=$2) OR (sender=$1 AND recipient=$2)) SELECT first, last, age, picture, description, experience, grade_comfort, grade_max, confirmed, users.id FROM users LEFT OUTER JOIN relations ON users.id=relations.recipient OR users.id=relations.sender WHERE users.id=$1;`,
         [id, userId]
     );
-    // return sql.query(
-    //     `SELECT * FROM users WHERE id=${id} FOR UPDATE; UPDATE users SET last_online=now() WHERE id=${id};`
-    // );
 };
 
 module.exports.getLocationById = async function (id) {

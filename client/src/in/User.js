@@ -1,7 +1,6 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { formatDistance, parseISO } from "date-fns";
-import { getTrips, getUserData } from "../helpers/actions";
+import { getUserData } from "../helpers/actions";
 import FriendButton from "./FriendBtn";
 import Matches from "./Matches";
 import Chat from "./Chat";
@@ -29,7 +28,7 @@ export default function User(props) {
         return obj.name;
     };
 
-    if (!other.first && !other.error) return null;
+    // if (!other.first && !other.error) return null;
 
     const otherUser = (
         <div className="central user">
@@ -180,7 +179,7 @@ export default function User(props) {
                 {other &&
                     !other.confirmed &&
                     (!matches || matches.length == 0) && (
-                        <div key={1} className="noChat">
+                        <div className="noChat">
                             <h3>chat functionality disabled</h3>
                             <p>
                                 it is active for friends and/or in case of a

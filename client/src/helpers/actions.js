@@ -223,7 +223,14 @@ export async function updateTripData(values, id) {
     }
 }
 
-////// unrevised actions /////
+export async function getFriendships() {
+    const { data } = await axios.get("/api/friends.json");
+    // console.log("data from server", data);
+    return {
+        type: "GET_FRIENDSHIPS",
+        payload: data,
+    };
+}
 
 export async function getUserData(id) {
     // console.log("Going to fetch user data:");
@@ -233,17 +240,20 @@ export async function getUserData(id) {
         return {
             type: "FULL_USER_DATA",
             payload: data,
-            id: id,
         };
     } catch (err) {
         console.log("Received an error on /user:", err);
         return {
             type: "FULL_USER_DATA",
-            payload: { error: "No Connection to Database" },
-            id: id,
+            payload: {
+                success: false,
+                error: { type: "essential", text: "No Connection to Database" },
+            },
         };
     }
 }
+
+////// unrevised actions /////
 
 export function toggleTripForm() {
     return { type: "TOGGLE_TRIP_FORM" };
@@ -343,15 +353,6 @@ export async function getTrips() {
 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
-
-export async function getFriendships() {
-    const { data } = await axios.get("/api/friends.json");
-    // console.log("data from server", data);
-    return {
-        type: "GET_FRIENDSHIPS",
-        payload: data,
-    };
-}
 
 export async function unfriend(id) {
     // console.log("Going to unfriend id", id);

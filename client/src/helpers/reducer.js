@@ -146,6 +146,28 @@ export default function reducer(store = { errors: [] }, action) {
         });
     }
 
+    if (action.type == "GET_FRIENDSHIPS") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            if (success) {
+                newStore.friendships = success;
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "FULL_USER_DATA") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            if (success) {
+                newStore.otherUser = success;
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////
     // changing primitive values on base level without immer
     ////////////////////////////////////////////////////////
@@ -203,17 +225,17 @@ export default function reducer(store = { errors: [] }, action) {
         chat: store.chat && [...store.chat],
     };
 
-    if (action.type == "FULL_USER_DATA") {
-        if (action.id == "0") {
-            store.user = action.payload.user;
-            store.grades = action.payload.grades;
-        } else {
-            store.otherUser = {
-                ...store.otherUser,
-                ...action.payload,
-            };
-        }
-    }
+    // if (action.type == "FULL_USER_DATA") {
+    //     if (action.id == "0") {
+    //         store.user = action.payload.user;
+    //         store.grades = action.payload.grades;
+    //     } else {
+    //         store.otherUser = {
+    //             ...store.otherUser,
+    //             ...action.payload,
+    //         };
+    //     }
+    // }
 
     if (action.type == "UPDATE_FRIENDSHIP_STATUS") {
         store.otherUser.confirmed = !store.otherUser.confirmed;
@@ -251,10 +273,6 @@ export default function reducer(store = { errors: [] }, action) {
             store.tripsError = action.error;
         }
         store.activeTripForm = !store.activeTripForm;
-    }
-
-    if (action.type == "GET_FRIENDSHIPS") {
-        store.friendships = action.payload;
     }
 
     if (action.type == "CANCEL_FRIENDSHIP") {

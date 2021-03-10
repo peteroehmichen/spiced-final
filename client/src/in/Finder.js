@@ -10,11 +10,17 @@ export default function Finder() {
     const [searchError, setSearchError] = useState("");
 
     useEffect(async () => {
-        // console.log("Firing!");
+        // TODO delay to limit searches
+        // FIXME still a bit dysfunctional
         let abort;
         if (!searchInput) {
             setUsers([]);
             setMsg("");
+            return;
+        } else if (searchInput.length < 3) {
+            return;
+        } else if (searchInput == " ") {
+            setSearchInput("");
             return;
         }
         try {
@@ -50,7 +56,9 @@ export default function Finder() {
                 id="searchFriend"
                 key="searchFriend"
                 onChange={(e) => {
-                    setSearchInput(e.target.value);
+                    if (!e.target.value.startsWith(" ")) {
+                        setSearchInput(e.target.value);
+                    }
                 }}
             />
             <h4>{msg}</h4>
