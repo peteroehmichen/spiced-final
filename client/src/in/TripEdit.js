@@ -14,42 +14,6 @@ export default function TripEdit(props) {
         });
     };
 
-    // <label>
-    //     Location
-    //     <select
-    //         disabled={true}
-    //         defaultValue={props.trip.location_id}
-    //         name="location_id"
-    //         onChange={changeHandler}
-    //     >
-    //         {locations &&
-    //             locations.map((elem) => (
-    //                 <option key={elem.id} value={elem.id}>
-    //                     {elem.name}
-    //                 </option>
-    //             ))}
-    //     </select>
-    // </label>
-    // <label>
-    //     Start
-    //     <input
-    //         disabled={true}
-    //         defaultValue={props.trip.from_min}
-    //         type="date"
-    //         name="from_min"
-    //         onChange={changeHandler}
-    //     />
-    // </label>
-    // <label>
-    //     End
-    //     <input
-    //         disabled={true}
-    //         defaultValue={props.trip.until_max}
-    //         type="date"
-    //         name="until_max"
-    //         onChange={changeHandler}
-    //     />
-    // </label>
     return (
         <div className="card-right">
             <p>
@@ -70,7 +34,6 @@ export default function TripEdit(props) {
                     cancel
                 </button>
                 <button
-                    disabled={status.loading}
                     onClick={() => {
                         if (values) {
                             dispatch(updateTripData(values, props.trip.id));
@@ -84,18 +47,3 @@ export default function TripEdit(props) {
         </div>
     );
 }
-
-/*
-
-        <div className="form">
-            <h1>User-Editor</h1>
-            
-            <textarea
-                name="description"
-                placeholder="Tell us a bit about you."
-                onChange={changeHandler}
-            />
-            
-        </div>
-
-*/

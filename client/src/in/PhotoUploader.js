@@ -51,7 +51,7 @@ export default function Uploader(props) {
             picture.append("location_id", props.id);
         } else if (props.type == "trip") {
             let element = trips.filter((elem) => elem.id == props.id);
-            console.log("found old picture:", element);
+            // console.log("found old picture:", element);
             picture.append("old", element.picture);
             picture.append("trip_id", props.id);
         } else {
@@ -71,7 +71,7 @@ export default function Uploader(props) {
         } else if (props.type == "trip") {
             dispatch(updateTripPicture(response, props.id));
         } else {
-            dispatch(updateProfilePicture(response));
+            dispatch(updateProfilePicture(response, user.id));
         }
         setLoading(false);
         if (props.type == "trip") {

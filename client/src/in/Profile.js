@@ -1,15 +1,6 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import Upload from "../graphComp/Upload";
-import {
-    getTrips,
-    toggleTripForm,
-    toggleProfileEdit,
-    toggleDescriptionEdit,
-    toggleTripEdit,
-    toggleTripUploadModal,
-} from "../helpers/actions";
+import { toggleTripForm, toggleTripEdit } from "../helpers/actions";
 import DescriptionEdit from "./DescriptionEdit";
 import NewTrip from "./NewTrip";
 import PhotoUploader from "./PhotoUploader";
@@ -24,25 +15,15 @@ export default function Profile() {
         activeTripForm,
         locations,
         user,
-        grades,
-        experience,
-        profileEdit,
-        descriptionEdit,
         tripEdit,
         activateTripUploadModal,
     } = useSelector((store) => store);
-
-    useEffect(() => {
-        // dispatch(getTrips());
-    }, []);
 
     const getLocationName = function (id) {
         const obj = locations.find((loc) => loc.id == id);
         return obj.name;
     };
 
-    // if (!user || !trips) return null;
-    // console.log(trips);
     return (
         <div className="central prof">
             {activateUploadModal && <PhotoUploader type="profile" />}
@@ -55,68 +36,34 @@ export default function Profile() {
                         <Upload />
                         <img src={user.picture || "/default.svg"} />
                     </div>
-                    {grades && experience && !profileEdit && (
-                        <div className="profile data">
-                            <p>
-                                <b>Name:</b> {user.first} {user.last}
-                            </p>
-                            <p>
-                                <b>Age:</b> {user.age}
-                            </p>
-                            <p>
-                                <b>Climbing Grade:</b>{" "}
-                                {grades[user.grade_comfort]} up to{" "}
-                                {grades[user.grade_max]}
-                            </p>
-                            <p>
-                                <b>Experience:</b> {experience[user.experience]}
-                            </p>
-                            <button
-                                onClick={() => {
-                                    dispatch(toggleProfileEdit());
-                                }}
-                            >
-                                edit
-                            </button>
-                        </div>
-                    )}
-                    {grades && experience && profileEdit && <ProfileEdit />}
-                    {!descriptionEdit && (
-                        <div className="profile description">
-                            <p>
-                                <b>About Me:</b>
-                            </p>
-                            <p>
-                                <i>{user.description}</i>
-                            </p>
-                            <button
-                                onClick={() => {
-                                    dispatch(toggleDescriptionEdit());
-                                }}
-                            >
-                                edit
-                            </button>
-                        </div>
-                    )}
-                    {descriptionEdit && <DescriptionEdit />}
+                    <div className="profile data">
+                        <ProfileEdit />
+                    </div>
+                    <div className="profile description">
+                        <DescriptionEdit />
+                    </div>
                 </div>
             )}
+
             <h1>Your current and upcomming trips</h1>
             <div className="container-frame">
                 <div className="card-container inprofile horizontal">
-                    <div className="card medium start">
-                        {!activeTripForm && (
-                            <h1
-                                style={{ cursor: "pointer" }}
-                                onClick={() => {
-                                    dispatch(toggleTripForm());
-                                }}
-                            >
-                                ✚
-                            </h1>
-                        )}
-                        {activeTripForm && <NewTrip />}
-                    </div>
+                    {!activeTripForm && (
+                        <div
+                            className="card medium start"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                                dispatch(toggleTripForm());
+                            }}
+                        >
+                            <h1>✚</h1>
+                        </div>
+                    )}
+                    {activeTripForm && (
+                        <div className="card medium start">
+                            <NewTrip />
+                        </div>
+                    )}
                     {trips &&
                         locations &&
                         user &&
@@ -173,7 +120,9 @@ export default function Profile() {
                                                 >
                                                     edit
                                                 </button>
-                                                <button>delete</button>
+                                                <button disabled={true}>
+                                                    delete
+                                                </button>
                                             </div>
                                         </div>
                                     )}
@@ -187,8 +136,3 @@ export default function Profile() {
         </div>
     );
 }
-
-// <div className="new">
-
-//                 {activeTripForm && <NewTrip />}
-//             </div>

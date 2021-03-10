@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addNewTrip, toggleTripForm } from "../helpers/actions";
 import { useFormEval } from "../helpers/customHooks";
-
-// FIXME Dates can be in wrong order
+import { formatISO } from "date-fns";
 
 export default function NewTrip() {
     const { locations } = useSelector((store) => store);
@@ -46,6 +45,7 @@ export default function NewTrip() {
                     <input
                         type="date"
                         name="from_min"
+                        min={formatISO(new Date(), { representation: "date" })}
                         onChange={handleChangeEval}
                         disabled={!values.location_id}
                     />
@@ -55,6 +55,8 @@ export default function NewTrip() {
                     <input
                         type="date"
                         name="until_max"
+                        defaultValue={values.from_min}
+                        min={values.from_min}
                         onChange={handleChangeEval}
                         disabled={!values.from_min}
                     />

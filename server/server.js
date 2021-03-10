@@ -169,10 +169,6 @@ app.get("/in/userData.json", async (req, res) => {
 });
 
 app.post("/in/updateUserData.json", async (req, res) => {
-    // console.log("updating: ", req.body);
-
-    // let user = await db.getUserById(req.session.userId, req.session.userId);
-    // console.log("old data:", user.rows[0]);
     try {
         for (let element in req.body) {
             await db.updateUserData(
@@ -181,36 +177,25 @@ app.post("/in/updateUserData.json", async (req, res) => {
                 req.session.userId
             );
         }
-        const results = await db.getUserById(
-            req.session.userId,
-            req.session.userId
-        );
+        const results = await db.getProfileData(req.session.userId);
         if (results.rowCount > 0) {
-            delete results.rows[0].id;
-            delete results.rows[0].confirmed;
-            delete results.rows[0].created_at;
-            delete results.rows[0].recipient;
-            delete results.rows[0].sender;
-            delete results.rows[0].password;
             return res.json({ success: results.rows[0], error: false });
         } else {
-            res.json({ success: false, error: "formatting Error" });
+            res.json({
+                success: false,
+                error: { type: "notifications", text: "formatting Error" },
+            });
         }
     } catch (err) {
         console.log("Error in user-Update:", err);
-        res.json({ error: "Failed Connection to Database" });
+        res.json({
+            success: false,
+            error: {
+                type: "notifications",
+                text: "Failed Connection to Database",
+            },
+        });
     }
-    // console.log("new data:", user.rows[0]);
-
-    // const result = await db.updateUserData(
-    //     age,
-    //     location,
-    //     grade_comfort,
-    //     grade_max,
-    //     description,
-    //     experience,
-    //     req.session.userId
-    // );
 });
 
 app.post("/in/updateTripData.json", async (req, res) => {
@@ -226,11 +211,20 @@ app.post("/in/updateTripData.json", async (req, res) => {
         if (results.rowCount > 0) {
             return res.json({ success: results.rows[0], error: false });
         } else {
-            res.json({ success: false, error: "formatting Error" });
+            res.json({
+                success: false,
+                error: { type: "notifications", text: "formatting Error" },
+            });
         }
     } catch (err) {
         console.log("Error in trip-Update:", err);
-        res.json({ error: "Failed Connection to Database" });
+        res.json({
+            success: false,
+            error: {
+                type: "notifications",
+                text: "Failed Connection to Database",
+            },
+        });
     }
 });
 

@@ -166,6 +166,63 @@ export async function updateLocationPicture(response, location_id) {
     };
 }
 
+export async function updateTripPicture(response, trip_id) {
+    return {
+        type: "UPDATE_TRIP_PICTURE",
+        payload: {
+            ...response,
+            trip_id,
+        },
+    };
+}
+
+export async function updateProfilePicture(response, user_id) {
+    return {
+        type: "UPDATE_PROFILE_PICTURE",
+        payload: {
+            ...response,
+            user_id,
+        },
+    };
+}
+
+export async function updateUserData(values) {
+    try {
+        const { data } = await axios.post("/in/updateUserData.json", values);
+        return {
+            type: "UPDATE_USER_DATA",
+            payload: data,
+        };
+    } catch (error) {
+        return {
+            type: "UPDATE_USER_DATA",
+            payload: {
+                success: false,
+                error: { type: "notifications", text: "No Server Connection" },
+            },
+        };
+    }
+}
+
+export async function updateTripData(values, id) {
+    values.id = id;
+    try {
+        const { data } = await axios.post("/in/updateTripData.json", values);
+        return {
+            type: "UPDATE_TRIP_DATA",
+            payload: data,
+        };
+    } catch (error) {
+        return {
+            type: "UPDATE_TRIP_DATA",
+            payload: {
+                success: false,
+                error: { type: "notifications", text: "No Server Connection" },
+            },
+        };
+    }
+}
+
 ////// unrevised actions /////
 
 export async function getUserData(id) {
@@ -188,39 +245,6 @@ export async function getUserData(id) {
     }
 }
 
-export async function updateTripData(values, id) {
-    values.id = id;
-    try {
-        const { data } = await axios.post("/in/updateTripData.json", values);
-        console.log("data from axios:", data);
-        return {
-            type: "UPDATE_TRIP_DATA",
-            payload: data,
-        };
-    } catch (error) {
-        return {
-            type: "UPDATE_TRIP_DATA",
-            payload: { error: "Unknown Error" },
-        };
-    }
-}
-
-export async function updateUserData(values) {
-    try {
-        const { data } = await axios.post("/in/updateUserData.json", values);
-        // console.log(data);
-        return {
-            type: "UPDATE_USER_DATA",
-            payload: data,
-        };
-    } catch (error) {
-        return {
-            type: "UPDATE_USER_DATA",
-            payload: { error: "Unknown Error" },
-        };
-    }
-}
-
 export function toggleTripForm() {
     return { type: "TOGGLE_TRIP_FORM" };
 }
@@ -237,43 +261,6 @@ export async function toggleTripUploadModal(id) {
         type: "TOGGLE_TRIP_UPLOAD_MODAL",
         payload: id,
     };
-}
-
-export async function toggleProfileEdit() {
-    return {
-        type: "TOGGLE_PROFILE_EDIT",
-    };
-}
-
-export async function toggleDescriptionEdit() {
-    return {
-        type: "TOGGLE_DESCRIPTION_EDIT",
-    };
-}
-
-export async function updateProfilePicture(response) {
-    const obj = {
-        type: "UPDATE_PROFILE_PICTURE",
-    };
-    if (response.url) {
-        obj.payload = response.url;
-    } else {
-        obj.profilePicError = response.error;
-    }
-    return obj;
-}
-
-export async function updateTripPicture(response, id) {
-    const obj = {
-        type: "UPDATE_TRIP_PICTURE",
-        id: id,
-    };
-    if (response.url) {
-        obj.payload = response.url;
-    } else {
-        obj.tripPicError = response.error;
-    }
-    return obj;
 }
 
 export async function updateFriendshipStatus() {

@@ -92,6 +92,60 @@ export default function reducer(store = { errors: [] }, action) {
         });
     }
 
+    if (action.type == "UPDATE_TRIP_PICTURE") {
+        const { success, trip_id } = action.payload;
+        return produce(store, (newStore) => {
+            if (success) {
+                newStore.trips.forEach((trip) => {
+                    if (trip.id == trip_id) {
+                        trip.picture = success.url;
+                    }
+                    return trip;
+                });
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "UPDATE_PROFILE_PICTURE") {
+        const { success, user_id } = action.payload;
+        return produce(store, (newStore) => {
+            if (success && user_id == newStore.user.id) {
+                newStore.user.picture = success.url;
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "UPDATE_USER_DATA") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            if (success && success.id == newStore.user.id) {
+                newStore.user = success;
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "UPDATE_TRIP_DATA") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            if (success) {
+                newStore.trips = newStore.trips.map((trip) => {
+                    if (trip.id == success.id) {
+                        trip = success;
+                    }
+                    return trip;
+                });
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////
     // changing primitive values on base level without immer
     ////////////////////////////////////////////////////////
@@ -106,14 +160,20 @@ export default function reducer(store = { errors: [] }, action) {
     }
 
     if (action.type == "TOGGLE_UPLOAD_MODAL") {
-        store.activateUploadModal =
-            store.activateUploadModal == null
-                ? true
-                : !store.activateUploadModal;
+        store.activateUploadModal = !store.activateUploadModal;
         return store;
     }
 
+    // if (action.type == "TOGGLE_DESCRIPTION_EDIT") {
+    //     store.descriptionEdit = !store.descriptionEdit;
+    //     return store;
+    // }
+
     /// unrevised after here
+    // if (action.type == "TOGGLE_PROFILE_EDIT") {
+    //     store.profileEdit = !store.profileEdit;
+    //     return store;
+    // }
 
     store = {
         ...store,
@@ -155,38 +215,6 @@ export default function reducer(store = { errors: [] }, action) {
         }
     }
 
-    if (action.type == "UPDATE_USER_DATA") {
-        // console.log("reducer - updating...");
-        // console.log(action.payload.success);
-        // FIXME Error Handling
-        store.updateError = action.payload.error;
-        if (action.payload.success) {
-            // console.log("adding to user...");
-            store.user = {
-                ...store.user,
-                ...action.payload.success,
-            };
-            // console.log("new user:", store.user);
-        }
-    }
-
-    if (action.type == "UPDATE_TRIP_DATA") {
-        console.log("reducer - updating...");
-        console.log(action.payload.success);
-        store.updateError = action.payload.error;
-        if (action.payload.success) {
-            store.trips = store.trips.map((elem) => {
-                console.log(elem.id, action.payload.success.id);
-                if (elem.id == action.payload.success.id) {
-                    console.log("reducer adding to trip...");
-                    elem = action.payload.success;
-                }
-                return elem;
-            });
-            // console.log("new user:", store.user);
-        }
-    }
-
     if (action.type == "UPDATE_FRIENDSHIP_STATUS") {
         store.otherUser.confirmed = !store.otherUser.confirmed;
     }
@@ -204,35 +232,6 @@ export default function reducer(store = { errors: [] }, action) {
 
     if (action.type == "TOGGLE_TRIP_UPLOAD_MODAL") {
         store.activateTripUploadModal = action.payload;
-    }
-
-    if (action.type == "TOGGLE_PROFILE_EDIT") {
-        store.profileEdit = !store.profileEdit;
-    }
-
-    if (action.type == "TOGGLE_DESCRIPTION_EDIT") {
-        store.descriptionEdit = !store.descriptionEdit;
-    }
-
-    if (action.type == "UPDATE_PROFILE_PICTURE") {
-        if (action.payload) {
-            store.user.picture = action.payload;
-        } else {
-            store.user.profilePicError = action.error;
-        }
-    }
-
-    if (action.type == "UPDATE_TRIP_PICTURE") {
-        if (action.payload) {
-            store.trips = store.trips.map((elem) => {
-                if (elem.id == action.id) {
-                    elem.picture = action.payload;
-                }
-                return elem;
-            });
-        } else {
-            store.trip.profilePicError = action.error;
-        }
     }
 
     if (action.type == "GET_LOCATIONS") {
