@@ -74,21 +74,21 @@ export default function Finder() {
                         </Fragment>
                     );
                     return (
-                        <div key={index} className="found-friend">
-                            <div className="friend-pic-small">
-                                <img src={elem.picture || "/default.svg"} />
-                            </div>
-                            <div className="friend-summary">
-                                <div className="friend-name">
-                                    <h4>{name}</h4>
+                        <Link key={index} to={`/user/${elem.id}`}>
+                            <div className="found-friend">
+                                <div className="friend-pic-small">
+                                    <img src={elem.picture || "/default.svg"} />
+                                </div>
+                                <div className="friend-summary">
+                                    <div className="friend-name">
+                                        <h4>{name}</h4>
+                                    </div>
+                                </div>
+                                <div className="friend-function">
+                                    <img src="/arrow_black.png" />
                                 </div>
                             </div>
-                            <div className="friend-function">
-                                <Link to={`/user/${elem.id}`}>
-                                    <img src="/arrow_black.png" />
-                                </Link>
-                            </div>
-                        </div>
+                        </Link>
                     );
                 })}
             </div>

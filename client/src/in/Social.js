@@ -53,23 +53,23 @@ export default function Social() {
             );
         } else {
             friends = friends.map((elem, i) => (
-                <div key={i} className="card small wide-small split">
-                    <div className="card-left">
-                        <img src={elem.picture || "/default.svg"} />
-                    </div>
-                    <div className="card-right">
-                        <div>
-                            <h4>
-                                {elem.first} {elem.last}
-                            </h4>
+                <Link key={i} to={`/user/${elem.id}`}>
+                    <div className="card small wide-small split">
+                        <div className="card-left">
+                            <img src={elem.picture || "/default.svg"} />
                         </div>
-                        <div className="friend-arrow">
-                            <Link to={`/user/${elem.id}`}>
+                        <div className="card-right">
+                            <div>
+                                <h4>
+                                    {elem.first} {elem.last}
+                                </h4>
+                            </div>
+                            <div className="friend-arrow">
                                 <img src="/arrow_black.png" />
-                            </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Link>
             ));
         }
 
@@ -77,46 +77,46 @@ export default function Social() {
             requests = <div>There are none</div>;
         } else {
             requests = requests.map((elem, i) => (
-                <div key={i} className="found-friend">
-                    <div className="friend-pic-small">
-                        <img src={elem.picture || "/default.svg"} />
-                    </div>
-                    <div className="friend-summary">
-                        <div className="friend-name">
-                            <h4>
-                                {elem.first} {elem.last}
-                            </h4>
+                <Link key={i} to={`/user/${elem.id}`}>
+                    <div className="found-friend">
+                        <div className="friend-pic-small">
+                            <img src={elem.picture || "/default.svg"} />
+                        </div>
+                        <div className="friend-summary">
+                            <div className="friend-name">
+                                <h4>
+                                    {elem.first} {elem.last}
+                                </h4>
+                            </div>
+                        </div>
+                        <div className="friend-function">
+                            <img src="/arrow_black.png" />
                         </div>
                     </div>
-                    <div className="friend-function">
-                        <Link to={`/user/${elem.id}`}>
-                            <img src="/arrow_black.png" />
-                        </Link>
-                    </div>
-                </div>
+                </Link>
             ));
         }
         if (!pending.length) {
             pending = <div>There are none</div>;
         } else {
             pending = pending.map((elem, i) => (
-                <div key={i} className="found-friend">
-                    <div className="friend-pic-small">
-                        <img src={elem.picture || "/default.svg"} />
-                    </div>
-                    <div className="friend-summary">
-                        <div className="friend-name">
-                            <h4>
-                                {elem.first} {elem.last}
-                            </h4>
+                <Link key={i} to={`/user/${elem.id}`}>
+                    <div className="found-friend">
+                        <div className="friend-pic-small">
+                            <img src={elem.picture || "/default.svg"} />
+                        </div>
+                        <div className="friend-summary">
+                            <div className="friend-name">
+                                <h4>
+                                    {elem.first} {elem.last}
+                                </h4>
+                            </div>
+                        </div>
+                        <div className="friend-function">
+                            <img src="/arrow_black.png" />
                         </div>
                     </div>
-                    <div className="friend-function">
-                        <Link to={`/user/${elem.id}`}>
-                            <img src="/arrow_black.png" />
-                        </Link>
-                    </div>
-                </div>
+                </Link>
             ));
         }
     }
