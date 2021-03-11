@@ -80,6 +80,8 @@ export default function Profile() {
                                         <Fragment>
                                             <div className="card-left">
                                                 <div className="card-image">
+                                                    <Upload trip={elem.id} />
+
                                                     <img
                                                         src={
                                                             elem.picture ||
@@ -121,9 +123,6 @@ export default function Profile() {
                                                         }}
                                                     >
                                                         edit
-                                                    </button>
-                                                    <button disabled={true}>
-                                                        delete
                                                     </button>
                                                 </div>
                                             </div>

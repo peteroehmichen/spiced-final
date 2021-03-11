@@ -241,6 +241,32 @@ app.post("/in/updateTripData.json", async (req, res) => {
     }
 });
 
+app.get("/in/deleteTrip.json", async (req, res) => {
+    try {
+        const result = await db.deleteTripById(req.query.id);
+        if (result.rowCount > 0) {
+            return res.json({ success: { id: req.query.id }, error: false });
+        } else {
+            res.json({
+                success: false,
+                error: {
+                    type: "notifications",
+                    text: "unable to delete from DB",
+                },
+            });
+        }
+    } catch (err) {
+        console.log("Error in trip-Delete:", err);
+        res.json({
+            success: false,
+            error: {
+                type: "notifications",
+                text: "Failed Connection to Database",
+            },
+        });
+    }
+});
+
 app.post("/in/addLocationSection.json", async (req, res) => {
     try {
         const result = await db.addLocationSection(

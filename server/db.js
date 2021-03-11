@@ -278,6 +278,10 @@ module.exports.getTripById = function (id) {
     );
 };
 
+module.exports.deleteTripById = function (id) {
+    return sql.query(`DELETE FROM trips WHERE id=${id};`);
+};
+
 module.exports.safeFriendRequest = function (userId, friendId) {
     return sql.query(
         `INSERT INTO friendships (sender, recipient) VALUES ($1, $2);`,

@@ -146,6 +146,19 @@ export default function reducer(store = { errors: [] }, action) {
         });
     }
 
+    if (action.type == "DELETE_TRIP") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            if (success) {
+                newStore.trips = newStore.trips.filter(
+                    (trip) => trip.id != success.id
+                );
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
     if (action.type == "GET_FRIENDSHIPS") {
         const { success } = action.payload;
         return produce(store, (newStore) => {

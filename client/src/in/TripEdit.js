@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Upload from "../graphComp/Upload";
-import { toggleTripEdit, updateTripData } from "../helpers/actions";
+import { deleteTrip, toggleTripEdit, updateTripData } from "../helpers/actions";
 import { formatISO } from "date-fns";
 // FIXME import DatePicker from "react-datepicker";
 
@@ -31,12 +31,27 @@ export default function TripEdit(props) {
     return (
         <Fragment>
             <div className="card-left">
-                <div className="card-image-edit">
-                    <Upload trip={props.trip.id} />
-                    <img src={props.trip.picture || "/default.svg"} />
-                </div>
                 <div className="card-text">
-                    <h4>{getLocationName(props.trip.location_id)}</h4>
+                    <select
+                        defaultValue={props.trip.location_id}
+                        name="location_id"
+                        onChange={changeHandler}
+                    >
+                        {locations &&
+                            locations
+                                .sort((e1, e2) =>
+                                    e1.name
+                                        .toLowerCase()
+                                        .localeCompare(e2.name.toLowerCase())
+                                )
+                                .map((elem) => (
+                                    <option key={elem.id} value={elem.id}>
+                                        {elem.name.length > 16
+                                            ? elem.name.slice(0, 14) + "..."
+                                            : elem.name}
+                                    </option>
+                                ))}
+                    </select>
                     <input
                         type="date"
                         name="from_min"
@@ -63,17 +78,6 @@ export default function TripEdit(props) {
                         onChange={changeHandler}
                     />
                 </div>
-            </div>
-            <div className="card-right">
-                <p>
-                    <b>Brief Description:</b>
-                </p>
-                <textarea
-                    name="comment"
-                    placeholder={"briefly describe your trip details"}
-                    onChange={changeHandler}
-                    defaultValue={props.trip.comment}
-                />
                 <div>
                     <button
                         onClick={() => {
@@ -93,7 +97,26 @@ export default function TripEdit(props) {
                     >
                         Submit
                     </button>
+                    <button
+                        onClick={() => {
+                            dispatch(toggleTripEdit(props.index));
+                            dispatch(deleteTrip(props.trip.id));
+                        }}
+                    >
+                        delete Trip
+                    </button>
                 </div>
+            </div>
+            <div className="card-right">
+                <p>
+                    <b>Brief Description:</b>
+                </p>
+                <textarea
+                    name="comment"
+                    placeholder={"briefly describe your trip details"}
+                    onChange={changeHandler}
+                    defaultValue={props.trip.comment}
+                />
             </div>
         </Fragment>
     );

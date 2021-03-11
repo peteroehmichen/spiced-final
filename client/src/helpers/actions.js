@@ -224,6 +224,24 @@ export async function updateTripData(values, id) {
     }
 }
 
+export async function deleteTrip(id) {
+    try {
+        const { data } = await axios.get(`/in/deleteTrip.json?id=${id}`);
+        return {
+            type: "DELETE_TRIP",
+            payload: data,
+        };
+    } catch (error) {
+        return {
+            type: "DELETE_TRIP",
+            payload: {
+                success: false,
+                error: { type: "notifications", text: "No Server Connection" },
+            },
+        };
+    }
+}
+
 export async function getFriendships() {
     const { data } = await axios.get("/api/friends.json");
     // console.log("data from server", data);
