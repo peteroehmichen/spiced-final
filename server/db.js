@@ -7,10 +7,17 @@ const sql = spicedPg(
 
 const redis = require("redis");
 const { promisify } = require("util");
-const client = redis.createClient({
-    host: "localhost",
-    port: 6379,
-});
+
+const client = process.env.REDIS_URL
+    ? redis.createClient(process.env.REDIS_URL, {
+          tls: {
+              rejectUnauthorized: false,
+          },
+      })
+    : redis.createClient({
+          host: "localhost",
+          port: 6379,
+      });
 client.on("error", function (err) {
     console.log(err);
 });

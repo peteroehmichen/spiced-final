@@ -16,9 +16,6 @@ export default function TripEdit(props) {
             ...values,
             [e.target.name]: e.target.value,
         });
-        setTimeout(() => {
-            console.log(values);
-        }, 500);
         if (values && values.from_min > newMax) {
             setNewMax(values.from_min);
         }
