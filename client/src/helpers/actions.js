@@ -206,6 +206,7 @@ export async function updateUserData(values) {
 
 export async function updateTripData(values, id) {
     values.id = id;
+    console.log("values:", values);
     try {
         const { data } = await axios.post("/in/updateTripData.json", values);
         return {

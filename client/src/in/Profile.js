@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Upload from "../graphComp/Upload";
 import { toggleTripForm, toggleTripEdit } from "../helpers/actions";
@@ -75,56 +76,58 @@ export default function Profile() {
                             )
                             .map((elem, i) => (
                                 <div key={i} className="card medium wide split">
-                                    <div className="card-left">
-                                        <div className="card-image">
-                                            <Upload trip={elem.id} />
-                                            <img
-                                                src={
-                                                    elem.picture ||
-                                                    "/default.svg"
-                                                }
-                                            />
-                                        </div>
-                                        <div className="card-text">
-                                            <h4>
-                                                {getLocationName(
-                                                    elem.location_id
-                                                )}
-                                            </h4>
-                                            <p>
-                                                {new Date(
-                                                    elem.from_min
-                                                ).toLocaleDateString()}{" "}
-                                                -{" "}
-                                                {new Date(
-                                                    elem.until_max
-                                                ).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-
                                     {!tripEdit[i] && (
-                                        <div className="card-right">
-                                            <div>
-                                                <p>
-                                                    <i>{elem.comment}</i>
-                                                </p>
+                                        <Fragment>
+                                            <div className="card-left">
+                                                <div className="card-image">
+                                                    <img
+                                                        src={
+                                                            elem.picture ||
+                                                            "/default.svg"
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className="card-text">
+                                                    <h4>
+                                                        {getLocationName(
+                                                            elem.location_id
+                                                        )}
+                                                    </h4>
+                                                    <p>
+                                                        {new Date(
+                                                            elem.from_min
+                                                        ).toLocaleDateString()}{" "}
+                                                        -{" "}
+                                                        {new Date(
+                                                            elem.until_max
+                                                        ).toLocaleDateString()}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div className="btn">
-                                                <button
-                                                    onClick={() => {
-                                                        dispatch(
-                                                            toggleTripEdit(i)
-                                                        );
-                                                    }}
-                                                >
-                                                    edit
-                                                </button>
-                                                <button disabled={true}>
-                                                    delete
-                                                </button>
+                                            <div className="card-right">
+                                                <div>
+                                                    <p>
+                                                        <i>{elem.comment}</i>
+                                                    </p>
+                                                </div>
+                                                <div className="btn">
+                                                    <button
+                                                        onClick={() => {
+                                                            dispatch(
+                                                                toggleTripEdit(
+                                                                    i
+                                                                )
+                                                            );
+                                                        }}
+                                                    >
+                                                        edit
+                                                    </button>
+                                                    <button disabled={true}>
+                                                        delete
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Fragment>
                                     )}
                                     {tripEdit[i] && (
                                         <TripEdit trip={elem} index={i} />

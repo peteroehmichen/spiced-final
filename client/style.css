@@ -278,6 +278,10 @@ textarea[name="comment"] {
     height: 50%;
 }
 
+.card-image-edit {
+    height: 33%;
+}
+
 .card-thumb {
     position: absolute;
     top: 0;
