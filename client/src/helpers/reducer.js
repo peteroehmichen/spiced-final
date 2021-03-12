@@ -174,7 +174,24 @@ export default function reducer(store = { errors: [] }, action) {
         const { success } = action.payload;
         return produce(store, (newStore) => {
             if (success) {
-                newStore.otherUser = success;
+                newStore.otherUser = {
+                    ...newStore.otherUser,
+                    ...success,
+                };
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "SUBMIT_FRIEND_ACTION") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            if (success) {
+                newStore.otherUser = {
+                    ...newStore.otherUser,
+                    nextFriendAction: success.text,
+                };
             } else {
                 newStore.errors.push(action.payload.error);
             }
@@ -317,12 +334,6 @@ export default function reducer(store = { errors: [] }, action) {
         store.friendships = store.friendships.filter(
             (user) => user.sender != action.payload
         );
-    }
-
-    if (action.type == "SUBMIT_FRIEND_ACTION") {
-        // console.log("payload:", action.payload);
-        store.otherUser.nextFriendAction = action.payload.text;
-        store.otherUser.dbError = action.payload.error;
     }
 
     if (action.type == "FIND_MATCHES") {

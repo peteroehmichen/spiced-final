@@ -32,7 +32,7 @@ export default function User(props) {
 
     const otherUser = (
         <div className="central user">
-            {other && grades && experience && (
+            {other.id && grades && experience && (
                 <div id="user-detail-left">
                     <div id="user-detail-head">
                         <div id="user-detail-image-frame">
@@ -166,19 +166,18 @@ export default function User(props) {
                     </div>
                 </div>
             )}
-            <div className="location-right">
-                {other && other.confirmed && matches && matches.length > 0 && (
-                    <Chat type="user+" user={props.match.params.id} />
-                )}
-                {other && other.confirmed && matches && !matches.length && (
-                    <Chat type="user-" user={props.match.params.id} />
-                )}
-                {other && !other.confirmed && matches && matches.length > 0 && (
-                    <Chat type="trip" user={props.match.params.id} />
-                )}
-                {other &&
-                    !other.confirmed &&
-                    (!matches || matches.length == 0) && (
+            {other.id && (
+                <div className="location-right">
+                    {other.confirmed && matches && matches.length > 0 && (
+                        <Chat type="user+" user={props.match.params.id} />
+                    )}
+                    {other.confirmed && matches && !matches.length && (
+                        <Chat type="user-" user={props.match.params.id} />
+                    )}
+                    {!other.confirmed && matches && matches.length > 0 && (
+                        <Chat type="trip" user={props.match.params.id} />
+                    )}
+                    {!other.confirmed && (!matches || matches.length == 0) && (
                         <div className="noChat">
                             <h3>chat functionality disabled</h3>
                             <p>
@@ -187,7 +186,8 @@ export default function User(props) {
                             </p>
                         </div>
                     )}
-            </div>
+                </div>
+            )}
         </div>
     );
     const errorBlock = (

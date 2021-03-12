@@ -243,6 +243,7 @@ app.post("/in/updateTripData.json", async (req, res) => {
 
 app.get("/in/deleteTrip.json", async (req, res) => {
     try {
+        // FIXME delete AWS picture as well
         const result = await db.deleteTripById(req.query.id);
         if (result.rowCount > 0) {
             return res.json({ success: { id: req.query.id }, error: false });
@@ -491,23 +492,22 @@ app.get("/api/friends.json", async (req, res) => {
 
 app.post("/api/user/friendBtn.json", async (req, res) => {
     // console.log();
+    let text;
     try {
         if (req.body.task == "") {
             const { rows } = await db.getFriendInfo(
                 req.session.userId,
                 req.body.friendId
             );
-            // console.log("DB-Results", rows);
             if (rows.length == 0) {
-                return res.json({ text: "Send Friend Request" });
+                text = "Send Friend Request";
+            } else if (rows[0].confirmed) {
+                text = "Cancel Friendship";
+            } else if (rows[0].sender == req.session.userId) {
+                text = "Cancel Request";
+            } else {
+                text = "Accept Request";
             }
-            if (rows[0].confirmed) {
-                return res.json({ text: "Cancel Friendship" });
-            }
-            if (rows[0].sender == req.session.userId) {
-                return res.json({ text: "Cancel Request" });
-            }
-            return res.json({ text: "Accept Request" });
         }
 
         if (req.body.task == "Send Friend Request") {
@@ -516,7 +516,7 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
                 req.body.friendId
             );
             if (rowCount > 0) {
-                return res.json({ text: "Cancel Request" });
+                text = "Cancel Request";
             }
         }
 
@@ -526,7 +526,7 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
                 req.body.friendId
             );
             if (rowCount > 0) {
-                return res.json({ text: "Send Friend Request" });
+                text = "Send Friend Request";
             }
         }
 
@@ -536,7 +536,7 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
                 req.body.friendId
             );
             if (rowCount > 0) {
-                return res.json({ text: "Cancel Friendship" });
+                text = "Cancel Friendship";
             }
         }
 
@@ -548,20 +548,32 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
                 req.session.userId,
                 req.body.friendId
             );
-            // console.log("DB from Cancel", rowCount);
             if (rowCount > 0) {
-                return res.json({ text: "Send Friend Request" });
+                text = "Send Friend Request";
             }
         }
-
-        return res.json({
-            text: "Internal error - please try again later",
-            error: true,
-        });
+        if (text) {
+            return res.json({
+                success: { text },
+                error: false,
+            });
+        } else {
+            res.json({
+                success: false,
+                error: {
+                    type: "notifications",
+                    text: "Internal error - please try again later",
+                },
+            });
+        }
     } catch (error) {
-        return res.json({
-            text: "Server error - please try again later",
-            error: true,
+        console.log("Error in FriendBtn-Server:", error);
+        res.json({
+            success: false,
+            error: {
+                type: "notifications",
+                text: "Server error - please try again later",
+            },
         });
     }
 });

@@ -18,6 +18,7 @@ export default function FriendButton(props) {
     };
 
     useEffect(() => {
+        // console.log("loading BTN with id", props.friendId);
         request("");
     }, []);
 

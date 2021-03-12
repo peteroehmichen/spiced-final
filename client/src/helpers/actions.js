@@ -272,6 +272,32 @@ export async function getUserData(id) {
     }
 }
 
+export async function submitFriendAction(id, task) {
+    // console.log("friend BTN Run (ID, TASK):", id, task);
+    try {
+        const { data } = await axios.post("/api/user/friendBtn.json", {
+            friendId: id,
+            task: task,
+        });
+        // console.log("result from BTN Action:", result.data);
+        return {
+            type: "SUBMIT_FRIEND_ACTION",
+            payload: data,
+        };
+    } catch (err) {
+        return {
+            type: "SUBMIT_FRIEND_ACTION",
+            payload: {
+                success: false,
+                type: {
+                    type: "notifications",
+                    text: "could not connect to Server",
+                },
+            },
+        };
+    }
+}
+
 ////// unrevised actions /////
 
 export function toggleTripForm() {
@@ -426,32 +452,6 @@ export async function cancelRequest(id) {
         return {
             type: "CANCEL_REQUEST",
             payload: id,
-        };
-    }
-}
-
-export async function submitFriendAction(id, task) {
-    // console.log("friend BTN Run (ID, TASK):", id, task);
-    try {
-        const result = await axios.post("/api/user/friendBtn.json", {
-            friendId: id,
-            task: task,
-        });
-        // console.log("result from BTN Action:", result.data);
-        return {
-            type: "SUBMIT_FRIEND_ACTION",
-            payload: {
-                text: result.data.text,
-                error: !!result.data.error,
-            },
-        };
-    } catch (err) {
-        return {
-            type: "SUBMIT_FRIEND_ACTION",
-            payload: {
-                text: false,
-                error: true,
-            },
         };
     }
 }
