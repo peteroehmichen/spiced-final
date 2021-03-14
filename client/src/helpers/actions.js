@@ -298,6 +298,38 @@ export async function submitFriendAction(id, task) {
     }
 }
 
+export async function receiveChatMessages(about, id, limit = 20) {
+    // console.log("asking server for chat data on", about, id);
+    try {
+        const { data } = await axios.get(
+            `/in/chat.json?about=${about}&id=${id}&limit=${limit}`
+        );
+        // console.log("chats received:", data);
+        return {
+            type: "RECEIVE_CHAT_MESSAGES",
+            payload: data,
+        };
+    } catch (error) {
+        return {
+            type: "RECEIVE_CHAT_MESSAGES",
+            payload: {
+                success: false,
+                error: {
+                    type: "notifications",
+                    text: "could not access Server",
+                },
+            },
+        };
+    }
+}
+
+export function newMessage(obj) {
+    return {
+        type: "NEW_MESSAGE",
+        payload: obj,
+    };
+}
+
 ////// unrevised actions /////
 
 export function toggleTripForm() {
@@ -477,42 +509,6 @@ export async function findMatchingTrips() {
             error: "Could not retrieve Matches",
         };
     }
-}
-
-export async function receiveChatMessages(about, id) {
-    // console.log("asking server for chat data on", about, id);
-    const { data } = await axios.get(`/in/chat.json?about=${about}&id=${id}`);
-    // console.log("chats received:", data);
-    if (!data.error) {
-        return {
-            type: "RECEIVE_CHAT_MESSAGES",
-            payload: data,
-        };
-    } else {
-        return {
-            type: "RECEIVE_CHAT_MESSAGES",
-            error: data.error,
-        };
-    }
-}
-
-export function newFriendMessage(obj) {
-    return {
-        type: "NEW_FRIEND_MESSAGE",
-        payload: obj,
-    };
-}
-export function newTripMessage(obj) {
-    return {
-        type: "NEW_TRIP_MESSAGE",
-        payload: obj,
-    };
-}
-export function newLocationMessage(obj) {
-    return {
-        type: "NEW_LOCATION_MESSAGE",
-        payload: obj,
-    };
 }
 
 /*

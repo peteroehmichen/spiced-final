@@ -382,16 +382,16 @@ module.exports.getFriendInfo = function (userId, friendId) {
     );
 };
 
-module.exports.getLastChats = function (about, id, userId) {
+module.exports.getLastChats = function (about, id, userId, limit) {
     let q;
     if (about == "general") {
-        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE (recipient=${userId} AND sender=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) OR (sender=${userId} AND recipient=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) ORDER BY chat.id DESC LIMIT 20;`;
+        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE (recipient=${userId} AND sender=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) OR (sender=${userId} AND recipient=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) ORDER BY chat.id DESC LIMIT ${limit};`;
     } else if (about == "trip") {
         const ids = id.split("T");
         // console.log("Split ids in trip-chat-header:", ids);
-        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE (trip_origin=${ids[1]} AND trip_target=${ids[2]}) OR (trip_origin=${ids[2]} AND trip_target=${ids[1]}) ORDER BY chat.id DESC LIMIT 20;`;
+        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE (trip_origin=${ids[1]} AND trip_target=${ids[2]}) OR (trip_origin=${ids[2]} AND trip_target=${ids[1]}) ORDER BY chat.id DESC LIMIT ${limit};`;
     } else if (about == "location") {
-        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE location_id=${id} ORDER BY chat.id DESC LIMIT 20;`;
+        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE location_id=${id} ORDER BY chat.id DESC LIMIT ${limit};`;
     }
     // console.log("running:", q);
     return sql.query(q);

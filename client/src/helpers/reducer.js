@@ -198,6 +198,29 @@ export default function reducer(store = { errors: [] }, action) {
         });
     }
 
+    if (action.type == "RECEIVE_CHAT_MESSAGES") {
+        const { success } = action.payload;
+        return produce(store, (newStore) => {
+            delete newStore.chat;
+            if (success) {
+                newStore.chat = success;
+            } else {
+                newStore.errors.push(action.payload.error);
+            }
+        });
+    }
+
+    if (action.type == "NEW_MESSAGE") {
+        const { success, error } = action.payload;
+        return produce(store, (newStore) => {
+            if (success) {
+                newStore.chat.push(success);
+            } else {
+                newStore.errors.push(error);
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////
     // changing primitive values on base level without immer
     ////////////////////////////////////////////////////////
@@ -342,35 +365,34 @@ export default function reducer(store = { errors: [] }, action) {
         store.matchesError = action.error;
     }
 
-    if (action.type == "RECEIVE_CHAT_MESSAGES") {
-        store.chat = action.payload;
-        store.chatError = action.error;
-    }
+    // if (action.type == "NEW_LOCATION_MESSAGE") {
+    //     const { success } = action.payload;
+    //     return produce(store, (newStore) => {
+    //         if (success) {
+    //             newStore.chat.push(success);
+    //         } else {
+    //             newStore.errors.push(action.payload.error);
+    //         }
+    //     });
+    // }
 
-    if (action.type == "NEW_FRIEND_MESSAGE") {
-        if (action.payload.error) {
-            store.msgError = action.payload.error;
-        } else {
-            store.chat.push(action.payload);
-            store.msgError = null;
-        }
-    }
-    if (action.type == "NEW_TRIP_MESSAGE") {
-        if (action.payload.error) {
-            store.msgError = action.payload.error;
-        } else {
-            store.chat.push(action.payload);
-            store.msgError = null;
-        }
-    }
-    if (action.type == "NEW_LOCATION_MESSAGE") {
-        if (action.payload.error) {
-            store.msgError = action.payload.error;
-        } else {
-            store.chat.push(action.payload);
-            store.msgError = null;
-        }
-    }
+    // if (action.type == "NEW_FRIEND_MESSAGE") {
+    //     if (action.payload.error) {
+    //         store.msgError = action.payload.error;
+    //     } else {
+    //         store.chat.push(action.payload);
+    //         store.msgError = null;
+    //     }
+    // }
+    // if (action.type == "NEW_TRIP_MESSAGE") {
+    //     if (action.payload.error) {
+    //         store.msgError = action.payload.error;
+    //     } else {
+    //         store.chat.push(action.payload);
+    //         store.msgError = null;
+    //     }
+    // }
+
     // if (action.type == "GET_LOCATION_RATING") {
     //     if (action.error) {
     //         store.ratingError = action.payload.error;

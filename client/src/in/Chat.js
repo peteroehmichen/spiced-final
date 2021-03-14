@@ -2,16 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatDistance, parseISO } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { receiveChatMessages } from "../helpers/actions";
-import {
-    emitFriendMessage,
-    emitLocationMessage,
-    emitTripMessage,
-} from "../helpers/socket";
-import LocationRating from "./LocationRating";
-// import { receiveChatMessages } from "./action";
-// import Countdown from "./countdown";
-// import { format_time } from "./helpers";
-// import { emitSingleMessage } from "./socket";
+import { emitMessage } from "../helpers/socket";
 
 // FIXME sorting of messages
 
@@ -22,36 +13,30 @@ export default function Chat(props) {
     const [group, setGroup] = useState("");
     const [searchInput, setSearchInput] = useState("");
 
-    // const [reply, setReply] = useState("0");
-    // const [placeholder, setPlaceholder] = useState("");
     const dispatch = useDispatch();
     let {
         chat: messages,
-        chatError,
         otherUser: other,
         matches,
         locations,
         user,
     } = useSelector((store) => store);
-    // const chatError = useSelector((store) => store.chatError);
-    // const msgError = useSelector((store) => store.msgError);
-    // const activeUsers = useSelector((store) => store.activeUsers || []);
 
     useEffect(() => {
         // console.log("receiving chat messages...");
         if (props.type == "user+" || props.type == "user-") {
-            dispatch(receiveChatMessages("general", props.user));
+            // dispatch(receiveChatMessages("general", props.user, 20));
         } else if (props.type == "location") {
             // console.log("fetching location chats on...", props.location);
-            dispatch(receiveChatMessages("location", props.location));
+            dispatch(receiveChatMessages("location", props.location, 20));
         }
     }, []);
 
     useEffect(() => {
         if (group == "direct") {
-            dispatch(receiveChatMessages("general", props.user));
+            dispatch(receiveChatMessages("general", props.user, 20));
         } else if (group[0] == "T") {
-            dispatch(receiveChatMessages("trip", group));
+            dispatch(receiveChatMessages("trip", group, 20));
         }
     }, [group]);
 
@@ -70,14 +55,16 @@ export default function Chat(props) {
                 (group == "" || group == "direct")
             ) {
                 // console.log("sending friend-message...");
-                emitFriendMessage({
+                emitMessage({
+                    type: "friend",
                     recipient: props.user,
                     value,
                 });
             } else if (group[0] == "T") {
                 // console.log("sending trip-message...");
                 const data = group.split("T");
-                emitTripMessage({
+                emitMessage({
+                    type: "trip",
                     recipient: data[3],
                     trip_target: data[1],
                     trip_origin: data[2],
@@ -85,7 +72,8 @@ export default function Chat(props) {
                 });
             } else if (props.type == "location") {
                 // console.log("sending location-message...");
-                emitLocationMessage({
+                emitMessage({
+                    type: "location",
                     location: props.location,
                     value,
                 });

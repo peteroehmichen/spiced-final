@@ -762,9 +762,14 @@ app.get("/in/chat.json", async (req, res) => {
     // userId = req.session.userId;
 
     // console.log("requested chat", req.query);
-    const { about, id } = req.query;
+    const { about, id, limit } = req.query;
     try {
-        const { rows } = await db.getLastChats(about, id, req.session.userId);
+        const { rows } = await db.getLastChats(
+            about,
+            id,
+            req.session.userId,
+            limit
+        );
         // console.log("sending back Chats:", rows.length);
         for (let i = 0; i < rows.length; i++) {
             // console.log("message:", rows[i].sender, req.session.userId);
@@ -772,10 +777,13 @@ app.get("/in/chat.json", async (req, res) => {
                 rows[i].from_me = true;
             }
         }
-        res.json(rows.reverse());
+        res.json({ success: rows.reverse(), error: false });
     } catch (error) {
         console.log("error in loading chat:", error);
-        res.json({ error: "Error in Loading Chat" });
+        res.json({
+            success: false,
+            error: { type: "notifications", text: "Error in Loading Chat" },
+        });
     }
 
     // res.json([{ success: "test" }]);
@@ -851,93 +859,195 @@ io.on("connection", (socket) => {
     // console.log("userid:", userId);
     // console.log("userid from Socket", socket.request.session.userId);
 
-    socket.on("newFriendMessage", async (msg) => {
+    socket.on("newMessageToServer", async (msg) => {
         // console.log("Friend-Chat:", msg);
         let status;
         try {
-            const result = await db.addFriendMessage(
-                socket.request.session.userId,
-                msg.recipient,
-                msg.value
-            );
+            let result;
+            if (msg.type == "friend") {
+                result = await db.addFriendMessage(
+                    socket.request.session.userId,
+                    msg.recipient,
+                    msg.value
+                );
+            } else if (msg.type == "trip") {
+                result = await db.addTripMessage(
+                    socket.request.session.userId,
+                    msg.recipient,
+                    msg.trip_origin,
+                    msg.trip_target,
+                    msg.value
+                );
+            } else if (msg.type == "location") {
+                result = await db.addLocationMessage(
+                    socket.request.session.userId,
+                    msg.location,
+                    msg.value
+                );
+            }
             status = {
-                ...result.user.rows[0],
-                ...result.chat.rows[0],
+                success: {
+                    ...result.user.rows[0],
+                    ...result.chat.rows[0],
+                },
+                error: false,
             };
         } catch (error) {
-            status = { error: "Server Error" };
-        }
-        let recipientSocket = Object.entries(activeSockets);
-        for (let i = 0; i < recipientSocket.length; i++) {
-            if (recipientSocket[i][1] == msg.recipient) {
-                // FIXME mail if unavailable
-                io.to(recipientSocket[i][0]).emit("newFriendMsg", status);
-            }
-        }
-        if (status.sender == socket.request.session.userId) {
-            status.from_me = true;
-        }
-        socket.emit("newFriendMsg", status);
-    });
-    socket.on("newTripMessage", async (msg) => {
-        // console.log("received Trip-Chat:", msg);
-        let status;
-        try {
-            const result = await db.addTripMessage(
-                socket.request.session.userId,
-                msg.recipient,
-                msg.trip_origin,
-                msg.trip_target,
-                msg.value
-            );
-
             status = {
-                ...result.user.rows[0],
-                ...result.chat.rows[0],
+                success: false,
+                error: { type: "notifications", text: "Server Error" },
             };
-            // console.log("status:", status);
-            // console.log("result:", result);
-        } catch (error) {
-            console.log("Problem:", error);
-            status = { error: "Server Error" };
         }
-        let recipientSocket = Object.entries(activeSockets);
-        for (let i = 0; i < recipientSocket.length; i++) {
-            if (recipientSocket[i][1] == msg.recipient) {
-                // FIXME mail if unavailable
-                io.to(recipientSocket[i][0]).emit("newTripMsg", status);
+        if (msg.type == "location") {
+            io.emit("newMessageToClient", status);
+        } else {
+            let recipientSocket = Object.entries(activeSockets);
+            for (let i = 0; i < recipientSocket.length; i++) {
+                if (recipientSocket[i][1] == msg.recipient) {
+                    // FIXME mail if unavailable
+                    io.to(recipientSocket[i][0]).emit(
+                        "newMessageToClient",
+                        status
+                    );
+                }
             }
-        }
-        if (status.sender == socket.request.session.userId) {
-            status.from_me = true;
-        }
-        socket.emit("newTripMsg", status);
-    });
-    socket.on("newLocationMessage", async (msg) => {
-        // console.log("received Location-Chat:", msg);
-        let status;
-        try {
-            const result = await db.addLocationMessage(
-                socket.request.session.userId,
-                msg.location,
-                msg.value
-            );
-
-            status = {
-                ...result.user.rows[0],
-                ...result.chat.rows[0],
-            };
             if (status.sender == socket.request.session.userId) {
                 status.from_me = true;
             }
-            // console.log("status:", status);
-            // console.log("result:", result);
-        } catch (error) {
-            console.log("Problem:", error);
-            status = { error: "Server Error" };
+            socket.emit("newMessageToClient", status);
         }
-        io.emit("newLocationMsg", status);
+
+        // if (msg.type == "friend") {
+        //     let recipientSocket = Object.entries(activeSockets);
+        //     for (let i = 0; i < recipientSocket.length; i++) {
+        //         if (recipientSocket[i][1] == msg.recipient) {
+        //             // FIXME mail if unavailable
+        //             io.to(recipientSocket[i][0]).emit("newMsg", status);
+        //         }
+        //     }
+        //     if (status.sender == socket.request.session.userId) {
+        //         status.from_me = true;
+        //     }
+        //     socket.emit("newMsg", status);
+        // } else if (msg.type == "trip") {
+        //     let recipientSocket = Object.entries(activeSockets);
+        //     for (let i = 0; i < recipientSocket.length; i++) {
+        //         if (recipientSocket[i][1] == msg.recipient) {
+        //             // FIXME mail if unavailable
+        //             io.to(recipientSocket[i][0]).emit("newMsg", status);
+        //         }
+        //     }
+        //     if (status.sender == socket.request.session.userId) {
+        //         status.from_me = true;
+        //     }
+        //     socket.emit("newMsg", status);
+        // } else if (msg.type == "location") {
+        //     io.emit("newMsg", status);
+        // }
     });
+    // socket.on("newFriendMessage", async (msg) => {
+    //     // console.log("Friend-Chat:", msg);
+    //     let status;
+    //     try {
+    //         const result = await db.addFriendMessage(
+    //             socket.request.session.userId,
+    //             msg.recipient,
+    //             msg.value
+    //         );
+    //         status = {
+    //             success: {
+    //                 ...result.user.rows[0],
+    //                 ...result.chat.rows[0],
+    //             },
+    //             error: false,
+    //         };
+    //     } catch (error) {
+    //         status = {
+    //             success: false,
+    //             error: { type: "notifications", text: "Server Error" },
+    //         };
+    //     }
+    //     let recipientSocket = Object.entries(activeSockets);
+    //     for (let i = 0; i < recipientSocket.length; i++) {
+    //         if (recipientSocket[i][1] == msg.recipient) {
+    //             // FIXME mail if unavailable
+    //             io.to(recipientSocket[i][0]).emit("newMsg", status);
+    //         }
+    //     }
+    //     if (status.sender == socket.request.session.userId) {
+    //         status.from_me = true;
+    //     }
+    //     socket.emit("newMsg", status);
+    // });
+
+    // socket.on("newTripMessage", async (msg) => {
+    //     // console.log("received Trip-Chat:", msg);
+    //     let status;
+    //     try {
+    //         const result = await db.addTripMessage(
+    //             socket.request.session.userId,
+    //             msg.recipient,
+    //             msg.trip_origin,
+    //             msg.trip_target,
+    //             msg.value
+    //         );
+
+    //         status = {
+    //             ...result.user.rows[0],
+    //             ...result.chat.rows[0],
+    //         };
+    //         // console.log("status:", status);
+    //         // console.log("result:", result);
+    //     } catch (error) {
+    //         console.log("Problem:", error);
+    //         status = { error: "Server Error" };
+    //     }
+    //     let recipientSocket = Object.entries(activeSockets);
+    //     for (let i = 0; i < recipientSocket.length; i++) {
+    //         if (recipientSocket[i][1] == msg.recipient) {
+    //             // FIXME mail if unavailable
+    //             io.to(recipientSocket[i][0]).emit("newMsg", status);
+    //         }
+    //     }
+    //     if (status.sender == socket.request.session.userId) {
+    //         status.from_me = true;
+    //     }
+    //     socket.emit("newMsg", status);
+    // });
+    // socket.on("newLocationMessage", async (msg) => {
+    //     // console.log("received Location-Chat:", msg);
+    //     let status;
+    //     try {
+    //         const result = await db.addLocationMessage(
+    //             socket.request.session.userId,
+    //             msg.location,
+    //             msg.value
+    //         );
+
+    //         status = {
+    //             success: {
+    //                 ...result.user.rows[0],
+    //                 ...result.chat.rows[0],
+    //             },
+    //             error: false,
+    //         };
+    //         if (status.sender == socket.request.session.userId) {
+    //             status.from_me = true;
+    //         }
+    //         // console.log("status:", status);
+    //         // console.log("result:", result);
+    //     } catch (error) {
+    //         console.log("Problem:", error);
+    //         status = {
+    //             success: false,
+    //             error: {
+    //                 type: "notifications",
+    //                 text: "Server Error in adding chat-message",
+    //             },
+    //         };
+    //     }
+    //     io.emit("newMsg", status);
+    // });
 
     // if (msg.recipient == 0) {
     //     // message to all
