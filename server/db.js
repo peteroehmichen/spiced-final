@@ -8,7 +8,7 @@ const sql = spicedPg(
 const redis = require("redis");
 const { promisify } = require("util");
 
-const client = process.env.REDIS_URL
+const client = process.env.REDIS_TLS_URL
     ? redis.createClient(process.env.REDIS_URL, {
           tls: {
               rejectUnauthorized: false,
@@ -23,7 +23,7 @@ client.on("error", function (err) {
 });
 // const rds = {};
 
-module.exports.rdsClient = client;
+// module.exports.rdsClient = client;
 module.exports.rdsSet = promisify(client.set).bind(client);
 module.exports.rdsGet = promisify(client.get).bind(client);
 module.exports.rdsSetex = promisify(client.setex).bind(client);
