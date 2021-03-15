@@ -19,9 +19,11 @@ const client = process.env.REDIS_URL
           port: 6379,
       });
 client.on("error", function (err) {
-    console.log(err);
+    console.log("couldnt access Redis:", err);
 });
 // const rds = {};
+
+module.exports.rdsClient = client;
 module.exports.rdsSet = promisify(client.set).bind(client);
 module.exports.rdsGet = promisify(client.get).bind(client);
 module.exports.rdsSetex = promisify(client.setex).bind(client);
