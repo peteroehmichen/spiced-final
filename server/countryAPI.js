@@ -26,3 +26,4 @@ module.exports.getCountries = function () {
         "http://countryapi.gear.host/v1/Country/getCountries"
     );
 };
+// FIXME redis is currently off
