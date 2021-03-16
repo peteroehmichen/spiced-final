@@ -18,16 +18,15 @@ export default function Chat(props) {
         chat: messages,
         otherUser: other,
         matches,
+        trips,
         locations,
         user,
+        selectedChat,
     } = useSelector((store) => store);
 
     useEffect(() => {
-        // console.log("receiving chat messages...");
-        if (props.type == "user+" || props.type == "user-") {
-            // dispatch(receiveChatMessages("general", props.user, 20));
-        } else if (props.type == "location") {
-            // console.log("fetching location chats on...", props.location);
+        messages = null;
+        if (props.type == "location") {
             dispatch(receiveChatMessages("location", props.location, 20));
         }
     }, []);
@@ -90,11 +89,6 @@ export default function Chat(props) {
         return obj.name;
     };
 
-    const selectGroup = function (e) {
-        // console.log(e.target.innerText)
-        setGroup(e.target.innerText);
-    };
-
     if (Array.isArray(messages)) {
         // FIXME filter on array for error control
         messages = messages.filter((message) => {
@@ -102,7 +96,7 @@ export default function Chat(props) {
                 !message.trip_origin &&
                 !message.trip_target &&
                 !message.location_id &&
-                (group == "" || group == "direct")
+                group == "direct"
             ) {
                 return true;
             } else if (
@@ -121,6 +115,10 @@ export default function Chat(props) {
                 return false;
             }
         });
+    }
+    let ownMatches = [];
+    if (Array.isArray(matches)) {
+        ownMatches = matches.filter((elem) => elem.person == other.id);
     }
 
     return (
@@ -142,25 +140,27 @@ export default function Chat(props) {
                                 Choose...
                             </option>
                             {other.confirmed && (
-                                <option value="direct">direct</option>
+                                <option value="direct">Direct Message</option>
                             )}
-                            {matches
-                                .filter((elem) => elem.person == other.id)
-                                .map((elem, i) => {
-                                    return (
-                                        <option
-                                            key={i}
-                                            value={`T${elem.id}T${elem.match_id}T${elem.person}`}
-                                        >
-                                            {getLocationName(elem.location_id)}{" "}
-                                            (
-                                            {new Date(
-                                                elem.from_min
-                                            ).toLocaleDateString()}
-                                            )
-                                        </option>
-                                    );
-                                })}
+                            {ownMatches.length && (
+                                <option disabled>MATCHES</option>
+                            )}
+
+                            {ownMatches.map((elem, i) => {
+                                return (
+                                    <option
+                                        key={i}
+                                        value={`T${elem.id}T${elem.match_id}T${elem.person}`}
+                                    >
+                                        {" -  "}
+                                        {getLocationName(elem.location_id)} (
+                                        {new Date(
+                                            elem.from_min
+                                        ).toLocaleDateString()}
+                                        )
+                                    </option>
+                                );
+                            })}
                         </select>
                     </label>
                 )}
@@ -181,7 +181,10 @@ export default function Chat(props) {
             <div ref={chatRef} className="messages">
                 {((!messages || messages.length == 0) && (
                     <div className="messages-no">
-                        <p>No Messages found</p>
+                        <p>
+                            {(!group && "please select a group") ||
+                                "No Messages found"}
+                        </p>
                     </div>
                 )) ||
                     (Array.isArray(messages) &&
@@ -216,14 +219,19 @@ export default function Chat(props) {
             </div>
             <div className="new-message">
                 <textarea
+                    disabled={!group}
                     placeholder="Your Message..."
                     onChange={(e) => setValue(e.target.value)}
-                    onKeyPress={(e) => submit(e)}
+                    onKeyPress={(e) => {
+                        if (value) {
+                            submit(e);
+                        }
+                    }}
                     ref={input}
                     className="chat-input"
                 />
                 <button
-                    disabled={!value}
+                    disabled={!value || !group}
                     onClick={(e) => {
                         submit(e);
                     }}
@@ -234,48 +242,3 @@ export default function Chat(props) {
         </div>
     );
 }
-
-// <div className="chat">
-
-//         <div className="chat">
-//             <div className="user">
-//                 <div
-//                     className="user-header selected"
-//                     id="0"
-//                     onClick={(e) => {
-//                         // e.stopPropagation();
-//                         // console.log(e);
-//                         setPlaceholder("");
-//                         selectedUser(e);
-//                     }}
-//                 >
-//                     <h1>ALL</h1>
-//                 </div>
-//                 <div className="active-users">
-//                     {Array.isArray(activeUsers) &&
-//                         activeUsers.map((user) => (
-//                             <div
-//                                 key={user.id}
-//                                 id={user.id}
-//                                 className="active-user"
-//                                 onClick={(e) => {
-//                                     setPlaceholder(
-//                                         `Your Message to ${user.first}...`
-//                                     );
-
-//                                     selectedUser(e);
-//                                 }}
-//                             >
-//                                 <div className="active-thumb">
-//                                     <img src={user.profile_pic_url} />
-//                                 </div>
-//                                 <div className="active-name">
-//                                     <b>{user.first}</b>
-//                                 </div>
-//                             </div>
-//                         ))}
-//                 </div>
-//             </div>
-//         </div>
-//     )}
-// </div>
