@@ -15,7 +15,9 @@ export default function Dashboard() {
             <div className="friend-two">
                 <div className="grow-split">
                     <div>
-                        <h3>What your friends are planning</h3>
+                        <div>
+                            <h3>What your friends are planning</h3>
+                        </div>
                         <div className="container-frame">
                             <div className="card-container wrapped">
                                 {trips &&
@@ -64,7 +66,9 @@ export default function Dashboard() {
                     </div>
 
                     <div>
-                        <h3>Trips that match your plans </h3>
+                        <div>
+                            <h3>Trips that match your plans </h3>
+                        </div>
                         <div className="container-frame">
                             <div className="card-container wrapped">
                                 <Matches mode="dashboard" />
@@ -72,7 +76,9 @@ export default function Dashboard() {
                         </div>
                     </div>
                     <div>
-                        <h3>Notifications</h3>
+                        <div>
+                            <h3>Notifications</h3>
+                        </div>
                         <div className="temp">comming soon...</div>
                     </div>
                 </div>
