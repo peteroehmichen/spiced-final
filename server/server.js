@@ -110,22 +110,22 @@ app.get("/in/essentialData.json", async (req, res) => {
 
             res.json({ success: obj, error: false });
         } else {
-            console.log("error in essential-obj:", results);
+            console.log("error in creating essential-obj:", results);
             res.json({
                 success: false,
                 error: {
-                    type: "essential",
-                    text: "couldn't load necessary data",
+                    type: "major",
+                    text: "Could not load all essential data",
                 },
             });
         }
     } catch (error) {
-        console.log("Error in DB on fetching essentials:", error);
+        console.log("Error in DB on creating essential-obj:", error);
         res.json({
             success: false,
             error: {
-                type: "essential",
-                text: "couldn't load necessary data",
+                type: "major",
+                text: "Could not access all essential databases",
             },
         });
     }
@@ -302,7 +302,7 @@ app.get("/in/addLocation.json", async (req, res) => {
                 success: false,
                 error: {
                     type: "notifications",
-                    text: "Error in writing to DB",
+                    text: "Error in writing to Database",
                 },
             });
         }
@@ -816,7 +816,7 @@ app.post("/in/picture.json", aws.uploader.single("file"), async (req, res) => {
                 success: false,
                 error: {
                     type: "notifications",
-                    text: "DB rejected new picture",
+                    text: "Database could not add the picture",
                 },
             });
         }

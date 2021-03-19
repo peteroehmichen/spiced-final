@@ -2,13 +2,14 @@ import { useEffect, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { findMatchingTrips } from "../helpers/actions";
+import { GetLocationName } from "../helpers/helperComponents";
 
 export default function Matches(props) {
-    const { matches, locations, user } = useSelector((store) => store);
-    const dispatch = useDispatch();
+    const { matches, user } = useSelector((store) => store);
+    // const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(findMatchingTrips());
+        // dispatch(findMatchingTrips());
     }, []);
 
     const perc2color = function (perc) {
@@ -27,16 +28,10 @@ export default function Matches(props) {
         return "#" + ("000000" + h.toString(16)).slice(-6);
     };
 
-    const getLocationName = function (id) {
-        const obj = locations.find((loc) => loc.id == id);
-        return obj.name;
-    };
-
     return (
         <Fragment>
             {matches &&
                 user &&
-                locations &&
                 props.mode == "user" &&
                 matches
                     .filter((elem) =>
@@ -69,7 +64,11 @@ export default function Matches(props) {
 
                             <div className="card-right-match">
                                 <div>
-                                    <h3>{getLocationName(elem.location_id)}</h3>
+                                    <h3>
+                                        <GetLocationName
+                                            id={elem.location_id}
+                                        />
+                                    </h3>
                                     <p>
                                         {new Date(
                                             elem.from_min
@@ -90,7 +89,6 @@ export default function Matches(props) {
                     ))}
             {matches &&
                 user &&
-                locations &&
                 props.mode == "dashboard" &&
                 matches.map((elem, i) => (
                     <Link to={`/user/${elem.person}`} key={i}>
@@ -106,7 +104,9 @@ export default function Matches(props) {
                                 <img src={elem.picture || "/default.svg"} />
                             </div>
                             <div className="card-text">
-                                <h4>{getLocationName(elem.location_id)}</h4>
+                                <h4>
+                                    <GetLocationName id={elem.location_id} />
+                                </h4>
                                 <p>
                                     {new Date(
                                         elem.from_min
@@ -126,42 +126,3 @@ export default function Matches(props) {
         </Fragment>
     );
 }
-
-/*
-
-<Link to={`/user/${elem.person}`} key={i}>
-                                    <div className={`card ${cardCSS}`}>
-                                        <div className="card-thumb">
-                                            <img src="/default.svg" />
-                                        </div>
-                                        <div className="card-image">
-                                            <img src="/default.svg" />
-                                        </div>
-                                        <div className="card-text">
-                                            <h4>
-                                                {(props.limit == "0" &&
-                                                    elem.first) ||
-                                                    elem.first}
-                                                s trip to{" "}
-                                                {getLocationName(elem.location_id)}
-                                            </h4>
-                                            <p>
-                                                (
-                                                {new Date(
-                                                    elem.from_min
-                                                ).toLocaleDateString()}{" "}
-                                                -{" "}
-                                                {new Date(
-                                                    elem.until_max
-                                                ).toLocaleDateString()}
-                                                )
-                                            </p>
-                                        </div>
-                                        <div className="card-foot">
-                                            {elem.match_overlap_percent}% match
-                                        </div>
-                                    </div>
-                                </Link>
-
-
-*/

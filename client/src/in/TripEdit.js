@@ -21,10 +21,6 @@ export default function TripEdit(props) {
         }
     };
 
-    const getLocationName = function (id) {
-        const obj = locations.find((loc) => loc.id == id);
-        return obj.name;
-    };
     return (
         <Fragment>
             <div className="card-left">

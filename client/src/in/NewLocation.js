@@ -8,8 +8,6 @@ export default function NewLocation() {
 
     const dispatch = useDispatch();
 
-    // if (!countries) return null;
-
     return (
         <div className="form new-locations">
             <div>

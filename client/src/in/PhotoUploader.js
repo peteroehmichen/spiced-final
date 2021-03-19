@@ -2,11 +2,9 @@ import axios from "../helpers/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import {
-    updateLocationPicture,
-    updateProfilePicture,
-    updateTripPicture,
     toggleUploadModal,
     toggleTripUploadModal,
+    updatePicture,
 } from "../helpers/actions";
 
 export default function Uploader(props) {
@@ -51,7 +49,6 @@ export default function Uploader(props) {
             picture.append("location_id", props.id);
         } else if (props.type == "trip") {
             let element = trips.filter((elem) => elem.id == props.id);
-            // console.log("found old picture:", element);
             picture.append("old", element.picture);
             picture.append("trip_id", props.id);
         } else {
@@ -64,21 +61,13 @@ export default function Uploader(props) {
             response = data;
         } catch (err) {
             console.log("error in Upload Post:", err);
-            response.error = "Unknown server error";
+            response.error = {
+                type: "notifications",
+                text: "Server did not respond",
+            };
         }
-        if (props.type == "location") {
-            dispatch(updateLocationPicture(response, props.id));
-        } else if (props.type == "trip") {
-            dispatch(updateTripPicture(response, props.id));
-        } else {
-            dispatch(updateProfilePicture(response, user.id));
-        }
+        dispatch(updatePicture(response, props.type, props.id));
         setLoading(false);
-        if (props.type == "trip") {
-            dispatch(toggleTripUploadModal(false));
-        } else {
-            dispatch(toggleUploadModal());
-        }
     }
 
     return (

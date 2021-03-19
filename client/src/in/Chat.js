@@ -3,6 +3,7 @@ import { formatDistance, parseISO } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { receiveChatMessages } from "../helpers/actions";
 import { emitMessage } from "../helpers/socket";
+import { GetLocationName } from "../helpers/helperComponents";
 
 // FIXME sorting of messages
 
@@ -84,11 +85,6 @@ export default function Chat(props) {
     };
     // console.log("active Users:", activeUsers);
 
-    const getLocationName = function (id) {
-        const obj = locations.find((loc) => loc.id == id);
-        return obj.name;
-    };
-
     if (Array.isArray(messages)) {
         // FIXME filter on array for error control
         messages = messages.filter((message) => {
@@ -153,7 +149,9 @@ export default function Chat(props) {
                                         value={`T${elem.id}T${elem.match_id}T${elem.person}`}
                                     >
                                         {" -  "}
-                                        {getLocationName(elem.location_id)} (
+                                        <GetLocationName
+                                            id={elem.location_id}
+                                        />
                                         {new Date(
                                             elem.from_min
                                         ).toLocaleDateString()}

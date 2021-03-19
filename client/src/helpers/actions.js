@@ -11,14 +11,14 @@ export async function getEssentialData() {
             },
         };
     } catch (err) {
-        console.log("Received an error on /app:", err);
+        console.log("Major Error in fetching essential data:", err);
         return {
             type: "GET_ESSENTIAL_DATA",
             payload: {
                 success: false,
                 error: {
-                    type: "essential",
-                    text: "couldn't access server",
+                    type: "major",
+                    text: "Connection to Server was lost",
                 },
             },
         };
@@ -40,18 +40,26 @@ export async function addNewLocation(values) {
         const { data } = await axios.get(
             `/in/addLocation.json?continent=${values.continent}&country=${values.country}&name=${values.name}`
         );
+        if (data.success) {
+            toast.success(
+                `Location "${values.name.toUpperCase()}" was added succesfully`
+            );
+        } else if (data.error) {
+            toast.error(data.error.text);
+        }
         return {
             type: "ADD_NEW_LOCATION",
             payload: data,
         };
     } catch (error) {
         console.log("Received an error on /locations:", error);
+        toast.error("Could not access Server");
         return {
             type: "ADD_NEW_LOCATION",
             payload: {
                 success: false,
                 error: {
-                    type: "notification",
+                    type: "notifications",
                     text: "Could not access Server",
                 },
             },
@@ -157,32 +165,18 @@ export async function addLocationSection(values, id, prev) {
     }
 }
 
-export async function updateLocationPicture(response, location_id) {
+export async function updatePicture(response, destination, id) {
+    if (response.success) {
+        toast.success(`Picture for ${destination} was changed succesfully`);
+    } else if (response.error) {
+        toast.error(response.error.text);
+    }
     return {
-        type: "UPDATE_LOCATION_PICTURE",
+        type: "UPDATE_PICTURE",
         payload: {
             ...response,
-            location_id,
-        },
-    };
-}
-
-export async function updateTripPicture(response, trip_id) {
-    return {
-        type: "UPDATE_TRIP_PICTURE",
-        payload: {
-            ...response,
-            trip_id,
-        },
-    };
-}
-
-export async function updateProfilePicture(response, user_id) {
-    return {
-        type: "UPDATE_PROFILE_PICTURE",
-        payload: {
-            ...response,
-            user_id,
+            destination,
+            id,
         },
     };
 }

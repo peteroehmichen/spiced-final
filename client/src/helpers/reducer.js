@@ -1,24 +1,27 @@
 import { produce } from "immer";
 
-export default function reducer(store = { errors: [] }, action) {
+export default function reducer(store = {}, action) {
     ///////////////////////////////////////////////////
     // changing complex and/or nested values with immer
     ///////////////////////////////////////////////////
 
     if (action.type == "GET_ESSENTIAL_DATA") {
         return produce(store, (newStore) => {
-            // newStore.errors = [];
-            if (action.payload.success) {
-                newStore.user = action.payload.success.user;
-                newStore.locations = action.payload.success.locations;
-                newStore.trips = action.payload.success.trips;
-                newStore.matches = action.payload.success.matches;
-                newStore.grades = action.payload.success.grades;
-                newStore.experience = action.payload.success.experience;
-                newStore.countries = action.payload.success.countries;
-                newStore.continents = action.payload.success.continents;
+            const { success, error } = action.payload;
+            if (success) {
+                newStore.user = success.user;
+                newStore.locations = success.locations;
+                newStore.trips = success.trips;
+                newStore.matches = success.matches;
+                newStore.grades = success.grades;
+                newStore.experience = success.experience;
+                newStore.countries = success.countries;
+                newStore.continents = success.continents;
             } else {
-                newStore.errors.push(action.payload.error);
+                newStore.errors = {
+                    [error.type]: error.text,
+                };
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -27,10 +30,8 @@ export default function reducer(store = { errors: [] }, action) {
         return produce(store, (newStore) => {
             if (action.payload.success) {
                 newStore.locations.unshift(action.payload.success);
-            } else {
-                newStore.errors.push(action.payload.error);
+                newStore.activeLocationForm = !store.activeLocationForm;
             }
-            newStore.activeLocationForm = !store.activeLocationForm;
         });
     }
 
@@ -39,7 +40,7 @@ export default function reducer(store = { errors: [] }, action) {
             if (action.payload.success) {
                 newStore.location = action.payload.success;
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -51,7 +52,7 @@ export default function reducer(store = { errors: [] }, action) {
                     newStore.location.infos = action.payload.success.infos;
                 }
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -70,51 +71,41 @@ export default function reducer(store = { errors: [] }, action) {
                     return country;
                 });
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
 
-    if (action.type == "UPDATE_LOCATION_PICTURE") {
-        const { success, location_id } = action.payload;
-        return produce(store, (newStore) => {
-            if (success && location_id == newStore.location.id) {
-                newStore.location.picture = success.url;
-                newStore.locations.forEach((country) => {
-                    if (country.id == location_id) {
-                        country.picture = success.url;
-                    }
-                    return country;
-                });
-            } else {
-                newStore.errors.push(action.payload.error);
-            }
-        });
-    }
-
-    if (action.type == "UPDATE_TRIP_PICTURE") {
-        const { success, trip_id } = action.payload;
+    if (action.type == "UPDATE_PICTURE") {
+        console.log("action for picture:", action);
+        const { destination, id, success } = action.payload;
         return produce(store, (newStore) => {
             if (success) {
-                newStore.trips.forEach((trip) => {
-                    if (trip.id == trip_id) {
-                        trip.picture = success.url;
+                if (destination == "location") {
+                    if (id == newStore.location.id) {
+                        newStore.location.picture = success.url;
+                        newStore.locations.forEach((country) => {
+                            if (country.id == id) {
+                                country.picture = success.url;
+                            }
+                            return country;
+                        });
                     }
-                    return trip;
-                });
-            } else {
-                newStore.errors.push(action.payload.error);
-            }
-        });
-    }
+                } else if (destination == "trip") {
+                    newStore.trips.forEach((trip) => {
+                        if (trip.id == id) {
+                            trip.picture = success.url;
+                        }
+                        return trip;
+                    });
+                    newStore.activateTripUploadModal = false;
+                } else if (destination == "profile") {
+                    if (id == newStore.user.id) {
+                        newStore.user.picture = success.url;
+                    }
+                }
 
-    if (action.type == "UPDATE_PROFILE_PICTURE") {
-        const { success, user_id } = action.payload;
-        return produce(store, (newStore) => {
-            if (success && user_id == newStore.user.id) {
-                newStore.user.picture = success.url;
-            } else {
-                newStore.errors.push(action.payload.error);
+                newStore.activateUploadModal = false;
             }
         });
     }
@@ -141,7 +132,7 @@ export default function reducer(store = { errors: [] }, action) {
                     return trip;
                 });
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -154,7 +145,7 @@ export default function reducer(store = { errors: [] }, action) {
                     (trip) => trip.id != success.id
                 );
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -179,7 +170,7 @@ export default function reducer(store = { errors: [] }, action) {
                     ...success,
                 };
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -193,7 +184,7 @@ export default function reducer(store = { errors: [] }, action) {
                     nextFriendAction: success.text,
                 };
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -205,7 +196,7 @@ export default function reducer(store = { errors: [] }, action) {
             if (success) {
                 newStore.chat = success;
             } else {
-                newStore.errors.push(action.payload.error);
+                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -216,7 +207,7 @@ export default function reducer(store = { errors: [] }, action) {
             if (success) {
                 newStore.chat.push(success);
             } else {
-                newStore.errors.push(error);
+                // newStore.errors.push(error);
             }
         });
     }
@@ -225,18 +216,18 @@ export default function reducer(store = { errors: [] }, action) {
     // changing primitive values on base level without immer
     ////////////////////////////////////////////////////////
 
-    store = {
-        ...store,
-    };
-
     if (action.type == "TOGGLE_LOCATION_FORM") {
-        store.activeLocationForm = !store.activeLocationForm;
-        return store;
+        return (store = {
+            ...store,
+            activeLocationForm: !store.activeLocationForm,
+        });
     }
 
     if (action.type == "TOGGLE_UPLOAD_MODAL") {
-        store.activateUploadModal = !store.activateUploadModal;
-        return store;
+        return (store = {
+            ...store,
+            activateUploadModal: !store.activateUploadModal,
+        });
     }
 
     // if (action.type == "TOGGLE_DESCRIPTION_EDIT") {

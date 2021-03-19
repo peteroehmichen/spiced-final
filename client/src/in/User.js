@@ -4,6 +4,7 @@ import { getUserData } from "../helpers/actions";
 import FriendButton from "./FriendBtn";
 import Matches from "./Matches";
 import Chat from "./Chat";
+import { GetLocationName } from "../helpers/helperComponents";
 
 export default function User(props) {
     const [activeMatches, setActiveMatches] = useState(true);
@@ -22,13 +23,6 @@ export default function User(props) {
         dispatch(getUserData(props.match.params.id));
         // dispatch(getTrips());
     }, []);
-
-    const getLocationName = function (id) {
-        const obj = locations.find((loc) => loc.id == id);
-        return obj.name;
-    };
-
-    // if (!other.first && !other.error) return null;
 
     const otherUser = (
         <div className="central user">
@@ -146,9 +140,9 @@ export default function User(props) {
                                         </div>
                                         <div className="card-text">
                                             <h4>
-                                                {getLocationName(
-                                                    elem.location_id
-                                                )}
+                                                <GetLocationName
+                                                    id={elem.location_id}
+                                                />
                                             </h4>
                                             <p>
                                                 {new Date(

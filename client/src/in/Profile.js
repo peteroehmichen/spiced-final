@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Upload from "../graphComp/Upload";
 import { toggleTripForm, toggleTripEdit } from "../helpers/actions";
+import { GetLocationName } from "../helpers/helperComponents";
 import DescriptionEdit from "./DescriptionEdit";
 import NewTrip from "./NewTrip";
 import PhotoUploader from "./PhotoUploader";
@@ -14,20 +15,16 @@ export default function Profile() {
     const {
         trips,
         activeTripForm,
-        locations,
         user,
         tripEdit,
         activateTripUploadModal,
     } = useSelector((store) => store);
 
-    const getLocationName = function (id) {
-        const obj = locations.find((loc) => loc.id == id);
-        return obj.name;
-    };
-
     return (
         <div className="central prof">
-            {activateUploadModal && <PhotoUploader type="profile" />}
+            {activateUploadModal && user && (
+                <PhotoUploader type="profile" id={user.id} />
+            )}
             {activateTripUploadModal && (
                 <PhotoUploader type="trip" id={activateTripUploadModal} />
             )}
@@ -66,7 +63,6 @@ export default function Profile() {
                         </div>
                     )}
                     {trips &&
-                        locations &&
                         user &&
                         trips
                             .filter(
@@ -91,9 +87,11 @@ export default function Profile() {
                                                 </div>
                                                 <div className="card-text">
                                                     <h4>
-                                                        {getLocationName(
-                                                            elem.location_id
-                                                        )}
+                                                        <GetLocationName
+                                                            id={
+                                                                elem.location_id
+                                                            }
+                                                        />
                                                     </h4>
                                                     <p>
                                                         {new Date(
