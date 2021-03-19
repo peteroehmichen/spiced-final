@@ -102,13 +102,14 @@ export default function ProfileEdit() {
                     </label>
                     <button
                         onClick={() => {
+                            setValues(null);
                             setProfileEditMode(false);
                         }}
                     >
                         cancel
                     </button>
                     <button
-                        disabled={status.loading}
+                        disabled={!values}
                         onClick={() => {
                             dispatch(updateUserData(values));
                             setProfileEditMode(false);

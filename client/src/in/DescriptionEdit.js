@@ -53,7 +53,7 @@ export default function DescriptionEdit() {
                         cancel
                     </button>
                     <button
-                        disabled={status.loading}
+                        disabled={!values}
                         onClick={() => {
                             dispatch(updateUserData(values));
                             setDescriptionEditMode(false);

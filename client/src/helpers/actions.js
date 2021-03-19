@@ -94,12 +94,18 @@ export async function changeMyRating(value, id) {
         const { data } = await axios.get(
             `/in/changeLocationRating.json?value=${value}&id=${id}`
         );
+        if (data.success) {
+            toast.success(`Your rating was updated succesfully`);
+        } else if (data.error) {
+            toast.error(data.error.text);
+        }
         return {
             type: "CHANGE_LOCATION_RATING",
             payload: data,
         };
     } catch (error) {
         console.log("Received an error on /location:", error);
+        toast.error("Could not access Server");
         return {
             type: "CHANGE_LOCATION_RATING",
             payload: {
@@ -184,11 +190,17 @@ export async function updatePicture(response, destination, id) {
 export async function updateUserData(values) {
     try {
         const { data } = await axios.post("/in/updateUserData.json", values);
+        if (data.success) {
+            toast.success(`Your profile data was successfully updated`);
+        } else if (data.error) {
+            toast.error(data.error.text);
+        }
         return {
             type: "UPDATE_USER_DATA",
             payload: data,
         };
     } catch (error) {
+        toast.error("No Server Connection");
         return {
             type: "UPDATE_USER_DATA",
             payload: {
@@ -199,16 +211,23 @@ export async function updateUserData(values) {
     }
 }
 
-export async function updateTripData(values, id) {
+export async function updateTripData(values, id, index) {
     values.id = id;
-    console.log("values:", values);
     try {
         const { data } = await axios.post("/in/updateTripData.json", values);
+        if (data.success) {
+            data.success.index = index;
+            toast.success("Trip was successfully updated");
+        } else {
+            toast.error(data.error.text);
+        }
         return {
             type: "UPDATE_TRIP_DATA",
             payload: data,
         };
     } catch (error) {
+        console.log("error in updating Trip:", error);
+        toast.error("No Server Connection");
         return {
             type: "UPDATE_TRIP_DATA",
             payload: {
@@ -222,11 +241,18 @@ export async function updateTripData(values, id) {
 export async function deleteTrip(id) {
     try {
         const { data } = await axios.get(`/in/deleteTrip.json?id=${id}`);
+        if (data.success) {
+            toast.success("Trip was successfully deleted");
+        } else {
+            toast.error(data.error.text);
+        }
         return {
             type: "DELETE_TRIP",
             payload: data,
         };
     } catch (error) {
+        console.log("Error in deleting trip:", error);
+        toast.error("No Connection to Server");
         return {
             type: "DELETE_TRIP",
             payload: {
@@ -367,25 +393,23 @@ export async function updateFriendshipStatus() {
 }
 
 export async function addNewTrip(values) {
-    // console.log("writing new Location:", values);
     try {
         const { data } = await axios.post(`/in/addTrip.json`, values);
-        // console.log("response:", data);
         if (data.success) {
-            return {
-                type: "ADD_NEW_TRIP",
-                payload: data.success,
-            };
+            toast.success(`new Trip was succesfully added`);
         } else {
-            return {
-                type: "ADD_NEW_TRIP",
-                error: data.error,
-            };
+            toast.error(data.error.text);
         }
-    } catch (error) {
         return {
             type: "ADD_NEW_TRIP",
-            error: "Could not access Server",
+            payload: data,
+        };
+    } catch (error) {
+        console.log("Error in adding Trip:", error);
+        toast.error("Could not access Server");
+        return {
+            type: "ADD_NEW_TRIP",
+            error: { type: "notifications", text: "Could not access Server" },
         };
     }
 }

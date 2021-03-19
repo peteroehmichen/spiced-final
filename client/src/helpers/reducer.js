@@ -26,6 +26,15 @@ export default function reducer(store = {}, action) {
         });
     }
 
+    if (action.type == "ADD_NEW_TRIP") {
+        return produce(store, (newStore) => {
+            if (action.payload.success) {
+                newStore.trips.unshift(action.payload.success);
+                newStore.activeTripForm = !store.activeTripForm;
+            }
+        });
+    }
+
     if (action.type == "ADD_NEW_LOCATION") {
         return produce(store, (newStore) => {
             if (action.payload.success) {
@@ -70,14 +79,11 @@ export default function reducer(store = {}, action) {
                     }
                     return country;
                 });
-            } else {
-                // newStore.errors.push(action.payload.error);
             }
         });
     }
 
     if (action.type == "UPDATE_PICTURE") {
-        console.log("action for picture:", action);
         const { destination, id, success } = action.payload;
         return produce(store, (newStore) => {
             if (success) {
@@ -115,8 +121,6 @@ export default function reducer(store = {}, action) {
         return produce(store, (newStore) => {
             if (success && success.id == newStore.user.id) {
                 newStore.user = success;
-            } else {
-                newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -125,14 +129,14 @@ export default function reducer(store = {}, action) {
         const { success } = action.payload;
         return produce(store, (newStore) => {
             if (success) {
+                newStore.tripEdit[success.index] = false;
+                delete success.index;
                 newStore.trips = newStore.trips.map((trip) => {
                     if (trip.id == success.id) {
                         trip = success;
                     }
                     return trip;
                 });
-            } else {
-                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -144,8 +148,6 @@ export default function reducer(store = {}, action) {
                 newStore.trips = newStore.trips.filter(
                     (trip) => trip.id != success.id
                 );
-            } else {
-                // newStore.errors.push(action.payload.error);
             }
         });
     }
@@ -307,16 +309,6 @@ export default function reducer(store = {}, action) {
         } else {
             store.locationError = action.error;
         }
-    }
-
-    if (action.type == "ADD_NEW_TRIP") {
-        // console.log("writing new trip to store");
-        if (action.payload) {
-            store.trips.unshift(action.payload);
-        } else {
-            store.tripsError = action.error;
-        }
-        store.activeTripForm = !store.activeTripForm;
     }
 
     if (action.type == "CANCEL_FRIENDSHIP") {

@@ -183,7 +183,10 @@ app.post("/in/updateUserData.json", async (req, res) => {
         } else {
             res.json({
                 success: false,
-                error: { type: "notifications", text: "formatting Error" },
+                error: {
+                    type: "notifications",
+                    text: "Database rejected new user infos",
+                },
             });
         }
     } catch (err) {
@@ -201,8 +204,6 @@ app.post("/in/updateUserData.json", async (req, res) => {
 app.post("/in/updateTripData.json", async (req, res) => {
     const tripId = req.body.id;
     delete req.body.id;
-    // console.log("tripID", tripId);
-    // console.log("body:", req.body);
     try {
         for (let element in req.body) {
             await db.updateTripData(element, req.body[element], tripId);
@@ -213,7 +214,10 @@ app.post("/in/updateTripData.json", async (req, res) => {
         } else {
             res.json({
                 success: false,
-                error: { type: "notifications", text: "formatting Error" },
+                error: {
+                    type: "notifications",
+                    text: "Database rejected new trip details",
+                },
             });
         }
     } catch (err) {
@@ -239,7 +243,7 @@ app.get("/in/deleteTrip.json", async (req, res) => {
                 success: false,
                 error: {
                     type: "notifications",
-                    text: "unable to delete from DB",
+                    text: "Unable to delete from Database",
                 },
             });
         }
@@ -377,7 +381,6 @@ app.get("/in/locationData.json", async (req, res) => {
 });
 
 app.get("/in/changeLocationRating.json", async (req, res) => {
-    console.log("rating query", req.query);
     try {
         await db.changeLocationRating(
             req.query.value,
@@ -393,8 +396,6 @@ app.get("/in/changeLocationRating.json", async (req, res) => {
         rating.own = results.user.rows.length
             ? results.user.rows[0].own
             : false;
-        //  results.user.rows[0]?.own || false;
-        console.log("rating:", rating);
         res.json({ success: rating, error: false });
     } catch (error) {
         console.log("Error in updating rating:", error);
@@ -402,7 +403,7 @@ app.get("/in/changeLocationRating.json", async (req, res) => {
             success: false,
             error: {
                 type: "notifications",
-                text: "Failed Connection to Database",
+                text: "Could not add Rating to Database",
             },
         });
     }
@@ -435,7 +436,6 @@ app.get("/in/getTrips.json", async (req, res) => {
 });
 
 app.post("/in/addTrip.json", async (req, res) => {
-    // console.log("receiving:", req.body);
     const { location_id, from_min, until_max, comment } = req.body;
     try {
         const result = await db.addTrip(
@@ -445,7 +445,6 @@ app.post("/in/addTrip.json", async (req, res) => {
             comment,
             req.session.userId
         );
-        // console.log("checking:", result);
         if (result.rowCount > 0) {
             req.body.person = req.session.userId;
             req.body.id = result.rows[0].id;
@@ -458,7 +457,7 @@ app.post("/in/addTrip.json", async (req, res) => {
                 success: false,
                 error: {
                     type: "notifications",
-                    text: "Error in writing to DB",
+                    text: "Database rejected the data",
                 },
             });
         }
@@ -472,7 +471,6 @@ app.post("/in/addTrip.json", async (req, res) => {
             },
         });
     }
-    // res.json({ success: "OK - trip" });
 });
 
 app.get("/api/friends.json", async (req, res) => {
