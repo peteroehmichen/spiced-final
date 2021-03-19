@@ -130,42 +130,6 @@ app.get("/in/essentialData.json", async (req, res) => {
         });
     }
 });
-// app.get("/in/essentialData.json", async (req, res) => {
-//     let result = await getCountries();
-//     const { Response: countries } = JSON.parse(result.body);
-//     const continents = [];
-//     countries.forEach((country) => {
-//         if (!continents.includes(country.Region) && country.Region != "") {
-//             continents.push(country.Region);
-//         }
-//     });
-//     // console.log("continents:", continents);
-//     try {
-//         const results = await db.getEssentialData(req.session.userId);
-//         // results.tripsRaw.rowCount > 0
-//         // console.log(results.userRaw);
-//         // console.log(results.locationsRaw);
-//         if (results.userRaw.rowCount > 0) {
-//             const obj = {
-//                 user: results.userRaw.rows[0],
-//                 locations: results.locationsRaw.rows,
-//                 countries,
-//                 continents,
-//                 grades,
-//                 experience,
-//                 // trips: results.tripsRaw[0],
-//             };
-//             obj.user.id = req.session.userId;
-//             res.json({ success: obj, error: false });
-//         } else {
-//             console.log("error in Obj:", results);
-//             res.json({ success: false, error: "couldn't load necessary data" });
-//         }
-//     } catch (error) {
-//         console.log("Error in DB:", error);
-//         res.json({ success: false, error: "couldn't access database" });
-//     }
-// });
 
 app.get("/in/userData.json", async (req, res) => {
     if (req.query.id == req.session.userId) {
@@ -304,11 +268,20 @@ app.post("/in/addLocationSection.json", async (req, res) => {
         if (result.rowCount > 0) {
             return res.json({ success: result.rows[0], error: false });
         } else {
-            res.json({ success: false, error: "Formatting Error" });
+            res.json({
+                success: false,
+                error: { type: "notifications", text: "Formatting Error" },
+            });
         }
     } catch (err) {
         console.log("Error in trip-Update:", err);
-        res.json({ success: false, error: "Failed Connection to Database" });
+        res.json({
+            success: false,
+            error: {
+                type: "notifications",
+                text: "Failed Connection to Database",
+            },
+        });
     }
 });
 
@@ -328,7 +301,7 @@ app.get("/in/addLocation.json", async (req, res) => {
             res.json({
                 success: false,
                 error: {
-                    type: "notification",
+                    type: "notifications",
                     text: "Error in writing to DB",
                 },
             });
@@ -338,7 +311,7 @@ app.get("/in/addLocation.json", async (req, res) => {
         res.json({
             success: false,
             error: {
-                type: "notification",
+                type: "notifications",
                 text: "Failed Connection to Database",
             },
         });
@@ -359,14 +332,14 @@ app.get("/in/getLocations.json", async (req, res) => {
             console.log("DB-Rejection:", result);
             res.json({
                 success: false,
-                error: "DB rejected command",
+                error: { type: "notifications", text: "DB rejected command" },
             });
         }
     } catch (error) {
         console.log("DB-Error:", error);
         res.json({
             success: false,
-            error: "Failed Connection to DB",
+            error: { type: "notifications", text: "Failed Connection to DB" },
         });
     }
 });
@@ -388,7 +361,7 @@ app.get("/in/locationData.json", async (req, res) => {
         } else {
             res.json({
                 success: false,
-                error: { type: "notification", text: "Location unkown" },
+                error: { type: "notifications", text: "Location unkown" },
             });
         }
     } catch (err) {
@@ -396,7 +369,7 @@ app.get("/in/locationData.json", async (req, res) => {
         res.json({
             success: false,
             error: {
-                type: "notification",
+                type: "notifications",
                 text: "Failed Connection to Database",
             },
         });
@@ -428,7 +401,7 @@ app.get("/in/changeLocationRating.json", async (req, res) => {
         res.json({
             success: false,
             error: {
-                type: "notification",
+                type: "notifications",
                 text: "Failed Connection to Database",
             },
         });
@@ -449,14 +422,14 @@ app.get("/in/getTrips.json", async (req, res) => {
             console.log("DB-Rejection:", result);
             res.json({
                 success: false,
-                error: "DB rejected command",
+                error: { type: "notifications", text: "DB rejected command" },
             });
         }
     } catch (error) {
         console.log("DB-Error:", error);
         res.json({
             success: false,
-            error: "Failed Connection to DB",
+            error: { type: "notifications", text: "Failed Connection to DB" },
         });
     }
 });
@@ -483,14 +456,20 @@ app.post("/in/addTrip.json", async (req, res) => {
         } else {
             res.json({
                 success: false,
-                error: "Error in writing to DB",
+                error: {
+                    type: "notifications",
+                    text: "Error in writing to DB",
+                },
             });
         }
     } catch (err) {
         console.log("checking Error:", err);
         res.json({
             success: false,
-            error: "Failed Connection to Database",
+            error: {
+                type: "notifications",
+                text: "Failed Connection to Database",
+            },
         });
     }
     // res.json({ success: "OK - trip" });
@@ -506,7 +485,7 @@ app.get("/api/friends.json", async (req, res) => {
         res.json({
             success: false,
             error: {
-                type: "notification",
+                type: "notifications",
                 text: "Failed Connection to Database",
             },
         });
@@ -776,7 +755,10 @@ app.get("/in/matches.json", async (req, res) => {
         console.log("error:", error);
         res.json({
             success: false,
-            error: "Could not fetch matches from Server",
+            error: {
+                type: "notifications",
+                text: "Could not fetch matches from Server",
+            },
         });
     }
 });
@@ -808,30 +790,7 @@ app.get("/in/chat.json", async (req, res) => {
             error: { type: "notifications", text: "Error in Loading Chat" },
         });
     }
-
-    // res.json([{ success: "test" }]);
-    // id = req.session.userId;
 });
-
-// app.get("/in/getLocationRating.json", async (req, res) => {
-//     // console.log("fetching rating for location", req.query.q);
-//     try {
-//         const results = await db.getLocationRating(
-//             req.query.q,
-//             req.session.userId
-//         );
-//         let rating = results.rating.rows[0];
-//         rating.location = req.query.q;
-//         if (results.user.rows.length) {
-//             rating.your_rating = results.user.rows[0].rate;
-//             rating.your_rating_date = results.user.rows[0].created_at;
-//         }
-//         res.json({ success: rating, error: false });
-//     } catch (error) {
-//         console.log("Error during fetching rating:", error);
-//         res.json({ success: false, error: "Server Error" });
-//     }
-// });
 
 app.post("/in/picture.json", aws.uploader.single("file"), async (req, res) => {
     try {
@@ -853,10 +812,19 @@ app.post("/in/picture.json", aws.uploader.single("file"), async (req, res) => {
         if (sql.rowCount > 0) {
             res.json({ success: awsAdd, error: false });
         } else {
-            res.json({ success: false, error: "DB rejected new picture" });
+            res.json({
+                success: false,
+                error: {
+                    type: "notifications",
+                    text: "DB rejected new picture",
+                },
+            });
         }
     } catch (error) {
-        res.json({ success: false, error: "Server denied upload" });
+        res.json({
+            success: false,
+            error: { type: "notifications", text: "Server denied upload" },
+        });
     }
 });
 
@@ -939,181 +907,10 @@ io.on("connection", (socket) => {
             }
             socket.emit("newMessageToClient", status);
         }
-
-        // if (msg.type == "friend") {
-        //     let recipientSocket = Object.entries(activeSockets);
-        //     for (let i = 0; i < recipientSocket.length; i++) {
-        //         if (recipientSocket[i][1] == msg.recipient) {
-        //             // FIXME mail if unavailable
-        //             io.to(recipientSocket[i][0]).emit("newMsg", status);
-        //         }
-        //     }
-        //     if (status.sender == socket.request.session.userId) {
-        //         status.from_me = true;
-        //     }
-        //     socket.emit("newMsg", status);
-        // } else if (msg.type == "trip") {
-        //     let recipientSocket = Object.entries(activeSockets);
-        //     for (let i = 0; i < recipientSocket.length; i++) {
-        //         if (recipientSocket[i][1] == msg.recipient) {
-        //             // FIXME mail if unavailable
-        //             io.to(recipientSocket[i][0]).emit("newMsg", status);
-        //         }
-        //     }
-        //     if (status.sender == socket.request.session.userId) {
-        //         status.from_me = true;
-        //     }
-        //     socket.emit("newMsg", status);
-        // } else if (msg.type == "location") {
-        //     io.emit("newMsg", status);
-        // }
     });
-    // socket.on("newFriendMessage", async (msg) => {
-    //     // console.log("Friend-Chat:", msg);
-    //     let status;
-    //     try {
-    //         const result = await db.addFriendMessage(
-    //             socket.request.session.userId,
-    //             msg.recipient,
-    //             msg.value
-    //         );
-    //         status = {
-    //             success: {
-    //                 ...result.user.rows[0],
-    //                 ...result.chat.rows[0],
-    //             },
-    //             error: false,
-    //         };
-    //     } catch (error) {
-    //         status = {
-    //             success: false,
-    //             error: { type: "notifications", text: "Server Error" },
-    //         };
-    //     }
-    //     let recipientSocket = Object.entries(activeSockets);
-    //     for (let i = 0; i < recipientSocket.length; i++) {
-    //         if (recipientSocket[i][1] == msg.recipient) {
-    //             // FIXME mail if unavailable
-    //             io.to(recipientSocket[i][0]).emit("newMsg", status);
-    //         }
-    //     }
-    //     if (status.sender == socket.request.session.userId) {
-    //         status.from_me = true;
-    //     }
-    //     socket.emit("newMsg", status);
-    // });
 
-    // socket.on("newTripMessage", async (msg) => {
-    //     // console.log("received Trip-Chat:", msg);
-    //     let status;
-    //     try {
-    //         const result = await db.addTripMessage(
-    //             socket.request.session.userId,
-    //             msg.recipient,
-    //             msg.trip_origin,
-    //             msg.trip_target,
-    //             msg.value
-    //         );
-
-    //         status = {
-    //             ...result.user.rows[0],
-    //             ...result.chat.rows[0],
-    //         };
-    //         // console.log("status:", status);
-    //         // console.log("result:", result);
-    //     } catch (error) {
-    //         console.log("Problem:", error);
-    //         status = { error: "Server Error" };
-    //     }
-    //     let recipientSocket = Object.entries(activeSockets);
-    //     for (let i = 0; i < recipientSocket.length; i++) {
-    //         if (recipientSocket[i][1] == msg.recipient) {
-    //             // FIXME mail if unavailable
-    //             io.to(recipientSocket[i][0]).emit("newMsg", status);
-    //         }
-    //     }
-    //     if (status.sender == socket.request.session.userId) {
-    //         status.from_me = true;
-    //     }
-    //     socket.emit("newMsg", status);
-    // });
-    // socket.on("newLocationMessage", async (msg) => {
-    //     // console.log("received Location-Chat:", msg);
-    //     let status;
-    //     try {
-    //         const result = await db.addLocationMessage(
-    //             socket.request.session.userId,
-    //             msg.location,
-    //             msg.value
-    //         );
-
-    //         status = {
-    //             success: {
-    //                 ...result.user.rows[0],
-    //                 ...result.chat.rows[0],
-    //             },
-    //             error: false,
-    //         };
-    //         if (status.sender == socket.request.session.userId) {
-    //             status.from_me = true;
-    //         }
-    //         // console.log("status:", status);
-    //         // console.log("result:", result);
-    //     } catch (error) {
-    //         console.log("Problem:", error);
-    //         status = {
-    //             success: false,
-    //             error: {
-    //                 type: "notifications",
-    //                 text: "Server Error in adding chat-message",
-    //             },
-    //         };
-    //     }
-    //     io.emit("newMsg", status);
-    // });
-
-    // if (msg.recipient == 0) {
-    //     // message to all
-    //     status.public = true;
-    //     status.private = false;
-    //     io.emit("newMsg", status);
-    // } else if (msg.recipient == id) {
-    //     // message to self
-    //     status.public = false;
-    //     status.private = true;
-    //     socket.emit("newMsg", status);
-    // } else {
-    // }
     socket.on("disconnect", async () => {
         delete activeSockets[socket.id];
         io.emit("activeUsers", await activeUsers(activeSockets));
-
-        // console.log("disconnecting socket:", socket.id);
     });
 });
-
-// app.get("/in/getOtherTrips.json", async (req, res) => {
-//     // console.log("fetching trips");
-//     try {
-//         const result = await db.getTripsbyUser(req.body.q);
-//         // console.log("from DB:", result.rows);
-//         if (result.rows) {
-//             res.json({
-//                 success: result.rows,
-//                 error: false,
-//             });
-//         } else {
-//             console.log("DB-Rejection:", result);
-//             res.json({
-//                 success: false,
-//                 error: "DB rejected command",
-//             });
-//         }
-//     } catch (error) {
-//         console.log("DB-Error:", error);
-//         res.json({
-//             success: false,
-//             error: "Failed Connection to DB",
-//         });
-//     }
-// });

@@ -20,8 +20,6 @@ const requestPromise = promisify(request);
 //     return countries;
 // };
 module.exports.getCountries = function () {
-    console.log("REDIS-details:", db.rdsSetex);
-    console.log("REDIS-details:", db.rdsClient);
     return requestPromise(
         "http://countryapi.gear.host/v1/Country/getCountries"
     );

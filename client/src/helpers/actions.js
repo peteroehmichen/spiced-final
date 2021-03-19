@@ -1,4 +1,5 @@
 import axios from "./axios";
+import toast from "react-hot-toast";
 
 export async function getEssentialData() {
     try {
@@ -243,12 +244,27 @@ export async function deleteTrip(id) {
 }
 
 export async function getFriendships() {
-    const { data } = await axios.get("/api/friends.json");
-    // console.log("data from server", data);
-    return {
-        type: "GET_FRIENDSHIPS",
-        payload: data,
-    };
+    try {
+        const { data } = await axios.get("/api/friends.json");
+        if (data.error) {
+            toast.error(data.error.text);
+        }
+        return {
+            type: "GET_FRIENDSHIPS",
+            payload: data,
+        };
+    } catch (error) {
+        if (error) {
+            toast.error("No Server Connection");
+        }
+        return {
+            type: "GET_FRIENDSHIPS",
+            payload: {
+                success: false,
+                error: true,
+            },
+        };
+    }
 }
 
 export async function getUserData(id) {

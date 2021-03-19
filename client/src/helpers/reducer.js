@@ -164,8 +164,8 @@ export default function reducer(store = { errors: [] }, action) {
         return produce(store, (newStore) => {
             if (success) {
                 newStore.friendships = success;
-            } else {
-                newStore.errors.push(action.payload.error);
+                // } else {
+                //     newStore.errors.push(action.payload.error);
             }
         });
     }
