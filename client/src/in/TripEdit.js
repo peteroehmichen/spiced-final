@@ -21,12 +21,12 @@ export default function TripEdit(props) {
         }
     };
 
-    let sortedLocations;
-    if (locations) {
-        sortedLocations = locations.sort((e1, e2) =>
-            e1.name.toLowerCase().localeCompare(e2.name.toLowerCase())
-        );
-    }
+    // let sortedLocations;
+    // if (Array.isArray(locations)) {
+    // sortedLocations = locations.sort((e1, e2) =>
+    //     e1.name.toLowerCase().localeCompare(e2.name.toLowerCase())
+    // );
+    // }
     // FIXME major bug in toast while changing trip destination in offline mode.
     return (
         <Fragment>
@@ -38,13 +38,19 @@ export default function TripEdit(props) {
                         onChange={changeHandler}
                     >
                         {locations &&
-                            sortedLocations.map((elem) => (
-                                <option key={elem.id} value={elem.id}>
-                                    {elem.name.length > 16
-                                        ? elem.name.slice(0, 14) + "..."
-                                        : elem.name}
-                                </option>
-                            ))}
+                            [...locations]
+                                .sort((e1, e2) =>
+                                    e1.name
+                                        .toLowerCase()
+                                        .localeCompare(e2.name.toLowerCase())
+                                )
+                                .map((elem) => (
+                                    <option key={elem.id} value={elem.id}>
+                                        {elem.name.length > 16
+                                            ? elem.name.slice(0, 14) + "..."
+                                            : elem.name}
+                                    </option>
+                                ))}
                     </select>
                     <input
                         type="date"

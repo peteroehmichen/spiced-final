@@ -54,14 +54,12 @@ export default function Chat(props) {
                 props.type != "location" &&
                 (group == "" || group == "direct")
             ) {
-                // console.log("sending friend-message...");
                 emitMessage({
                     type: "friend",
                     recipient: props.user,
                     value,
                 });
             } else if (group[0] == "T") {
-                // console.log("sending trip-message...");
                 const data = group.split("T");
                 emitMessage({
                     type: "trip",
@@ -71,7 +69,6 @@ export default function Chat(props) {
                     value,
                 });
             } else if (props.type == "location") {
-                // console.log("sending location-message...");
                 emitMessage({
                     type: "location",
                     location: props.location,
