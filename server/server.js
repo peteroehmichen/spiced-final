@@ -267,14 +267,15 @@ app.post("/in/addLocationSection.json", async (req, res) => {
             req.body.id,
             req.body.prev
         );
-        // console.log("before", result.rows[0]);
-        // console.log("after", JSON.parse(result.rows[0].infos));
         if (result.rowCount > 0) {
             return res.json({ success: result.rows[0], error: false });
         } else {
             res.json({
                 success: false,
-                error: { type: "notifications", text: "Formatting Error" },
+                error: {
+                    type: "notifications",
+                    text: "Database denied new Information",
+                },
             });
         }
     } catch (err) {
@@ -491,7 +492,6 @@ app.get("/api/friends.json", async (req, res) => {
 });
 
 app.post("/api/user/friendBtn.json", async (req, res) => {
-    // console.log();
     let text;
     try {
         if (req.body.task == "") {
@@ -562,7 +562,7 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
                 success: false,
                 error: {
                     type: "notifications",
-                    text: "Internal error - please try again later",
+                    text: "unknown database error",
                 },
             });
         }
@@ -572,7 +572,7 @@ app.post("/api/user/friendBtn.json", async (req, res) => {
             success: false,
             error: {
                 type: "notifications",
-                text: "Server error - please try again later",
+                text: "Could not connect to database",
             },
         });
     }

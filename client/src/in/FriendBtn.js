@@ -1,29 +1,18 @@
-import { useState, useEffect, Fragment } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { submitFriendAction, updateFriendshipStatus } from "../helpers/actions";
+import { submitFriendAction } from "../helpers/actions";
 
 export default function FriendButton(props) {
-    // const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
-    const { nextFriendAction, dbError } = useSelector(
-        (store) => store.otherUser
-    );
+    const { nextFriendAction } = useSelector((store) => store.otherUser);
 
     const request = async function (task) {
         dispatch(submitFriendAction(props.friendId, task));
-        // console.log(task);
-        if (task == "Cancel Friendship" || task == "Accept Request") {
-            dispatch(updateFriendshipStatus());
-        }
     };
 
     useEffect(() => {
-        // console.log("loading BTN with id", props.friendId);
         request("");
     }, []);
-
-    // console.log("nextFriendAction:", nextFriendAction);
-    // console.log("dbError:", dbError);
 
     if (!nextFriendAction) return null;
 

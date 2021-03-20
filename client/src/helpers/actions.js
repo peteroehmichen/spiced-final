@@ -152,12 +152,18 @@ export async function addLocationSection(values, id, prev) {
             "/in/addLocationSection.json",
             values
         );
+        if (data.success) {
+            toast.success("Location details updated");
+        } else {
+            toast.error(data.error.text);
+        }
         return {
             type: "ADD_LOCATION_SECTION",
             payload: data,
         };
     } catch (error) {
         console.log("Received an error on /addLocationSection:", error);
+        toast.error("Could not access Server");
         return {
             type: "ADD_LOCATION_SECTION",
             payload: {
@@ -266,22 +272,17 @@ export async function deleteTrip(id) {
 export async function getFriendships() {
     try {
         const { data } = await axios.get("/api/friends.json");
-        if (data.error) {
-            toast.error(data.error.text);
-        }
         return {
             type: "GET_FRIENDSHIPS",
             payload: data,
         };
     } catch (error) {
-        if (error) {
-            toast.error("No Server Connection");
-        }
+        console.log("Error in axios while fetching socials:", error);
         return {
             type: "GET_FRIENDSHIPS",
             payload: {
                 success: false,
-                error: true,
+                error: { type: "module", text: "Could not connect to server" },
             },
         };
     }
@@ -309,18 +310,28 @@ export async function getUserData(id) {
 }
 
 export async function submitFriendAction(id, task) {
-    // console.log("friend BTN Run (ID, TASK):", id, task);
     try {
         const { data } = await axios.post("/api/user/friendBtn.json", {
             friendId: id,
-            task: task,
+            task,
         });
-        // console.log("result from BTN Action:", result.data);
+        if (data.success) {
+            if (task != "") {
+                toast.success("Friendship status updated");
+            }
+            if (task == "Cancel Friendship" || task == "Accept Request") {
+                data.success.toggleConfirmed = true;
+            }
+        } else if (data.error) {
+            toast.error(data.error.text);
+        }
         return {
             type: "SUBMIT_FRIEND_ACTION",
             payload: data,
         };
     } catch (err) {
+        console.log("axios error in fetching ");
+        toast.error("could not connect to Server");
         return {
             type: "SUBMIT_FRIEND_ACTION",
             payload: {
@@ -383,12 +394,6 @@ export async function toggleTripUploadModal(id) {
     return {
         type: "TOGGLE_TRIP_UPLOAD_MODAL",
         payload: id,
-    };
-}
-
-export async function updateFriendshipStatus() {
-    return {
-        type: "UPDATE_FRIENDSHIP_STATUS",
     };
 }
 
