@@ -27,28 +27,28 @@ const cookieSessionMiddleware = cookieSession({
 
 const csurf = require("csurf");
 
-let BAName = process.env.BAName
-    ? process.env.BAName
-    : require("../secrets.json").BAName;
-let BAPass = process.env.BAPass
-    ? process.env.BAPass
-    : require("../secrets.json").BAPass;
+// let BAName = process.env.BAName
+//     ? process.env.BAName
+//     : require("../secrets.json").BAName;
+// let BAPass = process.env.BAPass
+//     ? process.env.BAPass
+//     : require("../secrets.json").BAPass;
 
-const basicAuth = require("basic-auth");
-const firstBlock = function (req, res, next) {
-    const creds = basicAuth(req);
-    if (!creds || creds.name != BAName || creds.pass != BAPass) {
-        res.setHeader(
-            "WWW-Authenticate",
-            'Basic realm="Enter your credentials to see this app"'
-        );
-        res.sendStatus(401);
-    } else {
-        next();
-    }
-};
+// const basicAuth = require("basic-auth");
+// const firstBlock = function (req, res, next) {
+//     const creds = basicAuth(req);
+//     if (!creds || creds.name != BAName || creds.pass != BAPass) {
+//         res.setHeader(
+//             "WWW-Authenticate",
+//             'Basic realm="Enter your credentials to see this app"'
+//         );
+//         res.sendStatus(401);
+//     } else {
+//         next();
+//     }
+// };
 
-app.use(firstBlock);
+// app.use(firstBlock);
 
 const db = require("./db");
 const aws = require("./aws");

@@ -36,6 +36,7 @@ router.post("/welcome/register.json", async (req, res) => {
 });
 
 router.post("/welcome/login.json", async (req, res) => {
+    console.log("received:", req.body);
     try {
         const result = await db.getAuthenticatedUser(
             req.body.email,

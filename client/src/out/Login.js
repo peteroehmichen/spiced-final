@@ -1,5 +1,6 @@
 import { useAthenticate, useFormEval } from "../helpers/customHooks";
 import { Link } from "react-router-dom";
+import axios from "../helpers/axios";
 
 export default function Login() {
     const [values, handleChangeEval] = useFormEval();
@@ -51,6 +52,26 @@ export default function Login() {
                     Forgot your password? Click here to{" "}
                     <Link to="/reset">reset</Link>
                 </p>
+                <i style={{ color: "blue" }}>
+                    Or log in with a predefined test user{" "}
+                    <b
+                        style={{ cursor: "pointer" }}
+                        onClick={async () => {
+                            const { data } = await axios.post(
+                                "/welcome/login.json",
+                                {
+                                    email: "test@example.com",
+                                    password: "test",
+                                }
+                            );
+                            if (data.status == "OK") {
+                                location.replace("/");
+                            }
+                        }}
+                    >
+                        click here
+                    </b>
+                </i>
             </div>
         </div>
     );

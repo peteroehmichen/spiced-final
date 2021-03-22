@@ -744,6 +744,7 @@ textarea[name="comment"] {
 
 .getting-started {
     background-color: rgba(255, 255, 255, 0.8);
+    max-width: 50%;
     border-radius: 15px;
     margin: 20px;
     padding: 20px;

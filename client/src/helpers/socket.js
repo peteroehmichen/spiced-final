@@ -11,8 +11,8 @@ export const init = (store) => {
     socket.on("newMessageToClient", (obj) => {
         return store.dispatch(newMessage(obj));
     });
-    socket.on("error", () => {
-        console.log("encountered an error");
+    socket.on("error", (err) => {
+        console.log("encountered an error", err);
     });
     socket.on("disconnect", () => {
         console.log("Socket Disconnected");
