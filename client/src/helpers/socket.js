@@ -16,13 +16,13 @@ export const init = (store) => {
     });
     socket.on("disconnect", () => {
         console.log("Socket Disconnected");
-        toast.error("Lost the connection to the server");
+        toast.error("Lost the socket-connection to the server");
     });
     socket.on("connect_failed", function () {
         toast.error("connect:failed");
     });
     socket.on("connect", function () {
-        toast.success("connectio to Websocket established");
+        // toast.success("connectio to Websocket established");
     });
     socket.on("connecting", function () {
         toast.error("connecting");

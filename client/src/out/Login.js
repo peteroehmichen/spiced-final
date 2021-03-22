@@ -60,7 +60,7 @@ export default function Login() {
                             const { data } = await axios.post(
                                 "/welcome/login.json",
                                 {
-                                    email: "test@example.com",
+                                    email: "test@expample.com",
                                     password: "test",
                                 }
                             );

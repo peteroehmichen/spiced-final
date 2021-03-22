@@ -146,9 +146,7 @@ export default function Chat(props) {
                                         value={`T${elem.id}T${elem.match_id}T${elem.person}`}
                                     >
                                         {" -  "}
-                                        <GetLocationName
-                                            id={elem.location_id}
-                                        />
+                                        {elem.location_name + " ("}
                                         {new Date(
                                             elem.from_min
                                         ).toLocaleDateString()}
