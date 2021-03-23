@@ -374,15 +374,15 @@ app.get("/in/locationData.json", async (req, res) => {
         } else {
             res.json({
                 success: false,
-                error: { type: "notifications", text: "Location unkown" },
+                error: { type: "component", text: "Location unkown" },
             });
         }
     } catch (err) {
-        console.log("checking2:", err);
+        console.log("Error in getting location details:", err);
         res.json({
             success: false,
             error: {
-                type: "notifications",
+                type: "component",
                 text: "Failed Connection to Database",
             },
         });

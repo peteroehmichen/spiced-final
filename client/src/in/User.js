@@ -22,6 +22,9 @@ export default function User(props) {
     useEffect(async () => {
         dispatch(getUserData(props.match.params.id));
         // dispatch(getTrips());
+        return () => {
+            console.log("unmounting...");
+        };
     }, []);
 
     const otherUser = (

@@ -47,6 +47,8 @@ export default function reducer(store = {}, action) {
         return produce(store, (newStore) => {
             if (action.payload.success) {
                 newStore.location = action.payload.success;
+            } else {
+                newStore.location.error = action.payload.error.text;
             }
         });
     }
@@ -200,6 +202,12 @@ export default function reducer(store = {}, action) {
             if (success) {
                 newStore.chat.push(success);
             }
+        });
+    }
+
+    if (action.type == "REMOVE_REDUX_DETAIL") {
+        return produce(store, (newStore) => {
+            newStore[action.payload] = {};
         });
     }
 

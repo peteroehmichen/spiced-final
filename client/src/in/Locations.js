@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toggleLocationForm } from "../helpers/actions";
@@ -8,6 +8,10 @@ export default function Locations() {
     const dispatch = useDispatch();
     const { activeLocationForm, locations } = useSelector((store) => store);
     const [searchInput, setSearchInput] = useState("");
+
+    // useEffect(() => {
+    //     return () => {};
+    // }, []);
 
     let filteredLocations = [];
     if (locations) {

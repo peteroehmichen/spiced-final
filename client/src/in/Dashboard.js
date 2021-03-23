@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Loader } from "../helpers/helperComponents";
 import Matches from "./Matches";
 
 export default function Dashboard() {
@@ -79,7 +80,7 @@ export default function Dashboard() {
                         <div>
                             <h3>Notifications</h3>
                         </div>
-                        <div className="temp">comming soon...</div>
+                        <Loader />
                     </div>
                 </div>
             </div>

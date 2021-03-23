@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getLocationData, addLocationSection } from "../helpers/actions";
+import {
+    getLocationData,
+    addLocationSection,
+    removeReduxDetail,
+} from "../helpers/actions";
 
 import Upload from "../graphComp/Upload";
 import Chat from "./Chat";
 import PhotoUploader from "./PhotoUploader";
 import LocationRating from "./LocationRating";
+import { Loader } from "../helpers/helperComponents";
 
-export default function User(props) {
+export default function Location(props) {
     const [newSection, setNewSection] = useState();
     const [values, setValues] = useState();
     const [editing, setEditing] = useState(false);
@@ -18,8 +23,11 @@ export default function User(props) {
         (store) => store
     );
 
-    useEffect(async () => {
+    useEffect(() => {
         dispatch(getLocationData(props.match.params.id));
+        return () => {
+            dispatch(removeReduxDetail("location"));
+        };
     }, []);
 
     const fillNew = function (e) {
@@ -41,7 +49,16 @@ export default function User(props) {
         infos = [];
     }
 
-    const LocDetails = loc.name && (
+    let errorBlock;
+    if (loc.error) {
+        errorBlock = (
+            <div className="central location">
+                <h4>{loc.error}</h4>
+            </div>
+        );
+    }
+
+    const details = (
         <div
             className="central location"
             style={{
@@ -50,23 +67,30 @@ export default function User(props) {
             }}
         >
             <Upload />
-
             {activateUploadModal && (
                 <PhotoUploader type="location" id={props.match.params.id} />
             )}
             <div className="location-head">
-                <h1>{loc.name}</h1>
-                <p>
-                    {loc.country} ({loc.continent})
-                </p>
-                <LocationRating id={props.match.params.id} />
+                {(!loc.name && <Loader />) || (
+                    <Fragment>
+                        <h1>{loc.name}</h1>
+                        <p>
+                            {loc.country} ({loc.continent})
+                        </p>
+                        <LocationRating id={props.match.params.id} />
+                    </Fragment>
+                )}
             </div>
             <div className="location-body">
                 <div className="location-left">
                     <h2>Tips and Trick for Solo Climbers</h2>
-                    <div className="info-block">
-                        {loc.infos &&
-                            infos.map((elem, i) => (
+                    {!loc.name && !loc.infos && <Loader />}
+                    {loc.name && !loc.infos && (
+                        <p>be the first to add infos here</p>
+                    )}
+                    {loc.infos && (
+                        <div className="info-block">
+                            {infos.map((elem, i) => (
                                 <div key={i}>
                                     {!secEdit[i] && (
                                         <div className="infos">
@@ -154,80 +178,81 @@ export default function User(props) {
                                     )}
                                 </div>
                             ))}
-                        {!newSection && (
-                            <div
-                                className="infos add"
-                                onClick={() => {
-                                    setEditing(true);
-                                    setNewSection(true);
-                                    setValues(null);
-                                }}
-                            >
-                                ✚
-                            </div>
-                        )}
-                        {newSection && (
-                            <div className="infos">
-                                <input
-                                    type="text"
-                                    placeholder="title of section"
-                                    name="title"
-                                    onChange={fillNew}
-                                />
-                                <div className="infos-content">
-                                    <textarea
-                                        placeholder="content"
-                                        name="content"
+                            {!newSection && (
+                                <div
+                                    className="infos add"
+                                    onClick={() => {
+                                        setEditing(true);
+                                        setNewSection(true);
+                                        setValues(null);
+                                    }}
+                                >
+                                    ✚
+                                </div>
+                            )}
+                            {newSection && (
+                                <div className="infos">
+                                    <input
+                                        type="text"
+                                        placeholder="title of section"
+                                        name="title"
                                         onChange={fillNew}
                                     />
+                                    <div className="infos-content">
+                                        <textarea
+                                            placeholder="content"
+                                            name="content"
+                                            onChange={fillNew}
+                                        />
+                                    </div>
+                                    <div>
+                                        <button
+                                            onClick={() => {
+                                                setValues(null);
+                                                setEditing(false);
+                                                setNewSection(false);
+                                            }}
+                                        >
+                                            cancel
+                                        </button>
+                                        <button
+                                            disabled={
+                                                !values ||
+                                                !values.title ||
+                                                !values.content
+                                            }
+                                            onClick={() => {
+                                                setEditing(false);
+                                                setNewSection(false);
+                                                dispatch(
+                                                    addLocationSection(
+                                                        values,
+                                                        loc.id,
+                                                        {}
+                                                    )
+                                                );
+                                            }}
+                                        >
+                                            Submit
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <button
-                                        onClick={() => {
-                                            setValues(null);
-                                            setEditing(false);
-                                            setNewSection(false);
-                                        }}
-                                    >
-                                        cancel
-                                    </button>
-                                    <button
-                                        disabled={
-                                            !values ||
-                                            !values.title ||
-                                            !values.content
-                                        }
-                                        onClick={() => {
-                                            setEditing(false);
-                                            setNewSection(false);
-                                            dispatch(
-                                                addLocationSection(
-                                                    values,
-                                                    loc.id,
-                                                    {}
-                                                )
-                                            );
-                                        }}
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                    )}
                 </div>
                 <div className="location-right">
                     <h2>Forum</h2>
-                    <Chat type="location" location={props.match.params.id} />
+                    {(!loc.name && <Loader />) || (
+                        <Chat
+                            type="location"
+                            location={props.match.params.id}
+                        />
+                    )}
                 </div>
             </div>
         </div>
     );
-    const errorBlock = (
-        <div className="central location">
-            <h4>Could not load the requested page</h4>
-        </div>
-    );
 
-    return LocDetails || errorBlock;
+    return errorBlock || details;
 }

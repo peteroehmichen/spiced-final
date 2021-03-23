@@ -81,7 +81,7 @@ export async function getLocationData(id) {
             payload: {
                 success: false,
                 error: {
-                    type: "notification",
+                    type: "component",
                     text: "Could not access Server",
                 },
             },
@@ -175,6 +175,13 @@ export async function addLocationSection(values, id, prev) {
             },
         };
     }
+}
+
+export function removeReduxDetail(section) {
+    return {
+        type: "REMOVE_REDUX_DETAIL",
+        payload: section,
+    };
 }
 
 export async function updatePicture(response, destination, id) {

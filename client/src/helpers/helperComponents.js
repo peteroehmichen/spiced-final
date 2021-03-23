@@ -5,3 +5,11 @@ export function GetLocationName(props) {
     const obj = locations.find((loc) => loc.id == props.id);
     return obj.name;
 }
+
+export function Loader() {
+    return (
+        <div className="spinner">
+            <div id="loading"></div>
+        </div>
+    );
+}
