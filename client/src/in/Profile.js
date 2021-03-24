@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Upload from "../graphComp/Upload";
 import { toggleTripForm, toggleTripEdit } from "../helpers/actions";
-import { GetLocationName } from "../helpers/helperComponents";
+import { GetLocationName, Loader } from "../helpers/helperComponents";
 import DescriptionEdit from "./DescriptionEdit";
 import NewTrip from "./NewTrip";
 import PhotoUploader from "./PhotoUploader";
@@ -19,7 +19,6 @@ export default function Profile() {
         tripEdit,
         activateTripUploadModal,
     } = useSelector((store) => store);
-
     return (
         <div className="central prof">
             {activateUploadModal && user && (
@@ -28,20 +27,33 @@ export default function Profile() {
             {activateTripUploadModal && (
                 <PhotoUploader type="trip" id={activateTripUploadModal} />
             )}
-            {user && (
-                <div className="profile-frame">
-                    <div className="profile picture">
-                        <Upload />
-                        <img src={user.picture || "/default.svg"} />
-                    </div>
-                    <div className="profile data">
-                        <ProfileEdit />
-                    </div>
-                    <div className="profile description">
-                        <DescriptionEdit />
-                    </div>
-                </div>
-            )}
+            <div className="profile-frame">
+                {!user ? (
+                    <Loader />
+                ) : (
+                    <Fragment>
+                        <div className="profile picture">
+                            <Upload />
+                            <img
+                                src={user.picture || "/climber.svg"}
+                                style={{
+                                    objectFit: user.picture
+                                        ? "cover"
+                                        : "contain",
+                                    color: "black",
+                                    objectPosition: "center top",
+                                }}
+                            />
+                        </div>
+                        <div className="profile data">
+                            <ProfileEdit />
+                        </div>
+                        <div className="profile description">
+                            <DescriptionEdit />
+                        </div>
+                    </Fragment>
+                )}
+            </div>
 
             <h1>Your current and upcomming trips</h1>
             <div className="container-frame">

@@ -23,7 +23,10 @@ export default function DescriptionEdit() {
                         <b>About Me:</b>
                     </p>
                     <p>
-                        <i>{user.description}</i>
+                        <i>
+                            {user.description ||
+                                "(...Tell us a bit about you...)"}
+                        </i>
                     </p>
                     <button
                         onClick={() => {

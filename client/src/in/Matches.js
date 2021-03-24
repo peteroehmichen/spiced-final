@@ -2,7 +2,7 @@ import { useEffect, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { findMatchingTrips } from "../helpers/actions";
-import { GetLocationName } from "../helpers/helperComponents";
+import { GetLocationName, Loader } from "../helpers/helperComponents";
 
 export default function Matches(props) {
     const { matches, user } = useSelector((store) => store);
@@ -30,99 +30,111 @@ export default function Matches(props) {
 
     return (
         <Fragment>
-            {matches &&
-                user &&
-                props.mode == "user" &&
-                matches
-                    .filter((elem) =>
-                        props.limit == "0" ? true : elem.person == props.limit
-                    )
-                    .map((elem, i) => (
-                        <div
-                            key={i}
-                            className="card medium extrawide split"
-                            style={{
-                                border: `4px solid ${perc2color(
-                                    elem.match_overlap_percent
-                                )}`,
-                            }}
-                        >
-                            <div className="card-left-XL">
-                                <div className="percent">
-                                    <h1
-                                        style={{
-                                            color: perc2color(
-                                                elem.match_overlap_percent
-                                            ),
-                                        }}
-                                    >
-                                        {elem.match_overlap_percent}%
-                                    </h1>
-                                </div>
-                                <img src={elem.picture || "/default.svg"} />
-                            </div>
-
-                            <div className="card-right-match">
-                                <div>
-                                    <h3>
-                                        <GetLocationName
-                                            id={elem.location_id}
+            {!matches || !user ? (
+                <Loader />
+            ) : matches.length == 0 ? (
+                <p>You currently have no matches.</p>
+            ) : (
+                <Fragment>
+                    {props.mode == "user" &&
+                        matches
+                            .filter((elem) =>
+                                props.limit == "0"
+                                    ? true
+                                    : elem.person == props.limit
+                            )
+                            .map((elem, i) => (
+                                <div
+                                    key={i}
+                                    className="card medium extrawide split"
+                                    style={{
+                                        border: `4px solid ${perc2color(
+                                            elem.match_overlap_percent
+                                        )}`,
+                                    }}
+                                >
+                                    <div className="card-left-XL">
+                                        <div className="percent">
+                                            <h1
+                                                style={{
+                                                    color: perc2color(
+                                                        elem.match_overlap_percent
+                                                    ),
+                                                }}
+                                            >
+                                                {elem.match_overlap_percent}%
+                                            </h1>
+                                        </div>
+                                        <img
+                                            src={elem.picture || "/default.svg"}
                                         />
-                                    </h3>
-                                    <p>
-                                        {new Date(
-                                            elem.from_min
-                                        ).toLocaleDateString()}{" "}
-                                        -{" "}
-                                        {new Date(
-                                            elem.until_max
-                                        ).toLocaleDateString()}
-                                    </p>
+                                    </div>
+
+                                    <div className="card-right-match">
+                                        <div>
+                                            <h3>
+                                                <GetLocationName
+                                                    id={elem.location_id}
+                                                />
+                                            </h3>
+                                            <p>
+                                                {new Date(
+                                                    elem.from_min
+                                                ).toLocaleDateString()}{" "}
+                                                -{" "}
+                                                {new Date(
+                                                    elem.until_max
+                                                ).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p>
+                                                <i>{elem.comment}</i>
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p>
-                                        <i>{elem.comment}</i>
-                                    </p>
+                            ))}
+                    {props.mode == "dashboard" &&
+                        matches.map((elem, i) => (
+                            <Link to={`/user/${elem.person}`} key={i}>
+                                <div
+                                    className="card small"
+                                    style={{
+                                        border: `4px solid ${perc2color(
+                                            elem.match_overlap_percent
+                                        )}`,
+                                    }}
+                                >
+                                    <div className="card-image">
+                                        <img
+                                            src={elem.picture || "/default.svg"}
+                                        />
+                                    </div>
+                                    <div className="card-text">
+                                        <h4>
+                                            <GetLocationName
+                                                id={elem.location_id}
+                                            />
+                                        </h4>
+                                        <p>
+                                            {new Date(
+                                                elem.from_min
+                                            ).toLocaleDateString()}{" "}
+                                            -{" "}
+                                            {new Date(
+                                                elem.until_max
+                                            ).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    <div className="percent-small">
+                                        {elem.match_overlap_percent}%
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    ))}
-            {matches &&
-                user &&
-                props.mode == "dashboard" &&
-                matches.map((elem, i) => (
-                    <Link to={`/user/${elem.person}`} key={i}>
-                        <div
-                            className="card small"
-                            style={{
-                                border: `4px solid ${perc2color(
-                                    elem.match_overlap_percent
-                                )}`,
-                            }}
-                        >
-                            <div className="card-image">
-                                <img src={elem.picture || "/default.svg"} />
-                            </div>
-                            <div className="card-text">
-                                <h4>
-                                    <GetLocationName id={elem.location_id} />
-                                </h4>
-                                <p>
-                                    {new Date(
-                                        elem.from_min
-                                    ).toLocaleDateString()}{" "}
-                                    -{" "}
-                                    {new Date(
-                                        elem.until_max
-                                    ).toLocaleDateString()}
-                                </p>
-                            </div>
-                            <div className="percent-small">
-                                {elem.match_overlap_percent}%
-                            </div>
-                        </div>
-                    </Link>
-                ))}
+                            </Link>
+                        ))}
+                </Fragment>
+            )}
         </Fragment>
     );
 }

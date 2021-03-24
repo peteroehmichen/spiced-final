@@ -7,6 +7,7 @@ export default function ProfileEdit() {
     const { user, grades, experience } = useSelector((store) => store);
     const [values, setValues] = useState();
     const [profileEditMode, setProfileEditMode] = useState(false);
+    const none = "(...please edit..)";
 
     const changeHandler = function (e) {
         setValues({
@@ -23,14 +24,17 @@ export default function ProfileEdit() {
                         <b>Name:</b> {user.first} {user.last}
                     </p>
                     <p>
-                        <b>Age:</b> {user.age}
+                        <b>Your age:</b> {user.age || none}
                     </p>
                     <p>
-                        <b>Climbing Grade:</b> {grades[user.grade_comfort]} up
-                        to {grades[user.grade_max]}
+                        <b>Your climbing grade:</b>{" "}
+                        {!user.grade_comfort || !user.grade_max
+                            ? none
+                            : grades[user.grade_comfort] + user.grade_max &&
+                              " up to " + grades[user.grade_max]}
                     </p>
                     <p>
-                        <b>Experience:</b> {experience[user.experience]}
+                        <b>Experience:</b> {experience[user.experience] || none}
                     </p>
                     <button
                         onClick={() => {
@@ -56,15 +60,20 @@ export default function ProfileEdit() {
                             onChange={changeHandler}
                             type="number"
                             name="age"
+                            min="18"
+                            max="99"
                         />
                     </label>
                     <label>
                         <b>Grade (comfort): </b>
                         <select
-                            defaultValue={user.grade_comfort}
+                            defaultValue={user.grade_comfort || "default"}
                             name="grade_comfort"
                             onChange={changeHandler}
                         >
+                            <option value="default" disabled>
+                                choose...
+                            </option>
                             {grades.map((element, i) => (
                                 <option key={i} value={i}>
                                     {element}
@@ -75,10 +84,13 @@ export default function ProfileEdit() {
                     <label>
                         <b>Grade (max): </b>
                         <select
-                            defaultValue={user.grade_max}
+                            defaultValue={user.grade_max || "default"}
                             name="grade_max"
                             onChange={changeHandler}
                         >
+                            <option value="default" disabled>
+                                choose...
+                            </option>
                             {grades.map((element, i) => (
                                 <option key={i} value={i}>
                                     {element}
@@ -89,10 +101,13 @@ export default function ProfileEdit() {
                     <label>
                         <b>Experience: </b>
                         <select
-                            defaultValue={user.experience}
+                            defaultValue={user.experience || "default"}
                             name="experience"
                             onChange={changeHandler}
                         >
+                            <option value="default" disabled>
+                                choose...
+                            </option>
                             {experience.map((element, i) => (
                                 <option key={i} value={i}>
                                     {element}

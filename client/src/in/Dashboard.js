@@ -5,6 +5,10 @@ import Matches from "./Matches";
 
 export default function Dashboard() {
     const { user, trips, locations } = useSelector((store) => store);
+    let otherTrips;
+    if (trips) {
+        otherTrips = trips.filter((trip) => trip.person != user.id);
+    }
 
     return (
         <div className="central social">
@@ -19,16 +23,15 @@ export default function Dashboard() {
                         <div>
                             <h3>What your friends are planning</h3>
                         </div>
-                        <div className="container-frame">
-                            <div className="card-container wrapped">
-                                {trips &&
-                                    locations &&
-                                    user &&
-                                    trips
-                                        .filter(
-                                            (trip) => trip.person != user.id
-                                        )
-                                        .map((elem, i) => (
+                        {!trips || !locations || !user ? (
+                            <Loader />
+                        ) : (
+                            <div className="container-frame">
+                                <div className="card-container wrapped">
+                                    {otherTrips.length == 0 ? (
+                                        <p>there are none</p>
+                                    ) : (
+                                        otherTrips.map((elem, i) => (
                                             <Link
                                                 key={i}
                                                 to={`/user/${elem.person}`}
@@ -61,11 +64,12 @@ export default function Dashboard() {
                                                     <div className="card-foot"></div>
                                                 </div>
                                             </Link>
-                                        ))}
+                                        ))
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
-
                     <div>
                         <div>
                             <h3>Trips that match your plans </h3>
@@ -80,7 +84,7 @@ export default function Dashboard() {
                         <div>
                             <h3>Notifications</h3>
                         </div>
-                        <Loader />
+                        <div>comming soon...</div>
                     </div>
                 </div>
             </div>
