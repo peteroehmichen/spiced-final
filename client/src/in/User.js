@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserData } from "../helpers/actions";
+import { getUserData, removeReduxDetail } from "../helpers/actions";
 import FriendButton from "./FriendBtn";
 import Matches from "./Matches";
 import Chat from "./Chat";
@@ -16,14 +16,12 @@ export default function User(props) {
         experience,
         matches,
         trips,
-        locations,
     } = useSelector((store) => store);
 
-    useEffect(async () => {
+    useEffect(() => {
         dispatch(getUserData(props.match.params.id));
-        // dispatch(getTrips());
         return () => {
-            console.log("unmounting...");
+            dispatch(removeReduxDetail("otherUser"));
         };
     }, []);
 
@@ -33,7 +31,14 @@ export default function User(props) {
                 <div id="user-detail-left">
                     <div id="user-detail-head">
                         <div id="user-detail-image-frame">
-                            <img src={other.picture || "/default.svg"} />
+                            <img
+                                src={other.picture || "/climber.svg"}
+                                style={{
+                                    objectFit: other.picture
+                                        ? "cover"
+                                        : "contain",
+                                }}
+                            />
                         </div>
                         <div id="user-detail-description">
                             <h1>
@@ -49,13 +54,21 @@ export default function User(props) {
                                     <b>Location:</b> {other.location}
                                 </p>
                             )}
-                            {other.grade_comfort && other.grade_max && (
+
+                            {(other.grade_comfort || other.grade_max) && (
                                 <p>
-                                    <b>Climbing Grade:</b>{" "}
-                                    {grades[other.grade_comfort]} up to{" "}
-                                    {grades[other.grade_max]}
+                                    <b>Climbing Grade:</b>
+                                    {other.grade_comfort &&
+                                        " " +
+                                            grades[other.grade_comfort] +
+                                            " (onsight)"}
+                                    {other.grade_max &&
+                                        " up to " +
+                                            grades[other.grade_max] +
+                                            " (redpoint)"}
                                 </p>
                             )}
+
                             {other.experience && (
                                 <p>
                                     <b>Experience:</b>{" "}
@@ -64,7 +77,7 @@ export default function User(props) {
                             )}
                             {other.description && (
                                 <p>
-                                    <b>Description:</b> {other.description}
+                                    <i>{other.description}</i>
                                 </p>
                             )}
 

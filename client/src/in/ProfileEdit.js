@@ -28,10 +28,10 @@ export default function ProfileEdit() {
                     </p>
                     <p>
                         <b>Your climbing grade:</b>{" "}
-                        {!user.grade_comfort || !user.grade_max
-                            ? none
-                            : grades[user.grade_comfort] + user.grade_max &&
-                              " up to " + grades[user.grade_max]}
+                        {user.grade_comfort &&
+                            grades[user.grade_comfort] + " (onsight) "}
+                        {user.grade_max &&
+                            "up to " + grades[user.grade_max] + " (redpoint)"}
                     </p>
                     <p>
                         <b>Experience:</b> {experience[user.experience] || none}
@@ -65,7 +65,7 @@ export default function ProfileEdit() {
                         />
                     </label>
                     <label>
-                        <b>Grade (comfort): </b>
+                        <b>Grade (onsight): </b>
                         <select
                             defaultValue={user.grade_comfort || "default"}
                             name="grade_comfort"
@@ -82,7 +82,7 @@ export default function ProfileEdit() {
                         </select>
                     </label>
                     <label>
-                        <b>Grade (max): </b>
+                        <b>Grade (redpoint): </b>
                         <select
                             defaultValue={user.grade_max || "default"}
                             name="grade_max"

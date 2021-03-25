@@ -11,9 +11,6 @@ export default function Social() {
 
     useEffect(() => {
         dispatch(getFriendships());
-        return () => {
-            console.log("unmounting...");
-        };
     }, []);
 
     let friends = <div>There are none</div>;
