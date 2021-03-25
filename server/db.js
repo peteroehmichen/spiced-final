@@ -5,35 +5,6 @@ const sql = spicedPg(
         "postgres:postgres:postgres@localhost:5432/final-project"
 );
 
-// const redis = require("redis");
-// const { promisify } = require("util");
-// const fs = require("fs");
-//
-// let client;
-// if (process.env.REDIS_URL) {
-//     client = redis.createClient(process.env.REDIS_URL, {
-//         tls: {
-//             rejectUnauthorized: false,
-//         },
-//     });
-// } else {
-//     client = redis.createClient({
-//         host: "localhost",
-//         port: 6379,
-//     });
-// }
-// // client.on("error", function (err) {
-// //     console.log("couldnt access Redis:", err);
-// // });
-// // const rds = {};
-
-// // module.exports.rdsClient = client;
-
-// module.exports.rdsSet = promisify(client.set).bind(client);
-// module.exports.rdsGet = promisify(client.get).bind(client);
-// module.exports.rdsSetex = promisify(client.setex).bind(client);
-// module.exports.rdsDel = promisify(client.del).bind(client);
-
 const redis = require("redis");
 const client = redis.createClient(
     process.env.REDIS_URL || { host: "localhost", port: 6379 }
@@ -403,7 +374,7 @@ module.exports.getFriendInfo = function (userId, friendId) {
 
 module.exports.getLastChats = function (about, id, userId, limit) {
     let q;
-    if (about == "general") {
+    if (about == "direct") {
         q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE (recipient=${userId} AND sender=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) OR (sender=${userId} AND recipient=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) ORDER BY chat.id DESC LIMIT ${limit};`;
     } else if (about == "trip") {
         const ids = id.split("T");

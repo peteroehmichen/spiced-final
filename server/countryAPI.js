@@ -4,9 +4,7 @@ const { promisify } = require("util");
 const requestPromise = promisify(request);
 
 module.exports.getCountries = async function () {
-    console.log("REDIS_URL", process.env.REDIS_URL);
     let countries = await db.rdsGet("countries");
-    // console.log("redis-result", countries);
     if (countries) {
         countries = JSON.parse(countries);
     } else {
@@ -19,9 +17,3 @@ module.exports.getCountries = async function () {
     }
     return countries;
 };
-// module.exports.getCountries = function () {
-//     return requestPromise(
-//         "http://countryapi.gear.host/v1/Country/getCountries"
-//     );
-// };
-// FIXME redis is currently off

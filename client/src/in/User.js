@@ -178,24 +178,7 @@ export default function User(props) {
             )}
             {other.id && (
                 <div className="location-right">
-                    {other.confirmed && matches && matches.length > 0 && (
-                        <Chat type="user+" user={props.match.params.id} />
-                    )}
-                    {other.confirmed && matches && !matches.length && (
-                        <Chat type="user-" user={props.match.params.id} />
-                    )}
-                    {!other.confirmed && matches && matches.length > 0 && (
-                        <Chat type="trip" user={props.match.params.id} />
-                    )}
-                    {!other.confirmed && (!matches || matches.length == 0) && (
-                        <div className="noChat">
-                            <h3>chat functionality disabled</h3>
-                            <p>
-                                it is active for friends and/or in case of a
-                                match
-                            </p>
-                        </div>
-                    )}
+                    <Chat type="user+" user={props.match.params.id} />
                 </div>
             )}
         </div>

@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { formatDistance, parseISO } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import { receiveChatMessages } from "../helpers/actions";
+import { receiveChatMessages, removeReduxDetail } from "../helpers/actions";
 import { emitMessage } from "../helpers/socket";
-import { GetLocationName } from "../helpers/helperComponents";
 
 // FIXME sorting of messages
+// FIXME clear search input before sending msg
 
+/*
+
+<div className="noChat">
+                            <h3>chat functionality disabled</h3>
+                            <p>
+                                it is active for friends and/or in case of a
+                                match
+                            </p>
+                        </div>
+
+*/
 export default function Chat(props) {
     const chatRef = useRef(null);
     const input = useRef(null);
@@ -15,45 +26,37 @@ export default function Chat(props) {
     const [searchInput, setSearchInput] = useState("");
 
     const dispatch = useDispatch();
-    let {
-        chat: messages,
-        otherUser: other,
-        matches,
-        trips,
-        locations,
-        user,
-        selectedChat,
-    } = useSelector((store) => store);
+    let { chat, otherUser: other, matches, user } = useSelector(
+        (store) => store
+    );
 
     useEffect(() => {
-        messages = null;
-        if (props.type == "location") {
-            dispatch(receiveChatMessages("location", props.location, 20));
-        }
+        return () => {
+            dispatch(removeReduxDetail("chat"));
+        };
     }, []);
 
     useEffect(() => {
-        if (group == "direct") {
-            dispatch(receiveChatMessages("general", props.user, 20));
+        if (group == "Direct") {
+            dispatch(receiveChatMessages("direct", props.user, 100));
         } else if (group[0] == "T") {
-            dispatch(receiveChatMessages("trip", group, 20));
+            dispatch(receiveChatMessages("trip", group, 100));
+        } else if (props.location) {
+            dispatch(receiveChatMessages("location", props.location, 100));
         }
     }, [group]);
 
     useEffect(() => {
-        if (messages && chatRef.current) {
+        if (chat && chatRef.current) {
             chatRef.current.scrollTop =
                 chatRef.current.scrollHeight - chatRef.current.clientHeight;
         }
-    }, [messages]);
+    }, [chat]);
 
     const submit = function (e) {
         if (e.key === "Enter" || e.type == "click") {
             e.preventDefault();
-            if (
-                props.type != "location" &&
-                (group == "" || group == "direct")
-            ) {
+            if (!props.location && (group == "" || group == "direct")) {
                 emitMessage({
                     type: "friend",
                     recipient: props.user,
@@ -68,7 +71,7 @@ export default function Chat(props) {
                     trip_origin: data[2],
                     value,
                 });
-            } else if (props.type == "location") {
+            } else if (props.location) {
                 emitMessage({
                     type: "location",
                     location: props.location,
@@ -80,99 +83,103 @@ export default function Chat(props) {
         }
         setValue(null);
     };
-    // console.log("active Users:", activeUsers);
 
-    if (Array.isArray(messages)) {
-        // FIXME filter on array for error control
-        messages = messages.filter((message) => {
-            if (
-                !message.trip_origin &&
-                !message.trip_target &&
-                !message.location_id &&
-                group == "direct"
-            ) {
-                return true;
-            } else if (
-                group[0] == "T" &&
-                group.includes(message.trip_origin) &&
-                group.includes(message.trip_target)
-            ) {
-                return true;
-            } else if (
-                props.type == "location" &&
-                props.location == message.location_id &&
-                message.text.includes(searchInput)
-            ) {
-                return true;
-            } else {
-                return false;
+    // create selectors in topic and filtered messages
+    let topics = [];
+    if (Array.isArray(chat)) {
+        if (props.location) {
+            chat = chat.filter((m) => {
+                if (props.location == m.location_id) {
+                    let topic = m.location_topic || "General";
+                    if (!topics.includes(topic)) {
+                        topics.push(<option value={topic}>{topic}</option>);
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        } else if (props.user) {
+            if (other.confirmed) {
             }
-        });
+            chat = chat.filter((m) => {
+                if (group == "Direct") {
+                    if (!m.trip_origin && !m.trip_target && !m.location_id) {
+                        return true;
+                    }
+                } else if (group[0] == "T") {
+                    if (
+                        group.includes(m.trip_origin) &&
+                        group.includes(m.trip_target)
+                    ) {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            });
+        }
+        chat = chat.filter((m) => m.text.includes(searchInput));
     }
-    let ownMatches = [];
+
+    let directMatches = [];
     if (Array.isArray(matches)) {
-        ownMatches = matches.filter((elem) => elem.person == other.id);
+        directMatches = matches.filter((elem) => elem.person == other.id);
     }
 
     return (
-        // <h1>Chatis here</h1>
         <div className="chat">
             <div className="target">
-                {props.type != "location" && other && matches && (
-                    <label>
-                        Chat Channel:
-                        <select
-                            defaultValue={"DEFAULT"}
-                            name="tripChat"
-                            onChange={(e) => {
-                                // console.log(e.target.value);
-                                setGroup(e.target.value);
-                            }}
-                        >
-                            <option value="DEFAULT" disabled>
-                                Choose...
-                            </option>
-                            {other.confirmed && (
-                                <option value="direct">Direct Message</option>
-                            )}
-                            {ownMatches.length && (
-                                <option disabled>MATCHES</option>
-                            )}
-
-                            {ownMatches.map((elem, i) => {
-                                return (
-                                    <option
-                                        key={i}
-                                        value={`T${elem.id}T${elem.match_id}T${elem.person}`}
-                                    >
-                                        {" -  "}
-                                        {elem.location_name + " ("}
-                                        {new Date(
-                                            elem.from_min
-                                        ).toLocaleDateString()}
-                                        )
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </label>
-                )}
-                {props.type == "location" && (
-                    <input
-                        type="text"
-                        name="searchContent"
-                        placeholder="search through past messages"
-                        id="searchContent"
-                        key="searchContent"
+                <label>
+                    Chat Topic:
+                    <select
+                        defaultValue={"DEFAULT"}
+                        name="topic"
                         onChange={(e) => {
-                            setSearchInput(e.target.value);
-                            // console.log(e.target.value);
+                            setGroup(e.target.value);
                         }}
-                    />
-                )}
+                    >
+                        <option value="DEFAULT" disabled>
+                            Choose...
+                        </option>
+                        {topics && topics}
+                        {props.user && other.confirmed && (
+                            <option value="Direct">Direct Message</option>
+                        )}
+                        {directMatches.length && (
+                            <option disabled>MATCHES</option>
+                        )}
+
+                        {directMatches.map((elem, i) => {
+                            return (
+                                <option
+                                    key={i}
+                                    value={`T${elem.id}T${elem.match_id}T${elem.person}`}
+                                >
+                                    {" -  "}
+                                    {elem.location_name + " ("}
+                                    {new Date(
+                                        elem.from_min
+                                    ).toLocaleDateString()}
+                                    )
+                                </option>
+                            );
+                        })}
+                    </select>
+                </label>
+                <input
+                    type="text"
+                    name="searchContent"
+                    placeholder="search through past messages"
+                    id="searchContent"
+                    key="searchContent"
+                    onChange={(e) => {
+                        setSearchInput(e.target.value);
+                    }}
+                />
             </div>
             <div ref={chatRef} className="messages">
-                {((!messages || messages.length == 0) && (
+                {((!chat || chat.length == 0) && (
                     <div className="messages-no">
                         <p>
                             {(!group && "please select a group") ||
@@ -180,8 +187,8 @@ export default function Chat(props) {
                         </p>
                     </div>
                 )) ||
-                    (Array.isArray(messages) &&
-                        messages.map((msg, i) => (
+                    (Array.isArray(chat) &&
+                        chat.map((msg, i) => (
                             <div
                                 key={i}
                                 className={

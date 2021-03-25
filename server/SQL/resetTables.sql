@@ -71,6 +71,7 @@ CREATE TABLE chat (
       trip_origin INT,
       trip_target INT,
       location_id INT,
+      location_topic text,
       text TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
