@@ -5,33 +5,46 @@ const sql = spicedPg(
         "postgres:postgres:postgres@localhost:5432/final-project"
 );
 
+// const redis = require("redis");
+// const { promisify } = require("util");
+// const fs = require("fs");
+//
+// let client;
+// if (process.env.REDIS_URL) {
+//     client = redis.createClient(process.env.REDIS_URL, {
+//         tls: {
+//             rejectUnauthorized: false,
+//         },
+//     });
+// } else {
+//     client = redis.createClient({
+//         host: "localhost",
+//         port: 6379,
+//     });
+// }
+// // client.on("error", function (err) {
+// //     console.log("couldnt access Redis:", err);
+// // });
+// // const rds = {};
+
+// // module.exports.rdsClient = client;
+
+// module.exports.rdsSet = promisify(client.set).bind(client);
+// module.exports.rdsGet = promisify(client.get).bind(client);
+// module.exports.rdsSetex = promisify(client.setex).bind(client);
+// module.exports.rdsDel = promisify(client.del).bind(client);
+
 const redis = require("redis");
+const client = redis.createClient(
+    process.env.REDIS_URL || { host: "localhost", port: 6379 }
+);
 const { promisify } = require("util");
-const fs = require("fs");
-
-let client;
-if (process.env.REDIS_URL) {
-    client = redis.createClient(process.env.REDIS_URL, {
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
-} else {
-    client = redis.createClient({
-        host: "localhost",
-        port: 6379,
-    });
-}
-// client.on("error", function (err) {
-//     console.log("couldnt access Redis:", err);
-// });
-// const rds = {};
-
-// module.exports.rdsClient = client;
-module.exports.rdsSet = promisify(client.set).bind(client);
-module.exports.rdsGet = promisify(client.get).bind(client);
-module.exports.rdsSetex = promisify(client.setex).bind(client);
-module.exports.rdsDel = promisify(client.del).bind(client);
+client.on("error", function (err) {
+    console.log(err);
+});
+exports.rdsGet = promisify(client.get).bind(client);
+exports.rdsSetex = promisify(client.setex).bind(client);
+exports.rdsDel = promisify(client.del).bind(client);
 
 module.exports.addUser = function (first, last, email, hashedPW) {
     return sql.query(
