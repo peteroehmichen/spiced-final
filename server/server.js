@@ -7,9 +7,7 @@ const io = require("socket.io")(server, {
         callback(
             null,
             req.headers.referer.startsWith("http://localhost:3000") ||
-                req.headers.referer.startsWith(
-                    "http://the-sharp-end.herokuapp.com"
-                )
+                req.headers.referer.startsWith("https://the-sharp-end.app")
         ),
 });
 

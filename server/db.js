@@ -1,3 +1,37 @@
+// this is my mongoDB-exercise
+const uri = process.env.mongoDbUser
+    ? `mongodb+srv://${process.env.mongoDbUser}:${process.env.mongoDbPassword}@cluster0.3mjmo.mongodb.net/?retryWrites=true&w=majority`
+    : "mongodb://localhost:27017/?readPreference=primary&appname=mongodb-vscode%200.5.0&ssl=false";
+const { MongoClient } = require("mongodb");
+const mClient = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+async function testMongo() {
+    try {
+        await mClient.connect();
+        console.log("Connected to MongoDB-Server");
+
+        const databasesList = await mClient.db().admin().listDatabases();
+        console.log("Databases:", databasesList);
+
+        /*
+        // write and read a test object to a specific collection
+        const mongo = mClient.db("the-sharp-end");
+        const collection = mongo.collection("people");
+        await collection.insertOne({first: "Peter", last: "Oehmichen"});
+        const myDoc = await collection.findOne();
+        console.log(myDoc);
+        */
+    } catch (err) {
+        console.log(err.stack);
+    } finally {
+        await mClient.close();
+        console.log("Disconnected from MongoDB-Server");
+    }
+}
+
 const auth = require("./auth");
 const spicedPg = require("spiced-pg");
 const sql = spicedPg(
@@ -10,6 +44,7 @@ const client = redis.createClient(
     process.env.REDIS_URL || { host: "localhost", port: 6379 }
 );
 const { promisify } = require("util");
+const { userInfo } = require("os");
 client.on("error", function (err) {
     console.log(err);
 });
@@ -137,6 +172,8 @@ module.exports.updateUserPw = function (email, hashedPw) {
 //////////////////////////////////////////////////////
 
 module.exports.getEssentialData = async function (userId) {
+    testMongo();
+
     return {
         user: await this.getProfileData(userId),
         locations: await this.getLocations(),
