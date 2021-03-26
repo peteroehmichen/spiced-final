@@ -1,3 +1,4 @@
+/*
 // this is my mongoDB-exercise
 const uri = process.env.mongoDbUser
     ? `mongodb+srv://${process.env.mongoDbUser}:${process.env.mongoDbPassword}@cluster0.3mjmo.mongodb.net/?retryWrites=true&w=majority`
@@ -9,6 +10,7 @@ const mClient = new MongoClient(uri, {
 });
 
 async function testMongo() {
+    // FIXME Topology is closed error on reload
     try {
         await mClient.connect();
         console.log("Connected to MongoDB-Server");
@@ -16,14 +18,14 @@ async function testMongo() {
         const databasesList = await mClient.db().admin().listDatabases();
         console.log("Databases:", databasesList);
 
-        /*
+        
         // write and read a test object to a specific collection
         const mongo = mClient.db("the-sharp-end");
         const collection = mongo.collection("people");
         await collection.insertOne({first: "Peter", last: "Oehmichen"});
         const myDoc = await collection.findOne();
         console.log(myDoc);
-        */
+        
     } catch (err) {
         console.log(err.stack);
     } finally {
@@ -32,6 +34,7 @@ async function testMongo() {
     }
 }
 
+*/
 const auth = require("./auth");
 const spicedPg = require("spiced-pg");
 const sql = spicedPg(
@@ -172,7 +175,7 @@ module.exports.updateUserPw = function (email, hashedPw) {
 //////////////////////////////////////////////////////
 
 module.exports.getEssentialData = async function (userId) {
-    testMongo();
+    // testMongo();
 
     return {
         user: await this.getProfileData(userId),
