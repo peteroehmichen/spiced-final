@@ -69,7 +69,7 @@ app.use(compression());
 
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
-const { grades, experience } = require("./config.json");
+const { grades, experience, location_topics } = require("./config.json");
 const { getCountries } = require("./countryAPI");
 const { activeUsers } = require("./socketHelper");
 const { analyseMatches } = require("./analyseMatches");
@@ -100,6 +100,7 @@ app.get("/in/essentialData.json", async (req, res) => {
                 continents,
                 grades,
                 experience,
+                location_topics,
                 user: results.user.rows[0],
                 locations: results.locations.rows,
                 trips: results.trips.rows,
@@ -797,6 +798,7 @@ io.on("connection", (socket) => {
                     msg.value
                 );
             } else if (msg.type == "location") {
+                console.log("Message:", msg);
                 result = await db.addLocationMessage(
                     socket.request.session.userId,
                     msg.location,

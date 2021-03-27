@@ -26,9 +26,13 @@ export default function Chat(props) {
     const [searchInput, setSearchInput] = useState("");
 
     const dispatch = useDispatch();
-    let { chat, otherUser: other, matches, user } = useSelector(
-        (store) => store
-    );
+    let {
+        chat,
+        otherUser: other,
+        matches,
+        user,
+        location_topics,
+    } = useSelector((store) => store);
 
     useEffect(() => {
         return () => {
@@ -75,6 +79,7 @@ export default function Chat(props) {
                 emitMessage({
                     type: "location",
                     location: props.location,
+                    topic: group,
                     value,
                 });
             }
@@ -84,24 +89,27 @@ export default function Chat(props) {
         setValue(null);
     };
 
-    // create selectors in topic and filtered messages
-    let topics = [];
+    let directMatches = [];
+    if (Array.isArray(matches)) {
+        directMatches = matches.filter((elem) => elem.person == other.id);
+    }
+
     if (Array.isArray(chat)) {
         if (props.location) {
             chat = chat.filter((m) => {
-                if (props.location == m.location_id) {
-                    let topic = m.location_topic || "General";
-                    if (!topics.includes(topic)) {
-                        topics.push(<option value={topic}>{topic}</option>);
-                    }
+                if (
+                    props.location === m.location_id &&
+                    m.location_topics === group &&
+                    m.location_topics == ""
+                ) {
                     return true;
                 } else {
                     return false;
                 }
+                // props.location === m.location_id ? true : false
             });
-        } else if (props.user) {
-            if (other.confirmed) {
-            }
+        }
+        if (props.user && other) {
             chat = chat.filter((m) => {
                 if (group == "Direct") {
                     if (!m.trip_origin && !m.trip_target && !m.location_id) {
@@ -122,11 +130,6 @@ export default function Chat(props) {
         chat = chat.filter((m) => m.text.includes(searchInput));
     }
 
-    let directMatches = [];
-    if (Array.isArray(matches)) {
-        directMatches = matches.filter((elem) => elem.person == other.id);
-    }
-
     return (
         <div className="chat">
             <div className="target">
@@ -142,14 +145,21 @@ export default function Chat(props) {
                         <option value="DEFAULT" disabled>
                             Choose...
                         </option>
-                        {topics && topics}
-                        {props.user && other.confirmed && (
-                            <option value="Direct">Direct Message</option>
+                        {props.location &&
+                            location_topics &&
+                            location_topics.map((e, i) => {
+                                return (
+                                    <option key={i} value={e}>
+                                        {e}
+                                    </option>
+                                );
+                            })}
+                        {other.confirmed && (
+                            <option value="direct">Direct Message</option>
                         )}
                         {directMatches.length && (
                             <option disabled>MATCHES</option>
                         )}
-
                         {directMatches.map((elem, i) => {
                             return (
                                 <option

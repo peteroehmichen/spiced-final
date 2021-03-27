@@ -15,6 +15,7 @@ export default function reducer(store = {}, action) {
                 newStore.matches = success.matches;
                 newStore.grades = success.grades;
                 newStore.experience = success.experience;
+                newStore.location_topics = success.location_topics;
                 newStore.countries = success.countries;
                 newStore.continents = success.continents;
             } else {
