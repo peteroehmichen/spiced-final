@@ -21,7 +21,7 @@ export default function User(props) {
     useEffect(() => {
         dispatch(getUserData(props.match.params.id));
         return () => {
-            dispatch(removeReduxDetail("otherUser"));
+            dispatch(removeReduxDetail("otherUser", {}));
         };
     }, []);
 

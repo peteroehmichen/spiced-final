@@ -19,7 +19,7 @@ export default function Location(props) {
     useEffect(() => {
         dispatch(getLocationData(props.match.params.id));
         return () => {
-            dispatch(removeReduxDetail("location"));
+            dispatch(removeReduxDetail("location", {}));
         };
     }, []);
 

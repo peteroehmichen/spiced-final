@@ -779,7 +779,6 @@ io.on("connection", (socket) => {
     // console.log("userid from Socket", socket.request.session.userId);
 
     socket.on("newMessageToServer", async (msg) => {
-        // console.log("Friend-Chat:", msg);
         let status;
         try {
             let result;
@@ -802,6 +801,7 @@ io.on("connection", (socket) => {
                 result = await db.addLocationMessage(
                     socket.request.session.userId,
                     msg.location,
+                    msg.topic,
                     msg.value
                 );
             }

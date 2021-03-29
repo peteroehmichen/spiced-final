@@ -421,7 +421,7 @@ module.exports.getLastChats = function (about, id, userId, limit) {
         // console.log("Split ids in trip-chat-header:", ids);
         q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE (trip_origin=${ids[1]} AND trip_target=${ids[2]}) OR (trip_origin=${ids[2]} AND trip_target=${ids[1]}) ORDER BY chat.id DESC LIMIT ${limit};`;
     } else if (about == "location") {
-        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id FROM chat JOIN users ON sender=users.id WHERE location_id=${id} ORDER BY chat.id DESC LIMIT ${limit};`;
+        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id, location_topic FROM chat JOIN users ON sender=users.id WHERE location_id=${id} ORDER BY chat.id DESC LIMIT ${limit};`;
     }
     // console.log("running:", q);
     return sql.query(q);
@@ -439,11 +439,16 @@ module.exports.addFriendMessage = async function (sender, recipient, msg) {
     };
 };
 
-module.exports.addLocationMessage = async function (sender, location, msg) {
+module.exports.addLocationMessage = async function (
+    sender,
+    location,
+    topic,
+    msg
+) {
     return {
         chat: await sql.query(
-            `INSERT INTO chat (sender, recipient, location_id, text) VALUES ($1, $2, $3, $4) RETURNING id, created_at, sender, recipient, text, trip_origin, trip_target, location_id;`,
-            [sender, 0, location, msg]
+            `INSERT INTO chat (sender, recipient, location_id, location_topic, text) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, sender, recipient, text, trip_origin, trip_target, location_id, location_topic;`,
+            [sender, 0, location, topic, msg]
         ),
         user: await sql.query(`SELECT first, last from users WHERE id=$1`, [
             sender,

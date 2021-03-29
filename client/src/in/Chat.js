@@ -22,7 +22,7 @@ export default function Chat(props) {
     const chatRef = useRef(null);
     const input = useRef(null);
     const [value, setValue] = useState("");
-    const [group, setGroup] = useState("");
+    const [group, setGroup] = useState();
     const [searchInput, setSearchInput] = useState("");
 
     const dispatch = useDispatch();
@@ -36,17 +36,19 @@ export default function Chat(props) {
 
     useEffect(() => {
         return () => {
-            dispatch(removeReduxDetail("chat"));
+            dispatch(removeReduxDetail("chat", null));
         };
     }, []);
 
     useEffect(() => {
-        if (group == "Direct") {
-            dispatch(receiveChatMessages("direct", props.user, 100));
-        } else if (group[0] == "T") {
-            dispatch(receiveChatMessages("trip", group, 100));
-        } else if (props.location) {
-            dispatch(receiveChatMessages("location", props.location, 100));
+        if (group) {
+            if (group == "Direct") {
+                dispatch(receiveChatMessages("direct", props.user, 100));
+            } else if (group[0] == "T") {
+                dispatch(receiveChatMessages("trip", group, 100));
+            } else if (props.location) {
+                dispatch(receiveChatMessages("location", props.location, 100));
+            }
         }
     }, [group]);
 
@@ -96,17 +98,20 @@ export default function Chat(props) {
 
     if (Array.isArray(chat)) {
         if (props.location) {
+            // console.log("filtering for:", group);
             chat = chat.filter((m) => {
-                if (
-                    props.location === m.location_id &&
-                    m.location_topics === group &&
-                    m.location_topics == ""
-                ) {
+                if (m.location_id != props.location) return false;
+                if (m.location_topic === group) {
+                    // console.log(m.location_topic, "pass");
                     return true;
                 } else {
+                    if (group === "General" && !m.location_topic) {
+                        // console.log(m.location_topic, "pass");
+                        return true;
+                    }
+                    // console.log(m.location_topic, "fail");
                     return false;
                 }
-                // props.location === m.location_id ? true : false
             });
         }
         if (props.user && other) {
@@ -227,10 +232,17 @@ export default function Chat(props) {
                             </div>
                         )))}
             </div>
-            <div className="new-message">
+            <div
+                className="new-message"
+                style={{ visibility: group ? "visible" : "hidden" }}
+            >
                 <textarea
-                    disabled={!group}
-                    placeholder="Your Message..."
+                    disabled={searchInput ? true : false}
+                    placeholder={
+                        searchInput
+                            ? "Clear search field before sending a message"
+                            : "Your Message..."
+                    }
                     onChange={(e) => setValue(e.target.value)}
                     onKeyPress={(e) => {
                         if (value) {

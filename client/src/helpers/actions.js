@@ -177,10 +177,13 @@ export async function addLocationSection(values, id, prev) {
     }
 }
 
-export function removeReduxDetail(section) {
+export function removeReduxDetail(section, value) {
     return {
         type: "REMOVE_REDUX_DETAIL",
-        payload: section,
+        payload: {
+            section,
+            value,
+        }
     };
 }
 

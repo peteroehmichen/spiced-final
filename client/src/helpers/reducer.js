@@ -208,7 +208,7 @@ export default function reducer(store = {}, action) {
 
     if (action.type == "REMOVE_REDUX_DETAIL") {
         return produce(store, (newStore) => {
-            newStore[action.payload] = {};
+            newStore[action.payload.section] = action.payload.value;
         });
     }
 
