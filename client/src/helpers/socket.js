@@ -22,7 +22,7 @@ export const init = (store) => {
         toast.error("connect:failed");
     });
     socket.on("connect", function () {
-        toast.success("connectio to Websocket established");
+        toast.success("Websocket connection established");
     });
     socket.on("connecting", function () {
         toast.error("connecting");

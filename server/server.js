@@ -797,7 +797,6 @@ io.on("connection", (socket) => {
                     msg.value
                 );
             } else if (msg.type == "location") {
-                console.log("Message:", msg);
                 result = await db.addLocationMessage(
                     socket.request.session.userId,
                     msg.location,
@@ -824,7 +823,7 @@ io.on("connection", (socket) => {
             let recipientSocket = Object.entries(activeSockets);
             for (let i = 0; i < recipientSocket.length; i++) {
                 if (recipientSocket[i][1] == msg.recipient) {
-                    // FIXME mail if unavailable
+                    // TODO mail if unavailable
                     io.to(recipientSocket[i][0]).emit(
                         "newMessageToClient",
                         status

@@ -102,21 +102,17 @@ export default function Chat(props) {
             chat = chat.filter((m) => {
                 if (m.location_id != props.location) return false;
                 if (m.location_topic === group) {
-                    // console.log(m.location_topic, "pass");
                     return true;
                 } else {
-                    if (group === "General" && !m.location_topic) {
-                        // console.log(m.location_topic, "pass");
-                        return true;
-                    }
-                    // console.log(m.location_topic, "fail");
-                    return false;
+                    return group === "General" && !m.location_topic
+                        ? true
+                        : false;
                 }
             });
         }
         if (props.user && other) {
             chat = chat.filter((m) => {
-                if (group == "Direct") {
+                if (group == "direct") {
                     if (!m.trip_origin && !m.trip_target && !m.location_id) {
                         return true;
                     }
@@ -159,27 +155,28 @@ export default function Chat(props) {
                                     </option>
                                 );
                             })}
-                        {other.confirmed && (
+                        {props.user && other.confirmed && (
                             <option value="direct">Direct Message</option>
                         )}
-                        {directMatches.length && (
+                        {props.user && directMatches.length && (
                             <option disabled>MATCHES</option>
                         )}
-                        {directMatches.map((elem, i) => {
-                            return (
-                                <option
-                                    key={i}
-                                    value={`T${elem.id}T${elem.match_id}T${elem.person}`}
-                                >
-                                    {" -  "}
-                                    {elem.location_name + " ("}
-                                    {new Date(
-                                        elem.from_min
-                                    ).toLocaleDateString()}
-                                    )
-                                </option>
-                            );
-                        })}
+                        {props.user &&
+                            directMatches.map((elem, i) => {
+                                return (
+                                    <option
+                                        key={i}
+                                        value={`T${elem.id}T${elem.match_id}T${elem.person}`}
+                                    >
+                                        {" -  "}
+                                        {elem.location_name + " ("}
+                                        {new Date(
+                                            elem.from_min
+                                        ).toLocaleDateString()}
+                                        )
+                                    </option>
+                                );
+                            })}
                     </select>
                 </label>
                 <input
