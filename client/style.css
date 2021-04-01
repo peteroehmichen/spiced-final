@@ -349,6 +349,7 @@ textarea[name="comment"] {
 }
 
 .card-left {
+    position: relative;
     flex-direction: column;
     justify-content: flex-start;
     width: 180px;
@@ -1001,7 +1002,25 @@ label span {
 }
 
 #user-detail-image-frame {
+    position: relative;
     width: 40%;
+}
+
+.user-online,
+.user-offline {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.534);
+    padding: 5px;
+}
+
+.user-offline {
+    color: red;
+}
+
+.user-online {
+    color: green;
 }
 
 #user-detail-description {

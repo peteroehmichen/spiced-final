@@ -73,6 +73,7 @@ const { grades, experience, location_topics } = require("./config.json");
 const { getCountries } = require("./countryAPI");
 const { activeUsers } = require("./socketHelper");
 const { analyseMatches } = require("./analyseMatches");
+// let visibleOnlineUsers = [];
 
 //////////////////////////////////////////////////////
 const router = require("./loggedOutRoutes");
@@ -108,6 +109,7 @@ app.get("/in/essentialData.json", async (req, res) => {
             };
             // FIXME proper ugly solution
             for (let i = 0; i < obj.matches.length; i++) {
+                // visibleOnlineUsers.push(obj.matches[i].person);
                 for (let j = 0; j < obj.locations.length; j++) {
                     if (obj.matches[i].location_id == obj.locations[j].id) {
                         obj.matches[i].location_name = obj.locations[j].name;
@@ -773,10 +775,12 @@ server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
     activeSockets[socket.id] = socket.request.session.userId;
     // console.log("userid:", userId);
     // console.log("userid from Socket", socket.request.session.userId);
+    const users = await activeUsers(activeSockets);
+    io.emit("activeUsers", users);
 
     socket.on("newMessageToServer", async (msg) => {
         let status;

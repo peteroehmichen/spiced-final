@@ -212,6 +212,12 @@ export default function reducer(store = {}, action) {
         });
     }
 
+    if (action.type == "ACTIVE_USERS") {
+        return produce(store, (newStore) => {
+            newStore.activeUsers = action.payload;
+        });
+    }
+
     ////////////////////////////////////////////////////////
     // changing primitive values on base level without immer
     ////////////////////////////////////////////////////////

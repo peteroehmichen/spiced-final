@@ -19,5 +19,6 @@ module.exports.activeUsers = async function (activeSockets) {
         };
     }
 
-    return data;
+    return arrOfTrueIds;
+    // return data;
 };

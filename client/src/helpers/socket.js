@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { newMessage } from "./actions";
+import { activeUsers, newMessage } from "./actions";
 import toast from "react-hot-toast";
 
 export let socket;
@@ -35,6 +35,13 @@ export const init = (store) => {
     });
     socket.on("reconnect_failed", function () {
         toast.error("reconnect_failed");
+    });
+
+    socket.on("activeUsers", (arr) => {
+        console.log("Users:", arr);
+        return store.dispatch(activeUsers(arr));
+        // toast.info("change in user status");
+        // return store.dispatch(activeUsers(arr));
     });
 };
 

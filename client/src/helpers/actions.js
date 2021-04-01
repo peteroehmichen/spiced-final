@@ -387,6 +387,14 @@ export function newMessage(obj) {
     };
 }
 
+export function activeUsers(arr) {
+    return {
+        type: "ACTIVE_USERS",
+        payload: arr,
+    };
+}
+
+
 ////// unrevised actions /////
 
 export function toggleTripForm() {
@@ -765,13 +773,6 @@ export function newChatMessage(obj) {
     };
 }
 
-export function activeUsers(arr) {
-    //
-    // console.log("payload: ", arr);
-    return {
-        type: "ACTIVE_USERS",
-        payload: arr,
-    };
-}
+
 
 */

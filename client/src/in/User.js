@@ -5,18 +5,14 @@ import FriendButton from "./FriendBtn";
 import Matches from "./Matches";
 import Chat from "./Chat";
 import { GetLocationName } from "../helpers/helperComponents";
+import OnlineStatus from "./OnlineStatus";
 
 export default function User(props) {
     const [activeMatches, setActiveMatches] = useState(true);
-
     const dispatch = useDispatch();
-    const {
-        otherUser: other,
-        grades,
-        experience,
-        matches,
-        trips,
-    } = useSelector((store) => store);
+    const { otherUser: other, grades, experience, trips } = useSelector(
+        (store) => store
+    );
 
     useEffect(() => {
         dispatch(getUserData(props.match.params.id));
@@ -39,6 +35,7 @@ export default function User(props) {
                                         : "contain",
                                 }}
                             />
+                            {other.confirmed && <OnlineStatus id={other.id} />}
                         </div>
                         <div id="user-detail-description">
                             <h1>
