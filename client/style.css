@@ -35,44 +35,49 @@ header {
     align-items: center;
 }
 
-.logo {
-    width: 50px;
-    height: 100%;
-}
-
-.logout {
-    position: relative;
-    /* right: 20px; */
-    /* top: 15px; */
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.logout div {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.logout_off {
-    z-index: 100;
-}
-.logout_off:hover {
-    display: none;
-}
+/* .nav-element {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+} */
 
 .nav-bar {
     width: 100%;
     height: 100%;
-
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
+}
+
+.logo,
+.logout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.nav-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.moving {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.nav-hover {
+    /* visibility: visible; */
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s linear 0s, opacity 600ms;
 }
 
 .central {

@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Link, Route } from "react-router-dom";
 import { getEssentialData } from "../helpers/actions";
@@ -13,6 +13,7 @@ import { Toaster } from "react-hot-toast";
 
 export default function App() {
     let { user, errors } = useSelector((store) => store);
+    const [appear, setAppear] = useState(["", ""]);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getEssentialData());
@@ -41,37 +42,59 @@ export default function App() {
             {!majorError && (
                 <Fragment>
                     <header>
-                        <div className="nav-element logo">
-                            <img src="/noun_Rope_61701.png" />
-                        </div>
                         <div className="nav-bar">
-                            <Link to="/">
-                                <div className="nav-element">Dashboard</div>
-                            </Link>
+                            <div className="nav-element logo">
+                                <Link
+                                    to="/"
+                                    onMouseOver={() => {
+                                        setAppear([" nav-hover", ""]);
+                                    }}
+                                    onMouseOut={() => {
+                                        setAppear(["", ""]);
+                                    }}
+                                >
+                                    <div className="nav-icon">
+                                        <img src="/noun_Rope_61701.png" />
+                                    </div>
+                                </Link>
+                                <div className={"moving" + appear[0]}>
+                                    Dashboard
+                                </div>
+                            </div>
                             <Link to="/locations">
-                                <div className="nav-element">Crags</div>
+                                <div className="nav-element">All Crags</div>
                             </Link>
                             <Link to="/profile">
                                 <div className="nav-element">
-                                    Profile & Trips
+                                    Your Profile & Trips
                                 </div>
                             </Link>
                             <Link to="/social">
-                                <div className="nav-element">Climbers</div>
+                                <div className="nav-element">
+                                    Other Climbers
+                                </div>
                             </Link>
-                        </div>
-                        <div className="nav-element logout">
-                            <a href="/logout">
-                                <div className="logout_on">
-                                    <img src={"/logOut.svg"} title="log out" />
+                            <div className="nav-element logout">
+                                <div className={"moving" + appear[1]}>
+                                    Logout
                                 </div>
-                                <div className="logout_off">
-                                    <img
-                                        src={user.picture || "/logOut.svg"}
-                                        title="log out"
-                                    />
-                                </div>
-                            </a>
+                                <a
+                                    href="/logout"
+                                    onMouseOver={() => {
+                                        setAppear(["", " nav-hover"]);
+                                    }}
+                                    onMouseOut={() => {
+                                        setAppear(["", ""]);
+                                    }}
+                                >
+                                    <div className="nav-icon">
+                                        <img
+                                            src={user.picture || "/climber.svg"}
+                                            title="log out"
+                                        />
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </header>
                     <Fragment>
