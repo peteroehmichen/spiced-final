@@ -6,7 +6,7 @@ export default function OnlineStatus(props) {
 
     return (
         <div className={status ? "user-online" : "user-offline"}>
-            {status ? "on" : "off"}
+            {status ? "online" : "offline"}
         </div>
     );
 }
