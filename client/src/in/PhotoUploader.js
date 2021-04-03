@@ -16,7 +16,7 @@ export default function Uploader(props) {
     const [error, setError] = useState(false);
 
     function selectHandler(e) {
-        e.target.labels[0].style.borderBottom = "3px solid orangered";
+        e.target.labels[0].style.borderBottom = "2px solid orangered";
         if (e.target.files.length < 1) {
             setFile("");
             setFilename("");
@@ -35,7 +35,7 @@ export default function Uploader(props) {
             setFilename(shortened);
             setError("");
 
-            e.target.labels[0].style.borderBottom = "3px solid green";
+            e.target.labels[0].style.borderBottom = "2px solid green";
         }
     }
 

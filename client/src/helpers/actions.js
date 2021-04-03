@@ -1,5 +1,7 @@
 import axios from "./axios";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import TripEdit from "../in/TripEdit";
 
 export async function getEssentialData() {
     try {
@@ -381,8 +383,51 @@ export async function receiveChatMessages(about, id, limit = 20) {
 }
 
 export function newMessage(obj) {
-    if (obj.error) {
+    if (obj.success) {
+        const { sender, recipient, first, last, trip_origin } = obj.success;
+        // gt toast if direct message or trip message to me and I am not on user page
+        if (
+            !location.id &&
+            window.location.pathname != `/user/${sender}` &&
+            window.location.pathname != `/user/${recipient}`
+        ) {
+            let text;
+            if (!trip_origin) {
+                text =
+                    "Please manually select the chat group 'Direct Message'.";
+            } else {
+                text =
+                    "Please manually select the chat group for the matching trip.";
+            }
+
+            toast(
+                (t) => (
+                    <span>
+                        Got a new message from {first} {last}.<br />
+                        <Link to={`/user/${sender}`}>
+                            <b
+                                onClick={() => {
+                                    toast.dismiss(t.id);
+                                    toast.success(text);
+                                }}
+                            >
+                                go to profile
+                            </b>
+                        </Link>
+                    </span>
+                ),
+                {
+                    duration: 5000,
+                    icon: "💬",
+                }
+            );
+
+            // toast.success(`Got a new message from ${first} ${last}.`);
+            obj = {};
+        }
+    } else {
         toast.error(obj.error.text);
+        obj = {};
     }
     return {
         type: "NEW_MESSAGE",

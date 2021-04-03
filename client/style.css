@@ -198,7 +198,7 @@ input[type="email"] {
     width: 250px;
     padding-top: 5px;
     border: 0;
-    border-bottom: 4px solid orangered;
+    border-bottom: 2px solid orangered;
     font-size: 1.1em;
     background-color: transparent;
 }
@@ -912,12 +912,11 @@ label[htmlFor="file"] {
     width: 70%;
     height: 40px;
     overflow: hidden;
-    border-bottom: 3px solid orangered;
+    border-bottom: 2px solid orangered;
     display: flex;
     flex-direction: column;
     margin: 0 20px;
     padding: 0 5px;
-    /* border-bottom: 3px solid orangered; */
 }
 
 label img {

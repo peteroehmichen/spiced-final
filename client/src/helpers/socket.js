@@ -38,10 +38,7 @@ export const init = (store) => {
     });
 
     socket.on("activeUsers", (arr) => {
-        console.log("Users:", arr);
         return store.dispatch(activeUsers(arr));
-        // toast.info("change in user status");
-        // return store.dispatch(activeUsers(arr));
     });
 };
 

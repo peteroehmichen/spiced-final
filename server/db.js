@@ -465,7 +465,7 @@ module.exports.addTripMessage = async function (
 ) {
     return {
         chat: await sql.query(
-            `INSERT INTO chat (sender, recipient, trip_origin, trip_target, text) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, recipient, text, trip_origin, trip_target, location_id;`,
+            `INSERT INTO chat (sender, recipient, trip_origin, trip_target, text) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, sender, recipient, text, trip_origin, trip_target, location_id;`,
             [sender, recipient, origin, target, msg]
         ),
         user: await sql.query(`SELECT first, last from users WHERE id=$1`, [
