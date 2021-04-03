@@ -42,7 +42,7 @@ export default function Chat(props) {
 
     useEffect(() => {
         if (group) {
-            if (group == "Direct") {
+            if (group == "direct") {
                 dispatch(receiveChatMessages("direct", props.user, 100));
             } else if (group[0] == "T") {
                 dispatch(receiveChatMessages("trip", group, 100));
@@ -62,7 +62,7 @@ export default function Chat(props) {
     const submit = function (e) {
         if (e.key === "Enter" || e.type == "click") {
             e.preventDefault();
-            if (!props.location && (group == "" || group == "direct")) {
+            if (group == "direct") {
                 emitMessage({
                     type: "friend",
                     recipient: props.user,

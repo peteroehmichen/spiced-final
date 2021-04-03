@@ -183,7 +183,7 @@ export function removeReduxDetail(section, value) {
         payload: {
             section,
             value,
-        }
+        },
     };
 }
 
@@ -381,6 +381,9 @@ export async function receiveChatMessages(about, id, limit = 20) {
 }
 
 export function newMessage(obj) {
+    if (obj.error) {
+        toast.error(obj.error.text);
+    }
     return {
         type: "NEW_MESSAGE",
         payload: obj,
@@ -393,7 +396,6 @@ export function activeUsers(arr) {
         payload: arr,
     };
 }
-
 
 ////// unrevised actions /////
 

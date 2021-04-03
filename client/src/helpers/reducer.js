@@ -198,7 +198,7 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "NEW_MESSAGE") {
-        const { success, error } = action.payload;
+        const { success } = action.payload;
         return produce(store, (newStore) => {
             if (success) {
                 newStore.chat.push(success);
