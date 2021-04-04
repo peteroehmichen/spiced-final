@@ -156,6 +156,5 @@ export default function Reset() {
     );
 }
 
-// FIXME redirect on large Countdown leeds to memory leak
 // TODO nicer redirect after end
 // FIXME remove error on change of input

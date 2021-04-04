@@ -7,8 +7,8 @@ export function useAthenticate(url, values) {
         loading: false,
     });
 
-    const handleAuthSubmit = async (e) => {
-        e.preventDefault();
+    const handleAuthSubmit = async () => {
+        // e.preventDefault();
         try {
             setStatus({
                 ...status,
