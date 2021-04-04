@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getFriendships } from "../helpers/actions";
 import Finder from "./Finder";
-import OnlineStatus from "./OnlineStatus";
+import OnlineSymbol from "./OnlineStatus";
 
 export default function Social() {
     const dispatch = useDispatch();
@@ -42,7 +42,7 @@ export default function Social() {
                     <div className="card small wide-small split">
                         <div className="card-left">
                             <img src={elem.picture || "/default.svg"} />
-                            <OnlineStatus id={elem.id} />
+                            <OnlineSymbol id={elem.id} />
                         </div>
                         <div className="card-right">
                             <div>

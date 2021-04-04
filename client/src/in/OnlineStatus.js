@@ -1,8 +1,12 @@
 import { useSelector } from "react-redux";
 
-export default function OnlineStatus(props) {
+export function onlineStatus(id) {
     const { activeUsers } = useSelector((store) => store);
-    let status = activeUsers && activeUsers.some((el) => el == props.id);
+    return activeUsers && activeUsers.some((el) => el == id);
+}
+
+export default function OnlineSymbol(props) {
+    let status = onlineStatus(props.id);
 
     return (
         <div className={status ? "user-online" : "user-offline"}>

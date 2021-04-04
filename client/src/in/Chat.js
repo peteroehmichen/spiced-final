@@ -3,6 +3,7 @@ import { formatDistance, parseISO } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { receiveChatMessages, removeReduxDetail } from "../helpers/actions";
 import { emitMessage } from "../helpers/socket";
+import { onlineStatus } from "./OnlineStatus";
 
 // FIXME sorting of messages
 // FIXME clear search input before sending msg
@@ -233,22 +234,31 @@ export default function Chat(props) {
                 className="new-message"
                 style={{ visibility: group ? "visible" : "hidden" }}
             >
-                <textarea
-                    disabled={searchInput ? true : false}
-                    placeholder={
-                        searchInput
-                            ? "Clear search field before sending a message"
-                            : "Your Message..."
-                    }
-                    onChange={(e) => setValue(e.target.value)}
-                    onKeyPress={(e) => {
-                        if (value) {
-                            submit(e);
+                <div className="msg-input">
+                    <textarea
+                        disabled={searchInput ? true : false}
+                        placeholder={
+                            searchInput
+                                ? "Clear search field before sending a message"
+                                : "Your Message..."
                         }
-                    }}
-                    ref={input}
-                    className="chat-input"
-                />
+                        onChange={(e) => setValue(e.target.value)}
+                        onKeyPress={(e) => {
+                            if (value) {
+                                submit(e);
+                            }
+                        }}
+                        ref={input}
+                        className="chat-input"
+                    />
+                    {props.user && (
+                        <p className="subtext">
+                            {onlineStatus(props.user)
+                                ? "User is online and may respond quickly."
+                                : "User is not online and will be informed via e-Mail."}
+                        </p>
+                    )}
+                </div>
                 <button
                     disabled={!value || !group}
                     onClick={(e) => {

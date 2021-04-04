@@ -5,7 +5,7 @@ import FriendButton from "./FriendBtn";
 import Matches from "./Matches";
 import Chat from "./Chat";
 import { GetLocationName } from "../helpers/helperComponents";
-import OnlineStatus from "./OnlineStatus";
+import OnlineSymbol from "./OnlineStatus";
 
 export default function User(props) {
     const [activeMatches, setActiveMatches] = useState(true);
@@ -35,7 +35,7 @@ export default function User(props) {
                                         : "contain",
                                 }}
                             />
-                            {other.confirmed && <OnlineStatus id={other.id} />}
+                            {other.confirmed && <OnlineSymbol id={other.id} />}
                         </div>
                         <div id="user-detail-description">
                             <h1>

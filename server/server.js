@@ -784,6 +784,7 @@ io.on("connection", async (socket) => {
 
     socket.on("newMessageToServer", async (msg) => {
         let status;
+        console.log(msg);
         try {
             let result;
             if (msg.type == "friend") {

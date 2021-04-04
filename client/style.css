@@ -151,7 +151,7 @@ select {
     font-family: sans-serif;
     outline: none;
     margin-left: 5px;
-    /* width: 100%; */
+    width: 100%;
 }
 
 textarea {
@@ -787,6 +787,7 @@ textarea[name="comment"] {
 
 .target {
     height: 50px;
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -834,6 +835,14 @@ textarea[name="comment"] {
     padding: 5px;
 }
 
+.msg-input {
+    width: 100%;
+}
+
+.msg-input textarea {
+    margin: 0;
+}
+
 .new-message {
     height: 100px;
     width: 100%;
@@ -842,6 +851,11 @@ textarea[name="comment"] {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+}
+
+.subtext {
+    font-size: 0.7em;
+    font-style: italic;
 }
 
 .user {
