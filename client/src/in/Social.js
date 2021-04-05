@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getFriendships } from "../helpers/actions";
+import { Loader } from "../helpers/helperComponents";
 import Finder from "./Finder";
 import OnlineSymbol from "./OnlineStatus";
 
@@ -14,11 +15,12 @@ export default function Social() {
         dispatch(getFriendships());
     }, []);
 
-    let friends = <div>There are none</div>;
-    let requests;
-    let pending;
+    let friends = <Loader />;
+    let requests = <Loader />;
+    let pending = <Loader />;
+    let none = <div>No entries found</div>;
 
-    if (all && all.length > 0) {
+    if (all) {
         friends = all.filter((elem) => elem.confirmed);
         friends = friends.filter((element) =>
             `${element.first} ${element.last}`.includes(searchInput)
@@ -30,13 +32,7 @@ export default function Social() {
             (elem) => !elem.confirmed && elem.recipient == elem.id
         );
 
-        if (!friends.length) {
-            friends = (
-                <div className="noFriendMsg">
-                    <h3>You are not connected to anybody so far</h3>
-                </div>
-            );
-        } else {
+        if (friends.length) {
             friends = friends.map((elem, i) => (
                 <Link key={i} to={`/user/${elem.id}`}>
                     <div className="card small wide-small split">
@@ -57,11 +53,11 @@ export default function Social() {
                     </div>
                 </Link>
             ));
+        } else {
+            friends = none;
         }
 
-        if (!requests.length) {
-            requests = <div>There are none</div>;
-        } else {
+        if (requests.length) {
             requests = requests.map((elem, i) => (
                 <Link key={i} to={`/user/${elem.id}`}>
                     <div className="found-friend">
@@ -81,10 +77,11 @@ export default function Social() {
                     </div>
                 </Link>
             ));
-        }
-        if (!pending.length) {
-            pending = <div>There are none</div>;
         } else {
+            requests = none;
+        }
+
+        if (pending.length) {
             pending = pending.map((elem, i) => (
                 <Link key={i} to={`/user/${elem.id}`}>
                     <div className="found-friend">
@@ -104,6 +101,8 @@ export default function Social() {
                     </div>
                 </Link>
             ));
+        } else {
+            pending = none;
         }
     }
 
