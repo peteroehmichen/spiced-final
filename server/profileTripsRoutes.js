@@ -105,7 +105,6 @@ router.post("/in/updateTripData.json", async (req, res) => {
 
 router.get("/in/deleteTrip.json", async (req, res) => {
     try {
-        // FIXME delete AWS picture as well
         const result = await db.deleteTripById(req.query.id);
         if (result.rowCount > 0) {
             return res.json({ success: { id: req.query.id }, error: false });

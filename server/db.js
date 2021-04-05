@@ -47,7 +47,6 @@ const client = redis.createClient(
     process.env.REDIS_URL || { host: "localhost", port: 6379 }
 );
 const { promisify } = require("util");
-const { userInfo } = require("os");
 client.on("error", function (err) {
     console.log(err);
 });
@@ -182,6 +181,7 @@ module.exports.getEssentialData = async function (userId) {
         locations: await this.getLocations(),
         trips: await this.getOwnAndFriendsFutureTrips(userId),
         matches: await this.getMatches(userId),
+        friendships: await this.getFriendships(userId),
     };
 };
 

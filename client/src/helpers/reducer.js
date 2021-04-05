@@ -9,6 +9,10 @@ export default function reducer(store = {}, action) {
         return produce(store, (newStore) => {
             const { success, error } = action.payload;
             if (success) {
+                // newStore = {
+                //     ...newStore,
+                //     ...success,
+                // };
                 newStore.user = success.user;
                 newStore.locations = success.locations;
                 newStore.trips = success.trips;
@@ -18,6 +22,7 @@ export default function reducer(store = {}, action) {
                 newStore.location_topics = success.location_topics;
                 newStore.countries = success.countries;
                 newStore.continents = success.continents;
+                newStore.friendships = success.friendships;
             } else {
                 newStore.errors = {
                     [error.type]: error.text,
@@ -146,15 +151,6 @@ export default function reducer(store = {}, action) {
                 newStore.trips = newStore.trips.filter(
                     (trip) => trip.id != success.id
                 );
-            }
-        });
-    }
-
-    if (action.type == "GET_FRIENDSHIPS") {
-        const { success } = action.payload;
-        return produce(store, (newStore) => {
-            if (success) {
-                newStore.friendships = success;
             }
         });
     }

@@ -25,29 +25,6 @@ const cookieSessionMiddleware = cookieSession({
 
 const csurf = require("csurf");
 
-// let BAName = process.env.BAName
-//     ? process.env.BAName
-//     : require("../secrets.json").BAName;
-// let BAPass = process.env.BAPass
-//     ? process.env.BAPass
-//     : require("../secrets.json").BAPass;
-
-// const basicAuth = require("basic-auth");
-// const firstBlock = function (req, res, next) {
-//     const creds = basicAuth(req);
-//     if (!creds || creds.name != BAName || creds.pass != BAPass) {
-//         res.setHeader(
-//             "WWW-Authenticate",
-//             'Basic realm="Enter your credentials to see this app"'
-//         );
-//         res.sendStatus(401);
-//     } else {
-//         next();
-//     }
-// };
-
-// app.use(firstBlock);
-
 const db = require("./db");
 const activeSockets = {};
 app.use(cookieSessionMiddleware);
@@ -125,10 +102,10 @@ app.get("/in/essentialData.json", async (req, res) => {
                 locations: results.locations.rows,
                 trips: results.trips.rows,
                 matches: analyseMatches(results.matches.rows),
+                friendships: results.friendships.rows,
             };
             // FIXME proper ugly solution
             for (let i = 0; i < obj.matches.length; i++) {
-                // visibleOnlineUsers.push(obj.matches[i].person);
                 for (let j = 0; j < obj.locations.length; j++) {
                     if (obj.matches[i].location_id == obj.locations[j].id) {
                         obj.matches[i].location_name = obj.locations[j].name;

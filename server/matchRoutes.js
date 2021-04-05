@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require("./db");
 
 router.get("/in/matches.json", async (req, res) => {
-    // console.log("server looking for matches...");
     try {
         const { rows: matches } = await db.getMatches(req.session.userId);
         const filteredMatches = matches.filter(

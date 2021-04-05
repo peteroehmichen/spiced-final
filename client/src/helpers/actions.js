@@ -281,25 +281,6 @@ export async function deleteTrip(id) {
     }
 }
 
-export async function getFriendships() {
-    try {
-        const { data } = await axios.get("/api/friends.json");
-        return {
-            type: "GET_FRIENDSHIPS",
-            payload: data,
-        };
-    } catch (error) {
-        console.log("Error in axios while fetching socials:", error);
-        return {
-            type: "GET_FRIENDSHIPS",
-            payload: {
-                success: false,
-                error: { type: "module", text: "Could not connect to server" },
-            },
-        };
-    }
-}
-
 export async function getUserData(id) {
     // console.log("Going to fetch user data:");
     try {

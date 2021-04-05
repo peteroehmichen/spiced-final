@@ -3,23 +3,6 @@ const router = express.Router();
 const db = require("./db");
 const aws = require("./aws");
 
-router.get("/api/friends.json", async (req, res) => {
-    // console.log("fetching friends for user:", req.session.userId);
-    try {
-        const { rows } = await db.getFriendships(req.session.userId);
-        res.json({ success: rows, error: false });
-    } catch (error) {
-        console.log("error in fetching friends:", error);
-        res.json({
-            success: false,
-            error: {
-                type: "notifications",
-                text: "Failed Connection to Database",
-            },
-        });
-    }
-});
-
 router.post("/api/user/friendBtn.json", async (req, res) => {
     let text;
     try {

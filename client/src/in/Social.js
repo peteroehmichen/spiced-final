@@ -1,19 +1,13 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { getFriendships } from "../helpers/actions";
 import { Loader } from "../helpers/helperComponents";
 import Finder from "./Finder";
 import OnlineSymbol from "./OnlineStatus";
 
 export default function Social() {
-    const dispatch = useDispatch();
     const all = useSelector((store) => store.friendships);
     const [searchInput, setSearchInput] = useState("");
-
-    useEffect(() => {
-        dispatch(getFriendships());
-    }, []);
 
     let friends = <Loader />;
     let requests = <Loader />;
