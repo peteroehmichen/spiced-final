@@ -27,11 +27,35 @@ main {
     position: fixed;
     z-index: 9998;
     top: 10px;
-    left: 0px;
+    /* left: 0px; */
     display: flex;
     flex-direction: column;
     overflow: visible;
     width: 55px;
+    /* visibility: hidden;
+    animation: displayNav 0s 3s forwards; */
+    animation: 4s ease 0s normal forwards 1 fadein;
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+        left: -100%;
+    }
+    50% {
+        opacity: 0;
+        left: -100%;
+    }
+    100% {
+        opacity: 1;
+        left: 0;
+    }
+}
+
+@keyframes displayNav {
+    to {
+        visibility: visible;
+    }
 }
 
 .nav-logo {
@@ -57,7 +81,6 @@ main {
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 600ms;
 }
 
 .nav-element {
