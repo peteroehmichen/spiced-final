@@ -21,6 +21,83 @@ main {
     /* overflow: hidden; */
 }
 
+/* BEGIN Experiment */
+
+.dropdown {
+    position: fixed;
+    z-index: 9998;
+    top: 10px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    width: 55px;
+}
+
+.nav-logo {
+    width: 55px;
+    height: 55px;
+    /* border-radius: 0 5px 5px 0; */
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.459);
+    border-radius: 0 15px 15px 0;
+    padding: 5px;
+    border: none;
+}
+
+.dropdown:hover .nav-logo {
+    background-color: rgba(255, 255, 255, 0.685);
+}
+
+.dropdown-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* width: max-content; */
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 600ms;
+}
+
+.nav-element {
+    position: relative;
+    left: calc(-100% + 40px);
+    transition: 0.5s;
+    background-color: rgba(255, 255, 255, 0.459);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    border-radius: 0 15px 15px 0;
+    color: black;
+    margin: 5px 0;
+    padding: 0 5px;
+    width: max-content;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.dropdown:hover .dropdown-content {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s linear 0s, opacity 600ms;
+}
+
+.nav-element:hover {
+    background-color: rgba(255, 255, 255, 0.685);
+    left: 0;
+}
+
+.nav-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 0 5px 5px 0;
+    padding: 5px;
+    overflow: hidden;
+}
+
+/* END Experiment */
+
 header {
     /* position: relative; */
     width: 100%;
@@ -34,12 +111,6 @@ header {
     justify-content: space-between;
     align-items: center;
 }
-
-/* .nav-element {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-} */
 
 .nav-bar {
     width: 100%;
@@ -55,13 +126,6 @@ header {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-}
-
-.nav-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    overflow: hidden;
 }
 
 .moving {

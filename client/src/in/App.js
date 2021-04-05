@@ -10,6 +10,7 @@ import User from "./User";
 import Location from "./Location";
 
 import { Toaster } from "react-hot-toast";
+import Navigation from "./Navigation";
 
 export default function App() {
     let { user, errors } = useSelector((store) => store);
@@ -38,65 +39,9 @@ export default function App() {
 
     return (
         <BrowserRouter>
-            {majorError && majorError}
-            {!majorError && (
+            {majorError || (
                 <Fragment>
-                    <header>
-                        <div className="nav-bar">
-                            <div className="nav-element logo">
-                                <Link
-                                    to="/"
-                                    onMouseOver={() => {
-                                        setAppear([" nav-hover", ""]);
-                                    }}
-                                    onMouseOut={() => {
-                                        setAppear(["", ""]);
-                                    }}
-                                >
-                                    <div className="nav-icon">
-                                        <img src="/noun_Rope_61701.png" />
-                                    </div>
-                                </Link>
-                                <div className={"moving" + appear[0]}>
-                                    Dashboard
-                                </div>
-                            </div>
-                            <Link to="/locations">
-                                <div className="nav-element">All Crags</div>
-                            </Link>
-                            <Link to="/profile">
-                                <div className="nav-element">
-                                    Your Profile & Trips
-                                </div>
-                            </Link>
-                            <Link to="/social">
-                                <div className="nav-element">
-                                    Other Climbers
-                                </div>
-                            </Link>
-                            <div className="nav-element logout">
-                                <div className={"moving" + appear[1]}>
-                                    Logout
-                                </div>
-                                <a
-                                    href="/logout"
-                                    onMouseOver={() => {
-                                        setAppear(["", " nav-hover"]);
-                                    }}
-                                    onMouseOut={() => {
-                                        setAppear(["", ""]);
-                                    }}
-                                >
-                                    <div className="nav-icon">
-                                        <img
-                                            src={user.picture || "/climber.svg"}
-                                            title="log out"
-                                        />
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </header>
+                    <Navigation />
                     <Fragment>
                         <Route exact path="/" render={() => <Dashboard />} />
                         <Route path="/locations" render={() => <Locations />} />

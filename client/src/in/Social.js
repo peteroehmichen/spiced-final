@@ -31,7 +31,7 @@ export default function Social() {
                 <Link key={i} to={`/user/${elem.id}`}>
                     <div className="card small wide-small split">
                         <div className="card-left">
-                            <img src={elem.picture || "/default.svg"} />
+                            <img src={elem.picture || "/climber.svg"} />
                             <OnlineSymbol id={elem.id} />
                         </div>
                         <div className="card-right">
@@ -123,7 +123,7 @@ export default function Social() {
                 <h1>Grow your Community of Climbers</h1>
                 <div className="grow-split">
                     <div>
-                        <h3>Friend-Requests to you</h3>
+                        <h3>Friendship-Requests to you</h3>
                         <div className="container-frame">
                             <div className="card-container wrapped">
                                 {requests}
@@ -132,7 +132,7 @@ export default function Social() {
                     </div>
 
                     <div>
-                        <h3>Friend-Request from you</h3>
+                        <h3>Friendship-Request from you</h3>
                         <div className="container-frame">
                             <div className="card-container wrapped">
                                 {pending}
