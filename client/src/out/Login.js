@@ -81,7 +81,7 @@ export default function Login() {
                     Forgot your password? Click here to{" "}
                     <Link to="/reset">reset</Link>
                 </p>
-                <i style={{ color: "blue" }}>
+                <i style={{ color: "rgb(53 53 53)" }}>
                     Or log in with a predefined test user{" "}
                     <b
                         style={{ cursor: "pointer" }}

@@ -87,7 +87,7 @@ module.exports.sendEMail = function (recipient) {
     const newCode = cryptoRandomString({ length: 6 });
     return ses
         .sendEmail({
-            Source: "The Makers of MessageBoard <oehmichenp@gmail.com>",
+            Source: "The Makers of The Sharp End <oehmichenp@gmail.com>",
             Destination: {
                 ToAddresses: [recipient],
             },
@@ -99,7 +99,7 @@ module.exports.sendEMail = function (recipient) {
                 },
                 Subject: {
                     Data:
-                        "MESSAGE BOARD: Your Validation Code for Password Reset",
+                        "THE SHARP END: Your Validation Code for Password Reset",
                 },
             },
         })

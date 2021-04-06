@@ -25,8 +25,8 @@ if (location.pathname === "/welcome") {
         <Provider store={store}>
             <App />
             <footer>
-                Made with 🍐 by Peter Oehmichen, 2021 || Logo “Rope” by Icons,
-                RU, from the Noun Project.
+                Made by Peter Oehmichen, 2021 || All icons from the Noun
+                Project.
             </footer>
         </Provider>
     );

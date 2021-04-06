@@ -2,19 +2,14 @@ import { Link } from "react-router-dom";
 
 export default function Navigation() {
     return (
-        <div className="dropdown">
+        <div className="navigation">
             <Link to="/">
                 <div className="nav-logo">
                     <img src="/noun_Rope_61701.svg" />
                 </div>
             </Link>
 
-            <div
-                className="dropdown-content"
-                onClick={(e) => {
-                    console.log("clicked on ", e.target);
-                }}
-            >
+            <div className="nav-content">
                 <Link to="/locations">
                     <div className="nav-element">
                         <div>All Crags</div>

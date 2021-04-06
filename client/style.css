@@ -21,9 +21,7 @@ main {
     /* overflow: hidden; */
 }
 
-/* BEGIN Experiment */
-
-.dropdown {
+.navigation {
     position: fixed;
     z-index: 9998;
     top: 10px;
@@ -69,11 +67,12 @@ main {
     border: none;
 }
 
-.dropdown:hover .nav-logo {
-    background-color: rgba(255, 255, 255, 0.685);
+.navigation:hover .nav-logo {
+    /* background-color: rgba(255, 255, 255, 0.685); */
+    background-color: rgb(253 192 84);
 }
 
-.dropdown-content {
+.nav-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -81,6 +80,7 @@ main {
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
+    transition: visibility 0s linear 0s, opacity 500ms;
 }
 
 .nav-element {
@@ -91,7 +91,7 @@ main {
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     border-radius: 0 15px 15px 0;
     color: black;
-    margin: 5px 0;
+    margin: 3px 0;
     padding: 0 5px;
     width: max-content;
     display: flex;
@@ -100,14 +100,15 @@ main {
     flex-wrap: nowrap;
 }
 
-.dropdown:hover .dropdown-content {
+.navigation:hover .nav-content {
     visibility: visible;
     opacity: 1;
-    transition: visibility 0s linear 0s, opacity 600ms;
+    transition: visibility 0s linear 0s, opacity 1000ms;
 }
 
 .nav-element:hover {
-    background-color: rgba(255, 255, 255, 0.685);
+    /* background-color: rgb(253 192 84); */
+    background-color: rgba(255, 255, 255, 0.842);
     left: 0;
 }
 
@@ -117,54 +118,6 @@ main {
     border-radius: 0 5px 5px 0;
     padding: 5px;
     overflow: hidden;
-}
-
-/* END Experiment */
-
-header {
-    /* position: relative; */
-    width: 100%;
-    height: 60px;
-    padding: 0 10px;
-    background-color: rgb(157 183 183);
-    border-bottom: 3px solid black;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-bar {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logo,
-.logout {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-}
-
-.moving {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    visibility: hidden;
-    opacity: 0;
-}
-
-.nav-hover {
-    /* visibility: visible; */
-    visibility: visible;
-    opacity: 1;
-    transition: visibility 0s linear 0s, opacity 600ms;
 }
 
 .central {
@@ -177,7 +130,7 @@ header {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background-color: rgb(127 164 164);
+    background-color: rgb(153 153 153);
 }
 
 label {
@@ -188,9 +141,9 @@ label {
 
 footer {
     width: 100%;
-    height: 50px;
-    background-color: rgb(157 183 183);
-    border-top: 3px solid black;
+    height: 30px;
+    background-color: rgb(111 111 111);
+    border-top: 1px solid black;
     color: black;
     font-weight: 500;
     padding-right: 10px;
@@ -314,7 +267,7 @@ textarea[name="comment"] {
 
 .out {
     justify-content: space-evenly;
-    background-color: rgb(48, 103, 68);
+    /* background-color: rgb(48, 103, 68); */
 }
 
 .container-frame {
@@ -851,7 +804,8 @@ textarea[name="comment"] {
     padding: 15px;
     margin: 15px;
     text-align: center;
-    background-color: rgb(127 164 164);
+    background-color: rgb(253 192 84);
+    border-radius: 200px;
 }
 
 .grey {
