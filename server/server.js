@@ -160,9 +160,22 @@ io.on("connection", async (socket) => {
 
     socket.on("markAsRead", async (messages) => {
         try {
-            db.markReadMessages(messages);
-            // const result = await db.markReadMessages(messages);
-            // console.log("return value from marking:", result);
+            db.markReadMessages(messages.arr);
+            console.log(
+                "sending reply to ",
+                messages.idOfSender,
+                "for",
+                messages.arr
+            );
+            let recipientSocket = Object.entries(activeSockets);
+            for (let i = 0; i < recipientSocket.length; i++) {
+                if (recipientSocket[i][1] == messages.idOfSender) {
+                    io.to(recipientSocket[i][0]).emit(
+                        "ownMessagesRead",
+                        messages.arr
+                    );
+                }
+            }
         } catch (error) {
             console.log("Error while marking as read:", error);
         }

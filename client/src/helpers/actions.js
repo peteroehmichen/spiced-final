@@ -416,8 +416,14 @@ export function newMessage(obj) {
     };
 }
 
+export function markMessagesAsRead(arr) {
+    return {
+        type: "MARK_MESSAGES_AS_READ",
+        payload: arr,
+    };
+}
+
 export function activeUsers(arr) {
-    
     return {
         type: "ACTIVE_USERS",
         payload: arr,

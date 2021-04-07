@@ -130,12 +130,15 @@ export default function Chat(props) {
             });
         }
         chat = chat.filter((m) => m.text.includes(searchInput));
-
+        let idOfSender;
         let receivedUnreadMessages = chat
             .filter((m) => !m.read_by_recipient && m.sender != user.id)
-            .map((m) => m.id);
+            .map((m) => {
+                idOfSender = m.sender;
+                return m.id;
+            });
         if (receivedUnreadMessages.length) {
-            markAsRead(receivedUnreadMessages);
+            markAsRead({ arr: receivedUnreadMessages, idOfSender });
         }
     }
 
@@ -221,6 +224,15 @@ export default function Chat(props) {
                                         : "unread-message"
                                 }`}
                             >
+                                <div className="message-highlight">
+                                    {msg.sender === user.id
+                                        ? msg.read_by_recipient
+                                            ? "read"
+                                            : "unread"
+                                        : msg.read_by_recipient
+                                        ? ""
+                                        : "new"}
+                                </div>
                                 <p className="message-head">
                                     <b>
                                         {msg.sender === user.id
@@ -282,4 +294,3 @@ export default function Chat(props) {
         </div>
     );
 }
-// setValue(e.target.value);

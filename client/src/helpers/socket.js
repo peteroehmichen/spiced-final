@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { activeUsers, newMessage } from "./actions";
+import { activeUsers, newMessage, markMessagesAsRead } from "./actions";
 import toast from "react-hot-toast";
 
 export let socket;
@@ -11,6 +11,11 @@ export const init = (store) => {
     socket.on("newMessageToClient", (obj) => {
         return store.dispatch(newMessage(obj));
     });
+    socket.on("ownMessagesRead", (arr) => {
+        console.log("your message was read:", arr);
+        return store.dispatch(markMessagesAsRead(arr));
+    });
+
     socket.on("error", (err) => {
         console.log("encountered an error", err);
     });

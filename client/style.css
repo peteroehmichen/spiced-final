@@ -863,6 +863,7 @@ textarea[name="comment"] {
 }
 
 .message {
+    position: relative;
     background-color: rgb(9 130 85 / 75%);
     width: 95%;
     padding: 5px;
@@ -889,11 +890,20 @@ textarea[name="comment"] {
 }
 
 .message-own {
+    position: relative;
     background-color: rgb(9 130 85 / 35%);
     width: 95%;
     padding: 5px;
     margin: 10px;
     border-radius: 10px;
+}
+
+.message-highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 4px;
+    font-size: 0.6em;
 }
 
 .message-head {

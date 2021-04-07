@@ -203,6 +203,19 @@ export default function reducer(store = {}, action) {
         });
     }
 
+    if (action.type == "MARK_MESSAGES_AS_READ") {
+        console.log("reducer received Array: ", action.payload);
+        return produce(store, (newStore) => {
+            if (newStore.chat) {
+                newStore.chat.forEach((m) => {
+                    if (action.payload.includes(m.id)) {
+                        m.read_by_recipient = true;
+                    }
+                });
+            }
+        });
+    }
+
     if (action.type == "REMOVE_REDUX_DETAIL") {
         return produce(store, (newStore) => {
             newStore[action.payload.section] = action.payload.value;
