@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatDistance, parseISO } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { receiveChatMessages, removeReduxDetail } from "../helpers/actions";
-import { emitMessage } from "../helpers/socket";
+import { emitMessage, markAsRead } from "../helpers/socket";
 import { onlineStatus } from "./OnlineStatus";
 
 // FIXME sorting of messages
@@ -25,8 +25,8 @@ export default function Chat(props) {
     const [value, setValue] = useState("");
     const [group, setGroup] = useState();
     const [searchInput, setSearchInput] = useState("");
-
     const dispatch = useDispatch();
+    let newValue;
     let {
         chat,
         otherUser: other,
@@ -67,7 +67,7 @@ export default function Chat(props) {
                 emitMessage({
                     type: "friend",
                     recipient: props.user,
-                    value,
+                    value: newValue,
                 });
             } else if (group[0] == "T") {
                 const data = group.split("T");
@@ -76,14 +76,14 @@ export default function Chat(props) {
                     recipient: data[3],
                     trip_target: data[1],
                     trip_origin: data[2],
-                    value,
+                    value: newValue,
                 });
             } else if (props.location) {
                 emitMessage({
                     type: "location",
                     location: props.location,
                     topic: group,
-                    value,
+                    value: newValue,
                 });
             }
             input.current.value = "";
@@ -130,6 +130,13 @@ export default function Chat(props) {
             });
         }
         chat = chat.filter((m) => m.text.includes(searchInput));
+
+        let receivedUnreadMessages = chat
+            .filter((m) => !m.read_by_recipient && m.sender != user.id)
+            .map((m) => m.id);
+        if (receivedUnreadMessages.length) {
+            markAsRead(receivedUnreadMessages);
+        }
     }
 
     return (
@@ -204,17 +211,19 @@ export default function Chat(props) {
                         chat.map((msg, i) => (
                             <div
                                 key={i}
-                                className={
-                                    msg.first == user.first &&
-                                    msg.last == user.last
+                                className={`${
+                                    msg.sender === user.id
                                         ? "message-own"
                                         : "message"
-                                }
+                                } ${
+                                    msg.read_by_recipient
+                                        ? ""
+                                        : "unread-message"
+                                }`}
                             >
                                 <p className="message-head">
                                     <b>
-                                        {msg.first == user.first &&
-                                        msg.last == user.last
+                                        {msg.sender === user.id
                                             ? "you"
                                             : msg.first + " " + msg.last}
                                     </b>
@@ -242,9 +251,11 @@ export default function Chat(props) {
                                 ? "Clear search field before sending a message"
                                 : "Your Message..."
                         }
-                        onChange={(e) => setValue(e.target.value)}
+                        onChange={(e) => {
+                            newValue = e.target.value;
+                        }}
                         onKeyPress={(e) => {
-                            if (value) {
+                            if (newValue) {
                                 submit(e);
                             }
                         }}
@@ -271,3 +282,4 @@ export default function Chat(props) {
         </div>
     );
 }
+// setValue(e.target.value);

@@ -591,6 +591,13 @@ textarea[name="comment"] {
 .location-left {
     width: 60%;
 }
+
+.location-tips {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
 .location-right {
     width: 40%;
 }
@@ -859,8 +866,26 @@ textarea[name="comment"] {
     background-color: rgb(9 130 85 / 75%);
     width: 95%;
     padding: 5px;
-    margin: 10px;
+    margin: 6px;
     border-radius: 10px;
+    border: 2px solid transparent;
+}
+
+.unread-message {
+    /* border-color: red; */
+    animation: 4s ease 0s normal forwards 1 unreadFader;
+}
+
+@keyframes unreadFader {
+    0% {
+        border-color: red;
+    }
+    50% {
+        border-color: red;
+    }
+    100% {
+        border-color: transparent;
+    }
 }
 
 .message-own {
@@ -1062,11 +1087,12 @@ label span {
 
 .user-online,
 .user-offline {
+    font-size: 0.8em;
     position: absolute;
     bottom: 0;
     right: 0;
     background-color: rgba(255, 255, 255, 0.534);
-    padding: 5px;
+    padding: 3px;
 }
 
 .user-offline {

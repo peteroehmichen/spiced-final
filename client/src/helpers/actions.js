@@ -417,6 +417,7 @@ export function newMessage(obj) {
 }
 
 export function activeUsers(arr) {
+    
     return {
         type: "ACTIVE_USERS",
         payload: arr,

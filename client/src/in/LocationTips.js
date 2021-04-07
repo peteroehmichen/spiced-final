@@ -30,7 +30,7 @@ export default function LocationTips() {
     }
 
     return (
-        <Fragment>
+        <div className="location-tips">
             {!loc.name && <Loader />}
             {loc.name && !infos && <p>be the first to add infos here</p>}
             {infos &&
@@ -174,6 +174,6 @@ export default function LocationTips() {
                     </div>
                 </div>
             )}
-        </Fragment>
+        </div>
     );
 }

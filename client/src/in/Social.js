@@ -32,7 +32,7 @@ export default function Social() {
                     <div className="card small wide-small split">
                         <div className="card-left">
                             <img src={elem.picture || "/climber.svg"} />
-                            <OnlineSymbol id={elem.id} />
+                            <OnlineSymbol id={elem.id} style="fullText" />
                         </div>
                         <div className="card-right">
                             <div>

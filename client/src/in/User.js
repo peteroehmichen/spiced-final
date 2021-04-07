@@ -35,7 +35,13 @@ export default function User(props) {
                                         : "contain",
                                 }}
                             />
-                            {other.confirmed && <OnlineSymbol id={other.id} />}
+                            {other.confirmed && (
+                                <OnlineSymbol
+                                    id={other.id}
+                                    style="fullText"
+                                    showOffline={true}
+                                />
+                            )}
                         </div>
                         <div id="user-detail-description">
                             <h1>

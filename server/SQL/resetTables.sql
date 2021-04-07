@@ -72,6 +72,7 @@ CREATE TABLE chat (
       trip_target INT,
       location_id INT,
       location_topic text,
+      read_by_recipient boolean default false,
       text TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

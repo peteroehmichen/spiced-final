@@ -158,9 +158,19 @@ io.on("connection", async (socket) => {
     const users = await activeUsers(activeSockets);
     io.emit("activeUsers", users);
 
+    socket.on("markAsRead", async (messages) => {
+        try {
+            db.markReadMessages(messages);
+            // const result = await db.markReadMessages(messages);
+            // console.log("return value from marking:", result);
+        } catch (error) {
+            console.log("Error while marking as read:", error);
+        }
+    });
+
     socket.on("newMessageToServer", async (msg) => {
         let status;
-        console.log(msg);
+        // console.log("received", msg);
         try {
             let result;
             if (msg.type == "friend") {

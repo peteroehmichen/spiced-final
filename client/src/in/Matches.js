@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { findMatchingTrips } from "../helpers/actions";
 import { GetLocationName, Loader } from "../helpers/helperComponents";
+import OnlineSymbol from "./OnlineStatus";
 
 export default function Matches(props) {
     const { matches, user } = useSelector((store) => store);
@@ -109,6 +110,10 @@ export default function Matches(props) {
                                     <div className="card-image">
                                         <img
                                             src={elem.picture || "/default.svg"}
+                                        />
+                                        <OnlineSymbol
+                                            id={elem.person}
+                                            style="shortText"
                                         />
                                     </div>
                                     <div className="card-text">

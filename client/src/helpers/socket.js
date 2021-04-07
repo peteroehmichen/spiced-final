@@ -49,3 +49,11 @@ export function emitMessage(message) {
         toast.error("No Connection - message was not sent");
     }
 }
+
+export function markAsRead(messages) {
+    if (socket.connected) {
+        socket.emit("markAsRead", messages);
+    } else {
+        toast.error("No Connection to server");
+    }
+}

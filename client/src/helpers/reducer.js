@@ -1,4 +1,5 @@
 import { produce } from "immer";
+import toast from "react-hot-toast";
 
 export default function reducer(store = {}, action) {
     ///////////////////////////////////////////////////
@@ -211,6 +212,35 @@ export default function reducer(store = {}, action) {
     if (action.type == "ACTIVE_USERS") {
         return produce(store, (newStore) => {
             newStore.activeUsers = action.payload;
+
+            const { activeUsers: prevActiveUsers, friendships } = store;
+            if (prevActiveUsers && friendships) {
+                prevActiveUsers.forEach((userId) => {
+                    if (!action.payload.includes(userId)) {
+                        friendships.forEach((friend) => {
+                            if (friend.id == userId && friend.confirmed) {
+                                toast.success(
+                                    `${friend.first} ${friend.last} just went offline`
+                                );
+                                return;
+                            }
+                        });
+                    }
+                });
+
+                action.payload.forEach((userId) => {
+                    if (!prevActiveUsers.includes(userId)) {
+                        friendships.forEach((friend) => {
+                            if (friend.id == userId && friend.confirmed) {
+                                toast.success(
+                                    `${friend.first} ${friend.last} just came online`
+                                );
+                                return;
+                            }
+                        });
+                    }
+                });
+            }
         });
     }
 
