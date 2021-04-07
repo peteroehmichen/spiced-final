@@ -160,13 +160,7 @@ io.on("connection", async (socket) => {
 
     socket.on("markAsRead", async (messages) => {
         try {
-            db.markReadMessages(messages.arr);
-            console.log(
-                "sending reply to ",
-                messages.idOfSender,
-                "for",
-                messages.arr
-            );
+            await db.markReadMessages(messages.arr);
             let recipientSocket = Object.entries(activeSockets);
             for (let i = 0; i < recipientSocket.length; i++) {
                 if (recipientSocket[i][1] == messages.idOfSender) {
@@ -183,7 +177,6 @@ io.on("connection", async (socket) => {
 
     socket.on("newMessageToServer", async (msg) => {
         let status;
-        // console.log("received", msg);
         try {
             let result;
             if (msg.type == "friend") {

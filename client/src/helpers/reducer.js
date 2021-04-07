@@ -204,7 +204,6 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "MARK_MESSAGES_AS_READ") {
-        console.log("reducer received Array: ", action.payload);
         return produce(store, (newStore) => {
             if (newStore.chat) {
                 newStore.chat.forEach((m) => {

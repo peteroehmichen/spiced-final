@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { formatDistance, parseISO } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { receiveChatMessages, removeReduxDetail } from "../helpers/actions";
-import { emitMessage, markAsRead } from "../helpers/socket";
-import { onlineStatus } from "./OnlineStatus";
+import { markAsRead } from "../helpers/socket";
+import ChatSender from "./ChatSender";
 
 // FIXME sorting of messages
 // FIXME clear search input before sending msg
@@ -22,11 +22,9 @@ import { onlineStatus } from "./OnlineStatus";
 export default function Chat(props) {
     const chatRef = useRef(null);
     const input = useRef(null);
-    const [value, setValue] = useState("");
     const [group, setGroup] = useState();
     const [searchInput, setSearchInput] = useState("");
     const dispatch = useDispatch();
-    let newValue;
     let {
         chat,
         otherUser: other,
@@ -60,38 +58,6 @@ export default function Chat(props) {
         }
     }, [chat]);
 
-    const submit = function (e) {
-        if (e.key === "Enter" || e.type == "click") {
-            e.preventDefault();
-            if (group == "direct") {
-                emitMessage({
-                    type: "friend",
-                    recipient: props.user,
-                    value: newValue,
-                });
-            } else if (group[0] == "T") {
-                const data = group.split("T");
-                emitMessage({
-                    type: "trip",
-                    recipient: data[3],
-                    trip_target: data[1],
-                    trip_origin: data[2],
-                    value: newValue,
-                });
-            } else if (props.location) {
-                emitMessage({
-                    type: "location",
-                    location: props.location,
-                    topic: group,
-                    value: newValue,
-                });
-            }
-            input.current.value = "";
-            input.current.focus();
-        }
-        setValue(null);
-    };
-
     let directMatches = [];
     if (Array.isArray(matches)) {
         directMatches = matches.filter((elem) => elem.person == other.id);
@@ -99,7 +65,6 @@ export default function Chat(props) {
 
     if (Array.isArray(chat)) {
         if (props.location) {
-            // console.log("filtering for:", group);
             chat = chat.filter((m) => {
                 if (m.location_id != props.location) return false;
                 if (m.location_topic === group) {
@@ -130,15 +95,18 @@ export default function Chat(props) {
             });
         }
         chat = chat.filter((m) => m.text.includes(searchInput));
-        let idOfSender;
-        let receivedUnreadMessages = chat
-            .filter((m) => !m.read_by_recipient && m.sender != user.id)
-            .map((m) => {
-                idOfSender = m.sender;
-                return m.id;
-            });
-        if (receivedUnreadMessages.length) {
-            markAsRead({ arr: receivedUnreadMessages, idOfSender });
+
+        if (!props.location) {
+            let idOfSender;
+            let receivedUnreadMessages = chat
+                .filter((m) => !m.read_by_recipient && m.sender != user.id)
+                .map((m) => {
+                    idOfSender = m.sender;
+                    return m.id;
+                });
+            if (receivedUnreadMessages.length) {
+                markAsRead({ arr: receivedUnreadMessages, idOfSender });
+            }
         }
     }
 
@@ -219,20 +187,24 @@ export default function Chat(props) {
                                         ? "message-own"
                                         : "message"
                                 } ${
-                                    msg.read_by_recipient
-                                        ? ""
-                                        : "unread-message"
+                                    props.user
+                                        ? msg.read_by_recipient
+                                            ? ""
+                                            : "unread-message"
+                                        : ""
                                 }`}
                             >
-                                <div className="message-highlight">
-                                    {msg.sender === user.id
-                                        ? msg.read_by_recipient
-                                            ? "read"
-                                            : "unread"
-                                        : msg.read_by_recipient
-                                        ? ""
-                                        : "new"}
-                                </div>
+                                {props.user && (
+                                    <div className="message-highlight">
+                                        {msg.sender === user.id
+                                            ? msg.read_by_recipient
+                                                ? "read"
+                                                : "unread"
+                                            : msg.read_by_recipient
+                                            ? ""
+                                            : "new"}
+                                    </div>
+                                )}
                                 <p className="message-head">
                                     <b>
                                         {msg.sender === user.id
@@ -251,46 +223,13 @@ export default function Chat(props) {
                             </div>
                         )))}
             </div>
-            <div
-                className="new-message"
-                style={{ visibility: group ? "visible" : "hidden" }}
-            >
-                <div className="msg-input">
-                    <textarea
-                        disabled={searchInput ? true : false}
-                        placeholder={
-                            searchInput
-                                ? "Clear search field before sending a message"
-                                : "Your Message..."
-                        }
-                        onChange={(e) => {
-                            newValue = e.target.value;
-                        }}
-                        onKeyPress={(e) => {
-                            if (newValue) {
-                                submit(e);
-                            }
-                        }}
-                        ref={input}
-                        className="chat-input"
-                    />
-                    {props.user && (
-                        <p className="subtext">
-                            {onlineStatus(props.user)
-                                ? "User is online and may respond quickly."
-                                : "User is not online and will be informed via e-Mail."}
-                        </p>
-                    )}
-                </div>
-                <button
-                    disabled={!value || !group}
-                    onClick={(e) => {
-                        submit(e);
-                    }}
-                >
-                    Send Message
-                </button>
-            </div>
+            {group && !searchInput && (
+                <ChatSender
+                    user={props.user}
+                    location={props.location}
+                    group={group}
+                />
+            )}
         </div>
     );
 }

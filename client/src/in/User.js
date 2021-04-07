@@ -6,13 +6,18 @@ import Matches from "./Matches";
 import Chat from "./Chat";
 import { GetLocationName } from "../helpers/helperComponents";
 import OnlineSymbol from "./OnlineStatus";
+import { matches } from "lodash";
 
 export default function User(props) {
     const [activeMatches, setActiveMatches] = useState(true);
     const dispatch = useDispatch();
-    const { otherUser: other, grades, experience, trips } = useSelector(
-        (store) => store
-    );
+    const {
+        otherUser: other,
+        grades,
+        experience,
+        trips,
+        matches,
+    } = useSelector((store) => store);
 
     useEffect(() => {
         dispatch(getUserData(props.match.params.id));
@@ -181,7 +186,19 @@ export default function User(props) {
             )}
             {other.id && (
                 <div className="location-right">
-                    <Chat type="user+" user={props.match.params.id} />
+                    {other.confirmed ||
+                    (matches &&
+                        matches.some((match) => match.person === other.id)) ? (
+                        <Chat type="user+" user={props.match.params.id} />
+                    ) : (
+                        <div className="noChat">
+                            <h3>chat functionality disabled</h3>
+                            <p>
+                                it is active for friends and/or in case of a
+                                match
+                            </p>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

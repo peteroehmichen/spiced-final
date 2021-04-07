@@ -365,10 +365,17 @@ export async function receiveChatMessages(about, id, limit = 20) {
 
 export function newMessage(obj) {
     if (obj.success) {
-        const { sender, recipient, first, last, trip_origin } = obj.success;
+        const {
+            sender,
+            recipient,
+            first,
+            last,
+            trip_origin,
+            location_id,
+        } = obj.success;
         // gt toast if direct message or trip message to me and I am not on user page
         if (
-            !location.id &&
+            !location_id &&
             window.location.pathname != `/user/${sender}` &&
             window.location.pathname != `/user/${recipient}`
         ) {

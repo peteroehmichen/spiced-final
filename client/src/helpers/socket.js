@@ -12,7 +12,6 @@ export const init = (store) => {
         return store.dispatch(newMessage(obj));
     });
     socket.on("ownMessagesRead", (arr) => {
-        console.log("your message was read:", arr);
         return store.dispatch(markMessagesAsRead(arr));
     });
 
