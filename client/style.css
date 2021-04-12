@@ -1044,6 +1044,7 @@ label span {
 }
 
 .logoStartFrame {
+    height: 75%;
     display: flex;
     flex-direction: column;
     justify-content: center;

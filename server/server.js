@@ -136,6 +136,11 @@ app.get("/in/essentialData.json", async (req, res) => {
     }
 });
 
+app.get("/redirect", (req, res) => {
+    console.log("OAUTH for GIT was hit");
+    res.sendStatus(200);
+});
+
 app.get("/logout", (req, res) => {
     req.session = null;
     res.redirect("/welcome");
@@ -150,7 +155,7 @@ app.get("*", function (req, res) {
 });
 
 server.listen(process.env.PORT || 3001, function () {
-    console.log("I'm listening.");
+    console.log("The Sharp End is running...");
 });
 
 io.on("connection", async (socket) => {

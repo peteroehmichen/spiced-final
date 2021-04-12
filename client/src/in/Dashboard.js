@@ -80,11 +80,32 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div
+                        style={{
+                            backgroundColor: "#fdc05480",
+                        }}
+                    >
                         <div>
-                            <h3>Notifications</h3>
+                            <h3>Next major steps for Development</h3>
                         </div>
-                        <div>comming soon...</div>
+                        <div>
+                            <ul>
+                                <li>OAuth 2.0 (first GitHub, later more)</li>
+                                <li>
+                                    Notfication System for live-Matches,
+                                    Friendships, Errors, etc.
+                                </li>
+                                <li>
+                                    Mobile Friendly Design and Switch to
+                                    Tailwind
+                                </li>
+                                <li>
+                                    Added feature for regular Climbing Buddies
+                                    (maybe with maps API)
+                                </li>
+                                <li>Full Review on Dashboard</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

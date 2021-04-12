@@ -12,7 +12,7 @@ export default function Navigation() {
             <div className="nav-content">
                 <Link to="/locations">
                     <div className="nav-element">
-                        <div>All Crags</div>
+                        <div>all Crags</div>
                         <div className="nav-icon">
                             <img src="/noun_Location_3835410.svg" />
                         </div>
