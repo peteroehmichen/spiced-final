@@ -5,6 +5,7 @@ import Register from "./Register";
 import Login from "./Login";
 import Reset from "./Reset";
 import GettingStarted from "./GettingStarted";
+import OAuth from "./OAuth";
 
 export default function Welcome() {
     return (
@@ -25,6 +26,7 @@ export default function Welcome() {
                     <Route exact path="/" component={GettingStarted} />
                     <Route path="/register" component={Register} />
                     <Route path="/login" component={Login} />
+                    <Route path="/oauth" component={OAuth} />
                     <Route path="/reset" component={Reset} />
                 </HashRouter>
             </div>

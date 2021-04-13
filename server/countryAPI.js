@@ -1,19 +1,26 @@
 const db = require("./db");
-const request = require("request");
-const { promisify } = require("util");
-const requestPromise = promisify(request);
+const axios = require("axios");
 
 module.exports.getCountries = async function () {
     let countries = await db.rdsGet("countries");
     if (countries) {
-        countries = JSON.parse(countries);
-    } else {
-        countries = await requestPromise(
-            "http://countryapi.gear.host/v1/Country/getCountries"
-        );
-        if (countries) {
-            db.rdsSetex("countries", 60 * 60 * 24, JSON.stringify(countries));
-        }
+        // console.log("via REDIS");
+        return JSON.parse(countries);
     }
-    return countries;
+    return axios
+        .get("http://countryapi.gear.host/v1/Country/getCountries")
+        .then(({ data }) => {
+            if (data.Response) {
+                db.rdsSetex(
+                    "countries",
+                    60 * 60 * 24,
+                    JSON.stringify(data.Response)
+                );
+            }
+            // console.log("via API");
+            return data.Response;
+        })
+        .catch((err) => {
+            console.log("error in fetching countries:", err);
+        });
 };

@@ -60,6 +60,29 @@ router.post("/welcome/login.json", async (req, res) => {
     }
 });
 
+router.post("/welcome/oauth.json", async (req, res) => {
+    axios;
+
+    try {
+        if (false) {
+            req.session.userId = 4;
+            res.json({
+                status: "OK",
+            });
+        } else {
+            // console.log("Login-Error:", result);
+            // if (result.error == "Error in DB") {
+            //     res.json({ error: "No Connection" });
+            // } else {
+            //     res.json({ error: "Invalid user credentials" });
+            // }
+            res.json({ error: "not yet finished" });
+        }
+    } catch (err) {
+        res.json({ error: "Log in rejected" });
+    }
+});
+
 router.post("/welcome/reset.json", async (req, res) => {
     try {
         const user = await db.getUserByEmail(req.body.email);

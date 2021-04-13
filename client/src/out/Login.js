@@ -81,6 +81,9 @@ export default function Login() {
                     Forgot your password? Click here to{" "}
                     <Link to="/reset">reset</Link>
                 </p>
+                <p>
+                    temporary Link to OAUTH with <Link to="/oauth">GitHub</Link>
+                </p>
                 <i style={{ color: "rgb(53 53 53)" }}>
                     Or log in with a predefined test user{" "}
                     <b

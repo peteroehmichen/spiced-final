@@ -25,6 +25,7 @@ export function useAthenticate(url, values) {
                     ...status,
                     error: data.error,
                 });
+                console.log("Error:", data.error);
             }
         } catch (err) {
             console.log("error in axios welcomePost", err);
