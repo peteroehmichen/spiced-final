@@ -37,10 +37,7 @@ async function testMongo() {
 */
 const auth = require("./auth");
 const spicedPg = require("spiced-pg");
-const sql = spicedPg(
-    process.env.DATABASE_URL ||
-        "postgres:postgres:postgres@localhost:5432/final-project"
-);
+const sql = spicedPg(process.env.DATABASE_URL);
 
 const redis = require("redis");
 const client = redis.createClient(

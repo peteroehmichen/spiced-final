@@ -1,7 +1,13 @@
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config();
+}
+
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
+const db = require("./db");
 
+const activeSockets = {};
 const io = require("socket.io")(server, {
     allowRequest: (req, callback) =>
         callback(
@@ -14,19 +20,14 @@ const io = require("socket.io")(server, {
 const compression = require("compression");
 const path = require("path");
 
-let cookie_secret = process.env.cookie_secret
-    ? process.env.cookie_secret
-    : require("../secrets.json").secretOfSession;
 const cookieSession = require("cookie-session");
+const csurf = require("csurf");
+
 const cookieSessionMiddleware = cookieSession({
-    secret: cookie_secret,
+    secret: process.env.cookie_secret,
     maxAge: 1000 * 60 * 60 * 24 * 7,
 });
 
-const csurf = require("csurf");
-
-const db = require("./db");
-const activeSockets = {};
 app.use(cookieSessionMiddleware);
 io.use(function (socket, next) {
     cookieSessionMiddleware(socket.request, socket.request.res, next);
@@ -154,7 +155,7 @@ app.get("*", function (req, res) {
     }
 });
 
-server.listen(process.env.PORT || 3001, function () {
+server.listen(process.env.PORT, function () {
     console.log("The Sharp End is running...");
 });
 

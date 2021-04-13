@@ -6,22 +6,15 @@ const uidSafe = require("uid-safe");
 const fs = require("fs");
 const path = require("path");
 
-let secrets;
-if (process.env.NODE_ENV === "production") {
-    secrets = process.env;
-} else {
-    secrets = require("../secrets.json");
-}
-
 const ses = new aws.SES({
-    accessKeyId: secrets.AWS_KEY,
-    secretAccessKey: secrets.AWS_SECRET,
+    accessKeyId: process.env.AWS_KEY,
+    secretAccessKey: process.env.AWS_SECRET,
     region: "eu-central-1",
 });
 
 const s3 = new aws.S3({
-    accessKeyId: secrets.AWS_KEY,
-    secretAccessKey: secrets.AWS_SECRET,
+    accessKeyId: process.env.AWS_KEY,
+    secretAccessKey: process.env.AWS_SECRET,
 });
 
 const diskStorage = multer.diskStorage({
