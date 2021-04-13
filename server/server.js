@@ -80,8 +80,6 @@ app.use(matchRoutes);
 app.get("/in/essentialData.json", async (req, res) => {
     try {
         const countries = await getCountries();
-        // console.log(countries);
-        // const { Response: countries } = JSON.parse(result.body);
         const continents = [];
         let countriesPure = countries.map((country) => {
             if (!continents.includes(country.Region) && country.Region != "") {

@@ -1,16 +1,9 @@
 import { useAthenticate, useFormEval } from "../helpers/customHooks";
 import { Link } from "react-router-dom";
 import axios from "../helpers/axios";
-import { useRef } from "react";
+import popup from "../helpers/popup";
 
 export default function OAuth() {
-    const passwordField = useRef();
-    const emailField = useRef();
-    const [values, handleChangeEval] = useFormEval();
-    const [status, handleAuthSubmit] = useAthenticate(
-        "/welcome/oauth.json",
-        values
-    );
     return (
         <div className="out-main login">
             <div className="title">
@@ -20,7 +13,20 @@ export default function OAuth() {
                 <div
                     onClick={() => {
                         console.log("Git called");
-                        handleAuthSubmit();
+                        popup(
+                            "https://github.com/login/oauth/authorize?client_id=73b6b33f653413cbbff5&scope=read:user,user:email"
+                        ).then((access_token) => {
+                            console.log(access_token);
+                            window.opener.postMessage(
+                                { auth: { token: access_token } },
+                                window.opener.location
+                            );
+
+                            window.opener.postMessage(
+                                { error: "Login failed" },
+                                window.opener.location
+                            );
+                        });
                     }}
                 >
                     GITHUB

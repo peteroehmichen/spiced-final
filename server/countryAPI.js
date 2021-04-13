@@ -4,7 +4,6 @@ const axios = require("axios");
 module.exports.getCountries = async function () {
     let countries = await db.rdsGet("countries");
     if (countries) {
-        // console.log("via REDIS");
         return JSON.parse(countries);
     }
     return axios
@@ -17,7 +16,6 @@ module.exports.getCountries = async function () {
                     JSON.stringify(data.Response)
                 );
             }
-            // console.log("via API");
             return data.Response;
         })
         .catch((err) => {

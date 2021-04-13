@@ -5,6 +5,8 @@ const db = require("./db");
 const auth = require("./auth");
 const aws = require("./aws");
 const { CODE_VALIDITY_IN_MINUTES } = require("./config.json");
+const axios = require("axios");
+// const { default: popup } = require("./popup");
 
 router.get("/welcome", (req, res) => {
     if (req.session.userId) {
@@ -60,27 +62,21 @@ router.post("/welcome/login.json", async (req, res) => {
     }
 });
 
-router.post("/welcome/oauth.json", async (req, res) => {
-    axios;
+router.get("/welcome/oauth", async (req, res) => {
+    console.log("moving to GitHub");
+    res.redirect(
+        `https://github.com/login/oauth/authorize?client_id=${process.env.GIT_CLIENT_ID}`
+    );
 
-    try {
-        if (false) {
-            req.session.userId = 4;
-            res.json({
-                status: "OK",
-            });
-        } else {
-            // console.log("Login-Error:", result);
-            // if (result.error == "Error in DB") {
-            //     res.json({ error: "No Connection" });
-            // } else {
-            //     res.json({ error: "Invalid user credentials" });
-            // }
-            res.json({ error: "not yet finished" });
-        }
-    } catch (err) {
-        res.json({ error: "Log in rejected" });
-    }
+    // try {
+    //     res.json({ error: "not yet finished" });
+    // } catch (err) {
+    //     res.json({ error: "Log in rejected" });
+    // }
+});
+
+router.get("/welcome/github-callback", (req, res) => {
+    console.log("redirect was hit with", req.body);
 });
 
 router.post("/welcome/reset.json", async (req, res) => {
