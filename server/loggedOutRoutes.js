@@ -6,6 +6,9 @@ const auth = require("./auth");
 const aws = require("./aws");
 const { CODE_VALIDITY_IN_MINUTES } = require("./config.json");
 const axios = require("axios");
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config();
+}
 // const { default: popup } = require("./popup");
 
 router.get("/welcome", (req, res) => {
@@ -59,6 +62,67 @@ router.post("/welcome/login.json", async (req, res) => {
         }
     } catch (err) {
         res.json({ error: "Log in rejected" });
+    }
+});
+
+router.get("/welcome/oauth", (req, res) => {
+    if (req.query.provider === "GitHub") {
+        const postBody = {
+            client_id: process.env.GIT_CLIENT_ID,
+            client_secret: process.env.GIT_SECRET,
+            code: req.query.code,
+        };
+        const postOptions = {
+            headers: {
+                accept: "application/json",
+            },
+        };
+        try {
+            axios
+                .post(
+                    "https://github.com/login/oauth/access_token",
+                    postBody,
+                    postOptions
+                )
+                .then((result) => {
+                    return result.data.access_token;
+                })
+                .then((token) => {
+                    return axios.get("https://api.github.com/user", {
+                        headers: { Authorization: `token ${token}` },
+                    });
+                })
+                .then((userData) => {
+                    const { name, email, bio, avatar_url } = userData.data;
+                    return db.getOauthUser(
+                        req.query.provider,
+                        email,
+                        name,
+                        bio,
+                        avatar_url
+                    );
+                })
+                .then((id) => {
+                    // console.log("the users ID is:", id);
+                    if (id) {
+                        req.session.userId = id;
+                        res.json({
+                            status: "OK",
+                        });
+                    } else {
+                        console.log("unkown OAUTH Login-Error");
+                        res.json({ error: "unkown OAUTH Login-Error" });
+                    }
+                })
+                .catch((err) => {
+                    return res.status(500).json({ err: err.message });
+                });
+        } catch (error) {
+            console.log("Error:", error);
+            return res.status(500).json({ err: error.message });
+        }
+    } else {
+        return res.sendStatus(404);
     }
 });
 

@@ -66,6 +66,26 @@ module.exports.addLocation = function (continent, country, name) {
     );
 };
 
+module.exports.getOauthUser = async function (
+    login_type,
+    email,
+    name,
+    bio,
+    picture
+) {
+    const result = await this.getUserByEmail(email);
+    if (result.rowCount === 0) {
+        const newUser = await sql.query(
+            `INSERT INTO USERS (first, last, email, password, picture, description, login_type) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;`,
+            [name, " ", email, "(none)", picture, bio, login_type]
+        );
+        // console.log("newUser:", newUser);
+        return newUser?.rows[0]?.id;
+    } else {
+        return result.rows[0].id;
+    }
+};
+
 module.exports.addLocationPic = function (url, id) {
     return sql.query(`UPDATE locations SET picture = $1 WHERE id = $2;`, [
         url,

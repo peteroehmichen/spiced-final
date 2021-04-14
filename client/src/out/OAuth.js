@@ -32,9 +32,26 @@ export default function OAuth() {
                             )
                             .then((data) => {
                                 if (data.code) {
-                                    // TODO continue here...
+                                    return data.code;
                                 } else {
-                                    toast.error(data.error || "unknown error");
+                                    toast.error(data.error || "Unknown Error");
+                                    throw new Error("exit Promise Chain");
+                                }
+                            })
+                            .then(async (code) => {
+                                try {
+                                    const { data } = await axios.get(
+                                        `/welcome/oauth?provider=GitHub&code=${code}`
+                                    );
+                                    // Continue here with respon
+                                    if (data.status == "OK") {
+                                        location.replace("/");
+                                    } else if (data.error) {
+                                        console.log("Error:", data.error);
+                                        toast.error("Unhandled Error");
+                                    }
+                                } catch (err) {
+                                    console.log("error:", err);
                                 }
                             })
                             .catch((err) => {

@@ -18,6 +18,7 @@ CREATE TABLE users (
       experience INT,
       grade_comfort VARCHAR(255),
       grade_max VARCHAR(255),
+      login_type VARCHAR(255) NOT NULL DEFAULT 'local',
       password VARCHAR(255) NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_online TIMESTAMP
