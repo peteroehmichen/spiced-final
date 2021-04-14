@@ -62,21 +62,8 @@ router.post("/welcome/login.json", async (req, res) => {
     }
 });
 
-router.get("/welcome/oauth", async (req, res) => {
-    console.log("moving to GitHub");
-    res.redirect(
-        `https://github.com/login/oauth/authorize?client_id=${process.env.GIT_CLIENT_ID}`
-    );
-
-    // try {
-    //     res.json({ error: "not yet finished" });
-    // } catch (err) {
-    //     res.json({ error: "Log in rejected" });
-    // }
-});
-
-router.get("/welcome/github-callback", (req, res) => {
-    console.log("redirect was hit with", req.body);
+router.get("/welcome/callback", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "client", "callback.html"));
 });
 
 router.post("/welcome/reset.json", async (req, res) => {

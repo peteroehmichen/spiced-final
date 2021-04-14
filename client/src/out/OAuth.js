@@ -1,9 +1,13 @@
-import { useAthenticate, useFormEval } from "../helpers/customHooks";
 import { Link } from "react-router-dom";
 import axios from "../helpers/axios";
 import popup from "../helpers/popup";
+import toast from "react-hot-toast";
 
 export default function OAuth() {
+    const GITHUB_ID =
+        process.env.NODE_ENV === "production"
+            ? "3cf739fc10dc7f8ef5dd"
+            : "73b6b33f653413cbbff5";
     return (
         <div className="out-main login">
             <div className="title">
@@ -12,21 +16,30 @@ export default function OAuth() {
             <div className="form-out">
                 <div
                     onClick={() => {
-                        console.log("Git called");
-                        popup(
-                            "https://github.com/login/oauth/authorize?client_id=73b6b33f653413cbbff5&scope=read:user,user:email"
-                        ).then((access_token) => {
-                            console.log(access_token);
-                            window.opener.postMessage(
-                                { auth: { token: access_token } },
-                                window.opener.location
-                            );
-
-                            window.opener.postMessage(
-                                { error: "Login failed" },
-                                window.opener.location
-                            );
-                        });
+                        toast
+                            .promise(
+                                popup(
+                                    `https://github.com/login/oauth/authorize?client_id=${GITHUB_ID}&scope=read:user,user:email`,
+                                    "githubPopup"
+                                ),
+                                {
+                                    loading:
+                                        "Authentication with GitHub in progress",
+                                    success: "Response from GitHub received",
+                                    error:
+                                        "Error while authentication with GitHub",
+                                }
+                            )
+                            .then((data) => {
+                                if (data.code) {
+                                    // TODO continue here...
+                                } else {
+                                    toast.error(data.error || "unknown error");
+                                }
+                            })
+                            .catch((err) => {
+                                console.log("error received:", err);
+                            });
                     }}
                 >
                     GITHUB

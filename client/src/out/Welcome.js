@@ -6,6 +6,7 @@ import Login from "./Login";
 import Reset from "./Reset";
 import GettingStarted from "./GettingStarted";
 import OAuth from "./OAuth";
+import { Toaster } from "react-hot-toast";
 
 export default function Welcome() {
     return (
@@ -30,6 +31,7 @@ export default function Welcome() {
                     <Route path="/reset" component={Reset} />
                 </HashRouter>
             </div>
+            <Toaster />
             <div className="photocredit-out">
                 Logo “Rope” by Icons, RU, from the Noun Project.
             </div>
