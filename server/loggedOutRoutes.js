@@ -80,7 +80,7 @@ router.get("/welcome/oauth", (req, res) => {
                 accept: "application/json",
             },
         };
-        console.log("fetching token with:", postBody);
+        // console.log("fetching token with:", postBody);
         try {
             axios
                 .post(
@@ -90,13 +90,13 @@ router.get("/welcome/oauth", (req, res) => {
                 )
                 .then((result) => {
                     const { access_token } = result.data;
-                    console.log("received token:", access_token);
+                    // console.log("received token:", access_token);
                     return axios.get("https://api.github.com/user", {
                         headers: { Authorization: `token ${access_token}` },
                     });
                 })
                 .then(({ data: user }) => {
-                    console.log("received user:", user);
+                    // console.log("received user:", user);
                     const { name, email, bio, avatar_url } = user;
                     return db.getOauthUser(
                         req.query.provider,
@@ -107,7 +107,7 @@ router.get("/welcome/oauth", (req, res) => {
                     );
                 })
                 .then((result) => {
-                    console.log("the users ID is:", result);
+                    // console.log("the users ID is:", result);
                     if (result.id) {
                         if (result.login_type === req.query.provider) {
                             req.session.userId = result.id;
@@ -135,28 +135,28 @@ router.get("/welcome/oauth", (req, res) => {
 });
 
 router.get("/welcome/callback", (req, res) => {
-    // res.sendFile(path.join(__dirname, "..", "client", "callback.html"));
-    res.send(`
-        <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-    </head>
-    <body>
-        <p>please wait...</p>
-        <script>
-            if (window.opener) {
-                window.opener.postMessage({ oauth: window.location.search });
-                window.close();
-            }
-        </script>
-    </body>
-</html>
+    res.sendFile(path.join(__dirname, "..", "client", "callback.html"));
+    //     res.send(`
+    //         <!DOCTYPE html>
+    // <html lang="en">
+    //     <head>
+    //         <meta charset="UTF-8" />
+    //         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    //         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    //         <title>Document</title>
+    //     </head>
+    //     <body>
+    //         <p>please wait...</p>
+    //         <script>
+    //             if (window.opener) {
+    //                 window.opener.postMessage({ oauth: window.location.search });
+    //                 window.close();
+    //             }
+    //         </script>
+    //     </body>
+    // </html>
 
-    `);
+    //     `);
 });
 
 router.post("/welcome/reset.json", async (req, res) => {
