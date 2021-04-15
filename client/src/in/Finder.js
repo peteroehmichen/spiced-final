@@ -64,7 +64,7 @@ export default function Finder() {
             <h4>{msg}</h4>
             <div>
                 {users.map((elem, index) => {
-                    let name = elem.first + " " + elem.last;
+                    let name = elem.username;
                     const regex = new RegExp(searchInput, "gi");
                     const one = name.slice(0, name.search(regex));
                     const tag = name.substr(

@@ -17,7 +17,7 @@ export default function Social() {
     if (all) {
         friends = all.filter((elem) => elem.confirmed);
         friends = friends.filter((element) =>
-            `${element.first} ${element.last}`.includes(searchInput)
+            `${element.username}`.includes(searchInput)
         );
         requests = all.filter(
             (elem) => !elem.confirmed && elem.sender == elem.id
@@ -37,7 +37,7 @@ export default function Social() {
                         <div className="card-right">
                             <div>
                                 <h4>
-                                    {elem.first} {elem.last}
+                                    {elem.username}
                                 </h4>
                             </div>
                             <div className="friend-arrow">
@@ -61,7 +61,7 @@ export default function Social() {
                         <div className="friend-summary">
                             <div className="friend-name">
                                 <h4>
-                                    {elem.first} {elem.last}
+                                    {elem.username}
                                 </h4>
                             </div>
                         </div>
@@ -85,7 +85,7 @@ export default function Social() {
                         <div className="friend-summary">
                             <div className="friend-name">
                                 <h4>
-                                    {elem.first} {elem.last}
+                                    {elem.username}
                                 </h4>
                             </div>
                         </div>

@@ -20,15 +20,15 @@ router.get("/welcome", (req, res) => {
 });
 
 router.post("/welcome/register.json", async (req, res) => {
-    const { first, last, email, password } = req.body;
-    if (first == "" || last == "" || !email.includes("@") || password == "") {
+    const { username, email, password } = req.body;
+    if (username == "" || !email.includes("@") || password == "") {
         return res.json({
             error: "Prohibited input",
         });
     }
     try {
         const hashedPw = await auth.hash(password);
-        const result = await db.addUser(first, last, email, hashedPw);
+        const result = await db.addUser(username, email, hashedPw);
         req.session.userId = result.rows[0].id;
         res.json({ status: "OK" });
     } catch (err) {

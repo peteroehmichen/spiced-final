@@ -21,7 +21,7 @@ export default function ProfileEdit() {
             {grades && experience && !profileEditMode && (
                 <Fragment>
                     <p>
-                        <b>Name:</b> {user.first} {user.last}
+                        <b>Name:</b> {user.username}
                     </p>
                     <p>
                         <b>Your age:</b> {user.age || none}
@@ -50,7 +50,12 @@ export default function ProfileEdit() {
                 <Fragment>
                     <p>
                         <b>Name: </b>
-                        {user.first} {user.last}
+                        <input
+                            defaultValue={user.username}
+                            onChange={changeHandler}
+                            type="text"
+                            name="username"
+                        />
                     </p>
 
                     <label>

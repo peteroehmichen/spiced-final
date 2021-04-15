@@ -95,11 +95,6 @@ router.get("/api/findUsers.json", async (req, res) => {
     const { search } = req.query;
     try {
         const result = await db.getUserByTextSearch(search, req.session.userId);
-        // console.log(result.first.rows);
-        // console.log(result.last.rows);
-        result.rows = [...result.first.rows, ...result.last.rows];
-        result.rowCount = result.first.rowCount + result.last.rowCount;
-
         if (result.rowCount > 0) {
             res.json({
                 search,

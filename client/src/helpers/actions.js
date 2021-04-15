@@ -368,8 +368,7 @@ export function newMessage(obj) {
         const {
             sender,
             recipient,
-            first,
-            last,
+            username,
             trip_origin,
             location_id,
         } = obj.success;
@@ -391,7 +390,7 @@ export function newMessage(obj) {
             toast(
                 (t) => (
                     <span>
-                        Got a new message from {first} {last}.<br />
+                        Got a new message from {username}.<br />
                         <Link to={`/user/${sender}`}>
                             <b
                                 onClick={() => {
@@ -409,8 +408,6 @@ export function newMessage(obj) {
                     icon: "💬",
                 }
             );
-
-            // toast.success(`Got a new message from ${first} ${last}.`);
             obj = {};
         }
     } else {

@@ -232,7 +232,7 @@ export default function reducer(store = {}, action) {
                         friendships.forEach((friend) => {
                             if (friend.id == userId && friend.confirmed) {
                                 toast.success(
-                                    `${friend.first} ${friend.last} just went offline`
+                                    `${friend.username} just went offline`
                                 );
                                 return;
                             }
@@ -245,7 +245,7 @@ export default function reducer(store = {}, action) {
                         friendships.forEach((friend) => {
                             if (friend.id == userId && friend.confirmed) {
                                 toast.success(
-                                    `${friend.first} ${friend.last} just came online`
+                                    `${friend.username} just came online`
                                 );
                                 return;
                             }

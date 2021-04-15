@@ -47,10 +47,7 @@ export default function Dashboard() {
                                                         />
                                                     </div>
                                                     <div className="card-text">
-                                                        <h4>
-                                                            {elem.first}{" "}
-                                                            {elem.last[0]}.
-                                                        </h4>
+                                                        <h4>{elem.username}</h4>
                                                         <p>
                                                             {new Date(
                                                                 elem.from_min

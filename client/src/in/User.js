@@ -50,7 +50,7 @@ export default function User(props) {
                         </div>
                         <div id="user-detail-description">
                             <h1>
-                                {other.first} {other.last}
+                                {other.username}
                             </h1>
                             {other.age && (
                                 <p>

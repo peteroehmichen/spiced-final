@@ -230,8 +230,7 @@ input[name="filterFriend"] {
     /* background-color: #fff; */
 }
 
-input[name="first"],
-input[name="last"],
+input[name="username"],
 input[name="code"],
 input[type="password"],
 input[type="email"] {

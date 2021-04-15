@@ -209,7 +209,7 @@ export default function Chat(props) {
                                     <b>
                                         {msg.sender === user.id
                                             ? "you"
-                                            : msg.first + " " + msg.last}
+                                            : msg.username}
                                     </b>
                                     ,{"  "}
                                     {formatDistance(

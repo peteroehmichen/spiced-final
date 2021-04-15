@@ -51,10 +51,10 @@ exports.rdsGet = promisify(client.get).bind(client);
 exports.rdsSetex = promisify(client.setex).bind(client);
 exports.rdsDel = promisify(client.del).bind(client);
 
-module.exports.addUser = function (first, last, email, hashedPW) {
+module.exports.addUser = function (username, email, hashedPW) {
     return sql.query(
-        `INSERT INTO USERS (first, last, email, password) VALUES ($1, $2, $3, $4) RETURNING id;`,
-        [first, last, email, hashedPW]
+        `INSERT INTO USERS (username, email, password) VALUES ($1, $2, $3) RETURNING id;`,
+        [username, email, hashedPW]
     );
 };
 
@@ -69,17 +69,16 @@ module.exports.addLocation = function (continent, country, name) {
 module.exports.getOauthUser = async function (
     login_type,
     email,
-    name,
+    username,
     bio,
     picture
 ) {
     const result = await this.getUserByEmail(email);
     if (result.rowCount === 0) {
         const newUser = await sql.query(
-            `INSERT INTO USERS (first, last, email, password, picture, description, login_type) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;`,
-            [name, " ", email, "(none)", picture, bio, login_type]
+            `INSERT INTO USERS (username, email, password, picture, description, login_type) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;`,
+            [username, email, "(none)", picture, bio, login_type]
         );
-        // console.log("newUser:", newUser);
         return newUser?.rows[0]?.id;
     } else {
         return result.rows[0].id;
@@ -204,7 +203,7 @@ module.exports.getEssentialData = async function (userId) {
 
 module.exports.getProfileData = function (userId) {
     return sql.query(
-        `SELECT id, first, last, age, picture, description, experience, grade_comfort, grade_max FROM users WHERE users.id=$1;`,
+        `SELECT id, username, age, picture, description, experience, grade_comfort, grade_max FROM users WHERE users.id=$1;`,
         [userId]
     );
     //     `SELECT * FROM users WHERE id=${id} FOR UPDATE; UPDATE users SET last_online=now() WHERE id=${id};`
@@ -223,14 +222,14 @@ module.exports.getOwnAndFriendsFutureTrips = async function (id) {
     const friendIds = friends.rows.map((friend) => friend.id);
     friendIds.push(id);
     return sql.query(
-        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) AND until_max>=now() ORDER BY from_min ASC;`,
+        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, username, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) AND until_max>=now() ORDER BY from_min ASC;`,
         [friendIds]
     );
 };
 
 module.exports.getMatches = function (userId) {
     return sql.query(
-        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
+        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.username, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
         [userId]
     );
 };
@@ -239,7 +238,7 @@ module.exports.getMatches = function (userId) {
 
 // module.exports.getLocationMatches = function (userId) {
 //     return sql.query(
-//         `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.first, users.last, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
+//         `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.username, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
 //         [userId]
 //     );
 // };
@@ -254,7 +253,7 @@ module.exports.getMatches = function (userId) {
 //     // console.log("id of friends:", friendIds);
 //     // return sql.query(`SELECT * FROM trips WHERE person=ANY($1);`, [friendIds]);
 //     return sql.query(
-//         `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, first, last, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,
+//         `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, username, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) ORDER BY from_min ASC;`,
 //         [friendIds]
 //     );
 // };
@@ -277,7 +276,7 @@ module.exports.getMatches = function (userId) {
 
 module.exports.getUserById = function (id, userId) {
     return sql.query(
-        `WITH relations as (SELECT * FROM friendships WHERE (recipient=$1 AND sender=$2) OR (sender=$1 AND recipient=$2)) SELECT first, last, age, picture, description, experience, grade_comfort, grade_max, confirmed, users.id FROM users LEFT OUTER JOIN relations ON users.id=relations.recipient OR users.id=relations.sender WHERE users.id=$1;`,
+        `WITH relations as (SELECT * FROM friendships WHERE (recipient=$1 AND sender=$2) OR (sender=$1 AND recipient=$2)) SELECT username, age, picture, description, experience, grade_comfort, grade_max, confirmed, users.id FROM users LEFT OUTER JOIN relations ON users.id=relations.recipient OR users.id=relations.sender WHERE users.id=$1;`,
         [id, userId]
     );
 };
@@ -373,7 +372,7 @@ module.exports.getFriendInfo = function (userId, friendId) {
 
 module.exports.getFriendships = function (userId) {
     return sql.query(
-        `SELECT users.id, first, last, users.picture, sender, recipient, confirmed FROM friendships JOIN users ON (recipient = $1 AND sender = users.id) OR (sender = $1 AND recipient = users.id);`,
+        `SELECT users.id, username, users.picture, sender, recipient, confirmed FROM friendships JOIN users ON (recipient = $1 AND sender = users.id) OR (sender = $1 AND recipient = users.id);`,
         [userId]
     );
 };
@@ -381,16 +380,10 @@ module.exports.getFriendships = function (userId) {
 module.exports.getUserByTextSearch = async function (text, userId) {
     const tag = text.length > 1 ? `%${text}%` : `${text}%`;
     // console.log("DB for", tag, userId);
-    return {
-        first: await sql.query(
-            `SELECT id, first, last, picture FROM users WHERE first ILIKE $1 AND id!=$2;`,
-            [tag, userId]
-        ),
-        last: await sql.query(
-            `SELECT id, first, last, picture FROM users WHERE last ILIKE $1 AND id!=$2;`,
-            [tag, userId]
-        ),
-    };
+    return sql.query(
+        `SELECT id, username, picture FROM users WHERE username ILIKE $1 AND id!=$2;`,
+        [tag, userId]
+    );
     //
 };
 
@@ -432,13 +425,13 @@ module.exports.getFriendInfo = function (userId, friendId) {
 module.exports.getLastChats = function (about, id, userId, limit) {
     let q;
     if (about == "direct") {
-        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id, read_by_recipient FROM chat JOIN users ON sender=users.id WHERE (recipient=${userId} AND sender=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) OR (sender=${userId} AND recipient=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) ORDER BY chat.id DESC LIMIT ${limit};`;
+        q = `SELECT chat.id, sender, text, chat.created_at, username, trip_origin, trip_target, location_id, read_by_recipient FROM chat JOIN users ON sender=users.id WHERE (recipient=${userId} AND sender=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) OR (sender=${userId} AND recipient=${id} AND trip_origin IS NULL AND trip_target IS NULL AND location_id IS NULL) ORDER BY chat.id DESC LIMIT ${limit};`;
     } else if (about == "trip") {
         const ids = id.split("T");
         // console.log("Split ids in trip-chat-header:", ids);
-        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id, read_by_recipient FROM chat JOIN users ON sender=users.id WHERE (trip_origin=${ids[1]} AND trip_target=${ids[2]}) OR (trip_origin=${ids[2]} AND trip_target=${ids[1]}) ORDER BY chat.id DESC LIMIT ${limit};`;
+        q = `SELECT chat.id, sender, text, chat.created_at, username trip_origin, trip_target, location_id, read_by_recipient FROM chat JOIN users ON sender=users.id WHERE (trip_origin=${ids[1]} AND trip_target=${ids[2]}) OR (trip_origin=${ids[2]} AND trip_target=${ids[1]}) ORDER BY chat.id DESC LIMIT ${limit};`;
     } else if (about == "location") {
-        q = `SELECT chat.id, sender, text, chat.created_at, first, last, trip_origin, trip_target, location_id, location_topic FROM chat JOIN users ON sender=users.id WHERE location_id=${id} ORDER BY chat.id DESC LIMIT ${limit};`;
+        q = `SELECT chat.id, sender, text, chat.created_at, username, trip_origin, trip_target, location_id, location_topic FROM chat JOIN users ON sender=users.id WHERE location_id=${id} ORDER BY chat.id DESC LIMIT ${limit};`;
     }
     // console.log("running:", q);
     return sql.query(q);
@@ -450,7 +443,7 @@ module.exports.addFriendMessage = async function (sender, recipient, msg) {
             `INSERT INTO chat (sender, recipient, text) VALUES ($1, $2, $3) RETURNING id, created_at, sender, recipient, text, trip_origin, trip_target, location_id;`,
             [sender, recipient, msg]
         ),
-        user: await sql.query(`SELECT first, last from users WHERE id=$1`, [
+        user: await sql.query(`SELECT username from users WHERE id=$1`, [
             sender,
         ]),
     };
@@ -467,7 +460,7 @@ module.exports.addLocationMessage = async function (
             `INSERT INTO chat (sender, recipient, location_id, location_topic, text) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, sender, recipient, text, trip_origin, trip_target, location_id, location_topic;`,
             [sender, 0, location, topic, msg]
         ),
-        user: await sql.query(`SELECT first, last from users WHERE id=$1`, [
+        user: await sql.query(`SELECT username from users WHERE id=$1`, [
             sender,
         ]),
     };
@@ -485,7 +478,7 @@ module.exports.addTripMessage = async function (
             `INSERT INTO chat (sender, recipient, trip_origin, trip_target, text) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, sender, recipient, text, trip_origin, trip_target, location_id;`,
             [sender, recipient, origin, target, msg]
         ),
-        user: await sql.query(`SELECT first, last from users WHERE id=$1`, [
+        user: await sql.query(`SELECT username from users WHERE id=$1`, [
             sender,
         ]),
     };
@@ -499,7 +492,7 @@ module.exports.markReadMessages = async function (arrOfIds) {
 };
 
 module.exports.getActiveUsersByIds = function (arrayOfIds) {
-    return sql.query(`SELECT id, first, last FROM users WHERE id = ANY($1);`, [
+    return sql.query(`SELECT id, username FROM users WHERE id = ANY($1);`, [
         arrayOfIds,
     ]);
 };

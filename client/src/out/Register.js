@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import { useAthenticate, useFormEval } from "../helpers/customHooks";
 
 export default function Register() {
-    const first = useRef();
-    const last = useRef();
+    const username = useRef();
     const email = useRef();
     const password = useRef();
     const [values, handleChangeEval] = useFormEval();
@@ -20,32 +19,17 @@ export default function Register() {
             </div>
             <div className="form-out">
                 <input
-                    ref={first}
+                    ref={username}
                     onChange={handleChangeEval}
                     type="text"
-                    name="first"
-                    placeholder="First name"
+                    name="username"
+                    placeholder="Your name"
                     onKeyDown={(e) => {
-                        if (e.key == "Enter" && values.first) {
-                            last.current.focus();
-                        } else if (e.key == "Escape") {
-                            values.first = "";
-                            first.current.value = "";
-                        }
-                    }}
-                />
-                <input
-                    ref={last}
-                    onChange={handleChangeEval}
-                    type="text"
-                    name="last"
-                    placeholder="Last name"
-                    onKeyDown={(e) => {
-                        if (e.key == "Enter" && values.last) {
+                        if (e.key == "Enter" && values.username) {
                             email.current.focus();
                         } else if (e.key == "Escape") {
-                            values.last = "";
-                            last.current.value = "";
+                            values.username = "";
+                            username.current.value = "";
                         }
                     }}
                 />
@@ -72,10 +56,10 @@ export default function Register() {
                     placeholder="Password"
                     onKeyDown={(e) => {
                         if (e.key == "Enter" && values.password) {
-                            if (values.first && values.last && values.email) {
+                            if (values.username && values.email) {
                                 handleAuthSubmit();
                             } else {
-                                first.current.focus();
+                                username.current.focus();
                             }
                         } else if (e.key == "Escape") {
                             values.password = "";
@@ -86,8 +70,7 @@ export default function Register() {
                 <button
                     className={(status.error && "error-btn") || " "}
                     disabled={
-                        !values.first ||
-                        !values.last ||
+                        !values.username ||
                         !values.email ||
                         !values.password ||
                         status.error ||
@@ -106,6 +89,9 @@ export default function Register() {
                 <p>
                     Already a user? Click here to{" "}
                     <Link to="/login">log in</Link>
+                </p>
+                <p>
+                    temporary Link to OAUTH with <Link to="/oauth">GitHub</Link>
                 </p>
             </div>
         </div>
