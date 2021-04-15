@@ -73,6 +73,7 @@ module.exports.getOauthUser = async function (
     bio,
     picture
 ) {
+    console.log("writing user to db with:", arguments);
     const result = await this.getUserByEmail(email);
     if (result.rowCount === 0) {
         const newUser = await sql.query(
