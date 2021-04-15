@@ -15,10 +15,6 @@ export default function GettingStarted() {
                     <h2>Getting started > > ></h2>
                 </div>
             </Link>
-
-            <p>
-                Or <Link to="/login">Log In </Link>directly
-            </p>
         </div>
     );
 }

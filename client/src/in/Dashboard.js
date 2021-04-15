@@ -83,11 +83,14 @@ export default function Dashboard() {
                         }}
                     >
                         <div>
-                            <h3>Next major steps for Development</h3>
+                            <h3>Next steps in development</h3>
                         </div>
                         <div>
                             <ul>
-                                <li>OAuth 2.0 (first GitHub, later more)</li>
+                                <li>
+                                    redesign LoggedOut Experience for better
+                                    OAuth integration
+                                </li>
                                 <li>
                                     Notfication System for live-Matches,
                                     Friendships, Errors, etc.
@@ -96,6 +99,7 @@ export default function Dashboard() {
                                     Mobile Friendly Design and Switch to
                                     Tailwind
                                 </li>
+                                <li>integrate more OAuth options</li>
                                 <li>
                                     Added feature for regular Climbing Buddies
                                     (maybe with maps API)

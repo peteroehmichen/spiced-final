@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAthenticate, useFormEval } from "../helpers/customHooks";
+import axios from "../helpers/axios";
 
 export default function Register() {
     const username = useRef();
@@ -91,8 +92,29 @@ export default function Register() {
                     <Link to="/login">log in</Link>
                 </p>
                 <p>
-                    temporary Link to OAUTH with <Link to="/oauth">GitHub</Link>
+                    Register or Log In with your{" "}
+                    <Link to="/oauth">GitHub account</Link>
                 </p>
+                <i style={{ color: "rgb(53 53 53)" }}>
+                    Or log in with a predefined test user?{" "}
+                    <b
+                        style={{ cursor: "pointer" }}
+                        onClick={async () => {
+                            const { data } = await axios.post(
+                                "/welcome/login.json",
+                                {
+                                    email: "test@example.com",
+                                    password: "test",
+                                }
+                            );
+                            if (data.status == "OK") {
+                                location.replace("/");
+                            }
+                        }}
+                    >
+                        Click here
+                    </b>
+                </i>
             </div>
         </div>
     );

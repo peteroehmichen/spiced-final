@@ -168,6 +168,10 @@ img {
     object-fit: cover;
 }
 
+.oauth-logo {
+    cursor: pointer;
+}
+
 a {
     text-decoration: none;
     color: black;

@@ -11,10 +11,12 @@ export default function OAuth() {
     return (
         <div className="out-main login">
             <div className="title">
-                <h3>Please log in with another account</h3>
+                <h3>Please log in with your GitHub account</h3>
             </div>
             <div className="form-out">
-                <div
+                <img
+                    src="/GitHub-Mark-64px.png"
+                    className="oauth-logo"
                     onClick={() => {
                         toast
                             .promise(
@@ -58,14 +60,16 @@ export default function OAuth() {
                                 console.log("error received:", err);
                             });
                     }}
-                >
-                    GITHUB
-                </div>
+                />
             </div>
             <div className="welcome-footnote">
                 <p>
                     Not yet a user? Click here to{" "}
                     <Link to="/register">register</Link>
+                </p>
+                <p>
+                    Already a local user? Click here to{" "}
+                    <Link to="/login">log in</Link>
                 </p>
             </div>
         </div>
