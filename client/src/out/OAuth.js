@@ -45,6 +45,7 @@ export default function OAuth() {
                                     const { data } = await axios.get(
                                         `/welcome/oauth?provider=GitHub&code=${code}`
                                     );
+                                    console.log("data from process:", data);
                                     // Continue here with respon
                                     if (data.status == "OK") {
                                         location.replace("/");

@@ -80,6 +80,7 @@ router.get("/welcome/oauth", (req, res) => {
                 accept: "application/json",
             },
         };
+        console.log("fetching token with:", postBody);
         try {
             axios
                 .post(
@@ -88,15 +89,15 @@ router.get("/welcome/oauth", (req, res) => {
                     postOptions
                 )
                 .then((result) => {
-                    return result.data.access_token;
-                })
-                .then((token) => {
+                    const { access_token } = result.data;
+                    console.log("received token:", access_token);
                     return axios.get("https://api.github.com/user", {
-                        headers: { Authorization: `token ${token}` },
+                        headers: { Authorization: `token ${access_token}` },
                     });
                 })
-                .then((userData) => {
-                    const { name, email, bio, avatar_url } = userData.data;
+                .then(({ data: user }) => {
+                    console.log("received user:", user);
+                    const { name, email, bio, avatar_url } = user;
                     return db.getOauthUser(
                         req.query.provider,
                         email,
@@ -106,7 +107,7 @@ router.get("/welcome/oauth", (req, res) => {
                     );
                 })
                 .then((result) => {
-                    // console.log("the users ID is:", id);
+                    console.log("the users ID is:", result);
                     if (result.id) {
                         if (result.login_type === req.query.provider) {
                             req.session.userId = result.id;
