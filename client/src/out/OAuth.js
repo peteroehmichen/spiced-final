@@ -11,7 +11,7 @@ export default function OAuth() {
     return (
         <div className="out-main login">
             <div className="title">
-                <h3>Please log in with your GitHub account</h3>
+                <h3>Please sign up or log in with your GitHub account</h3>
             </div>
             <div className="form-out">
                 <img
@@ -64,10 +64,6 @@ export default function OAuth() {
                 />
             </div>
             <div className="welcome-footnote">
-                <p>
-                    Not yet a user? Click here to{" "}
-                    <Link to="/register">register</Link>
-                </p>
                 <p>
                     Already a local user? Click here to{" "}
                     <Link to="/login">log in</Link>
