@@ -48,7 +48,7 @@ export default function OAuth() {
                                         location.replace("/");
                                     } else if (data.error) {
                                         console.log("Error:", data.error);
-                                        toast.error("Unhandled Error");
+                                        toast.error(data.error);
                                     }
                                 } catch (err) {
                                     console.log("error:", err);

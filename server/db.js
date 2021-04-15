@@ -79,9 +79,9 @@ module.exports.getOauthUser = async function (
             `INSERT INTO USERS (username, email, password, picture, description, login_type) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;`,
             [username, email, "(none)", picture, bio, login_type]
         );
-        return newUser?.rows[0]?.id;
+        return { id: newUser?.rows[0]?.id, login_type };
     } else {
-        return result.rows[0].id;
+        return { id: result.rows[0].id, login_type: result.rows[0].login_type };
     }
 };
 

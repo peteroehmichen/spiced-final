@@ -105,16 +105,20 @@ router.get("/welcome/oauth", (req, res) => {
                         avatar_url
                     );
                 })
-                .then((id) => {
+                .then((result) => {
                     // console.log("the users ID is:", id);
-                    if (id) {
-                        req.session.userId = id;
-                        res.json({
-                            status: "OK",
-                        });
+                    if (result.id) {
+                        if (result.login_type === req.query.provider) {
+                            req.session.userId = result.id;
+                            res.json({
+                                status: "OK",
+                            });
+                        } else {
+                            res.json({ error: "already existing account" });
+                        }
                     } else {
                         console.log("unkown OAUTH Login-Error");
-                        res.json({ error: "unkown OAUTH Login-Error" });
+                        res.json({ error: "unkown Login-Error" });
                     }
                 })
                 .catch((err) => {
