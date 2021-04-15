@@ -53,8 +53,8 @@ exports.rdsDel = promisify(client.del).bind(client);
 
 module.exports.addUser = function (username, email, hashedPW) {
     return sql.query(
-        `INSERT INTO USERS (username, email, password) VALUES ($1, $2, $3) RETURNING id;`,
-        [username, email, hashedPW]
+        `INSERT INTO USERS (username, email, password, login_type) VALUES ($1, $2, $3, $4) RETURNING id;`,
+        [username, email, hashedPW, "local"]
     );
 };
 
@@ -135,26 +135,36 @@ module.exports.addTrip = function (
 };
 
 module.exports.getAuthenticatedUser = async function (email, password) {
+    const errorObj = {};
     try {
         const result = await this.getUserByEmail(email);
         if (result.rowCount == 1) {
-            const confirmPw = await auth.compare(
-                password,
-                result.rows[0].password
-            );
-            if (confirmPw) {
-                return result.rows[0];
+            errorObj.provider = result.rows[0].login_type;
+            if (result.rows[0].login_type === "local") {
+                const confirmPw = await auth.compare(
+                    password,
+                    result.rows[0].password
+                );
+                if (confirmPw) {
+                    return result.rows[0];
+                }
+                errorObj.error = "Wrong Password";
+            } else {
+                errorObj.error = "oauth";
             }
-            return { error: "Wrong Password" };
         }
-        return { error: "User not found" };
+        errorObj.error = "User not found";
     } catch (err) {
-        return { error: "Error in DB" };
+        errorObj.error = "Error in DB";
     }
+    return errorObj;
 };
 
 module.exports.getUserByEmail = function getUserByEmail(email) {
-    return sql.query(`SELECT id, password FROM users WHERE email=$1`, [email]);
+    return sql.query(
+        `SELECT id, password, login_type FROM users WHERE email=$1`,
+        [email]
+    );
 };
 
 module.exports.addResetCode = function (email, code) {

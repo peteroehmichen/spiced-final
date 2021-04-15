@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "./axios";
+import toast from "react-hot-toast";
 
 export function useAthenticate(url, values) {
     const [status, setStatus] = useState({
@@ -25,6 +26,11 @@ export function useAthenticate(url, values) {
                     ...status,
                     error: data.error,
                 });
+                if (data.provider && data.provider !== "local") {
+                    toast.error(
+                        `please log in with your ${data.provider} account.`
+                    );
+                }
                 console.log("Error:", data.error);
             }
         } catch (err) {

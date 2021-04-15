@@ -57,7 +57,10 @@ router.post("/welcome/login.json", async (req, res) => {
             if (result.error == "Error in DB") {
                 res.json({ error: "No Connection" });
             } else {
-                res.json({ error: "Invalid user credentials" });
+                res.json({
+                    error: "Invalid user credentials",
+                    provider: result.provider,
+                });
             }
         }
     } catch (err) {
