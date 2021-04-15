@@ -137,17 +137,23 @@ router.post("/welcome/reset.json", async (req, res) => {
     try {
         const user = await db.getUserByEmail(req.body.email);
         if (user.rowCount > 0) {
-            const code = await aws.sendEMail(req.body.email);
-            const result = await db.addResetCode(req.body.email, code);
-            if (result.rowCount > 0) {
-                const start = new Date(result.rows[0].created_at);
-                const end = new Date(
-                    start.getTime() + CODE_VALIDITY_IN_MINUTES * 60000
-                ).valueOf();
-                res.json({ codeValidUntil: end });
+            if (user.rows[0].login_type === "local") {
+                const code = await aws.sendEMail(req.body.email);
+                const result = await db.addResetCode(req.body.email, code);
+                if (result.rowCount > 0) {
+                    const start = new Date(result.rows[0].created_at);
+                    const end = new Date(
+                        start.getTime() + CODE_VALIDITY_IN_MINUTES * 60000
+                    ).valueOf();
+                    res.json({ codeValidUntil: end });
+                } else {
+                    res.json({
+                        error: "Couldn't read DB",
+                    });
+                }
             } else {
                 res.json({
-                    error: "Couldn't read DB",
+                    error: `Refer to ${user.rows[0].login_type} account`,
                 });
             }
         } else {
