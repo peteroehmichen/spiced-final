@@ -7,6 +7,7 @@ import Reset from "./Reset";
 import GettingStarted from "./GettingStarted";
 import OAuth from "./OAuth";
 import { Toaster } from "react-hot-toast";
+import Authenticate from "./Authenticate";
 
 export default function Welcome() {
     return (
@@ -25,6 +26,7 @@ export default function Welcome() {
                 </div>
                 <HashRouter>
                     <Route exact path="/" component={GettingStarted} />
+                    <Route path="/auth" component={Authenticate} />
                     <Route path="/register" component={Register} />
                     <Route path="/login" component={Login} />
                     <Route path="/oauth" component={OAuth} />

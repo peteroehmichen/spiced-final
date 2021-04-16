@@ -10,9 +10,9 @@ export default function GettingStarted() {
                 steps towards realization - no copyright infringement is
                 intended.
             </p>
-            <Link to="/register">
+            <Link to="/auth">
                 <div className="link-out">
-                    <h2>Getting started > > ></h2>
+                    <h2>Getting started</h2>
                 </div>
             </Link>
         </div>

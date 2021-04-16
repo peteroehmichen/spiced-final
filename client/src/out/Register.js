@@ -1,7 +1,5 @@
 import { useRef } from "react";
-import { Link } from "react-router-dom";
 import { useAthenticate, useFormEval } from "../helpers/customHooks";
-import axios from "../helpers/axios";
 
 export default function Register() {
     const username = useRef();
@@ -14,10 +12,7 @@ export default function Register() {
     );
 
     return (
-        <div className="out-main register">
-            <div className="title">
-                <h3>Please sign up with your personal information</h3>
-            </div>
+        <div className="auth-nav-body">
             <div className="form-out">
                 <input
                     ref={username}
@@ -85,36 +80,6 @@ export default function Register() {
                         ? "Loading"
                         : "Register"}
                 </button>
-            </div>
-            <div className="welcome-footnote">
-                <p>
-                    Already a user? Click here to{" "}
-                    <Link to="/login">log in</Link>
-                </p>
-                <p>
-                    Register or Log In with your{" "}
-                    <Link to="/oauth">GitHub account</Link>
-                </p>
-                <i style={{ color: "rgb(53 53 53)" }}>
-                    Or log in with a predefined test user?{" "}
-                    <b
-                        style={{ cursor: "pointer" }}
-                        onClick={async () => {
-                            const { data } = await axios.post(
-                                "/welcome/login.json",
-                                {
-                                    email: "test@example.com",
-                                    password: "test",
-                                }
-                            );
-                            if (data.status == "OK") {
-                                location.replace("/");
-                            }
-                        }}
-                    >
-                        Click here
-                    </b>
-                </i>
             </div>
         </div>
     );

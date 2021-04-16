@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 // import { Redirect } from "react-router";
 // import { Link, withRouter } from "react-router-dom";
 import axios from "../helpers/axios";
 import { useFormEval } from "../helpers/customHooks";
 import { Link } from "react-router-dom";
 
-export default function Reset() {
+export default function Reset(props) {
     const [step, setStep] = useState(1);
     const [values, handleChangeEval] = useFormEval();
     const [error, setError] = useState(false);
@@ -142,17 +142,22 @@ export default function Reset() {
     }
 
     return (
-        <div className="out-main reset">
-            <div className="title">
-                <h3>Reset your password</h3>
-            </div>
+        <Fragment>
             {renderedStep}
             <div className="welcome-footnote">
                 <p>
-                    Go back to Log In Page. <Link to="/login">click here</Link>
+                    Go back to Log In Page.{" "}
+                    <b
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                            props.resetPage(false);
+                        }}
+                    >
+                        click here
+                    </b>
                 </p>
             </div>
-        </div>
+        </Fragment>
     );
 }
 
