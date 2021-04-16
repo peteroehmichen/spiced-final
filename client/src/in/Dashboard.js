@@ -88,10 +88,6 @@ export default function Dashboard() {
                         <div>
                             <ul>
                                 <li>
-                                    redesign LoggedOut Experience for better
-                                    OAuth integration
-                                </li>
-                                <li>
                                     Notfication System for live-Matches,
                                     Friendships, Errors, etc.
                                 </li>

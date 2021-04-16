@@ -27,10 +27,6 @@ export default function Welcome() {
                 <HashRouter>
                     <Route exact path="/" component={GettingStarted} />
                     <Route path="/auth" component={Authenticate} />
-                    <Route path="/register" component={Register} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/oauth" component={OAuth} />
-                    <Route path="/reset" component={Reset} />
                 </HashRouter>
             </div>
             <Toaster />
