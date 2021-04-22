@@ -72,7 +72,7 @@ router.post("/in/updateUserData.json", async (req, res) => {
     }
 });
 
-router.put("/in/tripStatus.json", async (req, res) => {
+router.patch("/in/tripStatus.json", async (req, res) => {
     try {
         const { rowCount } = await db.toggleTripStatus(req.body.id);
         if (rowCount) {

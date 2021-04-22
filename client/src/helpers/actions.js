@@ -284,7 +284,7 @@ export async function deleteTrip(id) {
 export async function toggleTripStatus(id) {
     const obj = { type: "TOGGLE_TRIP_STATUS" };
     try {
-        const { data } = await axios.put("/in/tripStatus.json", { id });
+        const { data } = await axios.patch("/in/tripStatus.json", { id });
         obj.payload = { id, ...data };
     } catch (error) {
         console.log(error);
