@@ -284,12 +284,19 @@ export async function deleteTrip(id) {
 export async function toggleTripStatus(id) {
     const obj = { type: "TOGGLE_TRIP_STATUS" };
     try {
-        const result = await axios.put("/in/tripStatus.json", { id });
-        console.log("action:", result.data);
-        obj.payload = { id, success: true };
+        const { data } = await axios.put("/in/tripStatus.json", { id });
+        obj.payload = { id, ...data };
     } catch (error) {
         console.log(error);
-        obj.payload = { id, error };
+        obj.payload.error = {
+            type: "notifications",
+            text: "No Server Connection",
+        };
+    }
+    if (obj.payload.success) {
+        toast.success("Trip status changed");
+    } else {
+        toast.error(obj.payload.error?.text);
     }
     return obj;
 }

@@ -146,7 +146,6 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type == "TOGGLE_TRIP_STATUS") {
-        console.log("reducer for status:", action);
         return produce(store, (newStore) => {
             if (action.payload.success) {
                 newStore.trips = newStore.trips.map((trip) => {

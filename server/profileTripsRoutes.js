@@ -73,13 +73,25 @@ router.post("/in/updateUserData.json", async (req, res) => {
 });
 
 router.put("/in/tripStatus.json", async (req, res) => {
-    console.log(req.body);
     try {
-        await db.toggleTripStatus(req.body.id);
-        res.json({ success: true, error: false });
+        const { rowCount } = await db.toggleTripStatus(req.body.id);
+        if (rowCount) {
+            res.json({ success: true, error: false });
+        } else {
+            res.json({
+                success: false,
+                error: {
+                    type: "notifications",
+                    text: "DB rejected new Status",
+                },
+            });
+        }
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, error });
+        console.log("Error in trip-status-update:", error);
+        res.json({
+            success: false,
+            error: { type: "notifications", text: "No Connection to DB" },
+        });
     }
 });
 

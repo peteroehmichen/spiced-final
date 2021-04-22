@@ -136,7 +136,6 @@ module.exports.addTrip = function (
 };
 
 module.exports.toggleTripStatus = function (id) {
-    console.log("toggling trip:", id);
     return sql.query(`update trips set public=NOT public where id=$1;`, [id]);
 };
 
