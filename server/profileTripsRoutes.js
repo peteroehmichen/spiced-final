@@ -76,7 +76,9 @@ router.patch("/in/tripStatus.json", async (req, res) => {
     try {
         const { rowCount } = await db.toggleTripStatus(req.body.id);
         if (rowCount) {
-            res.json({ success: true, error: false });
+            const result = await db.getMatches(req.session.userId);
+            // console.log("Matches:", result);
+            res.json({ success: result, error: false });
         } else {
             res.json({
                 success: false,

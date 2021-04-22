@@ -49,7 +49,6 @@ app.use(express.static(path.join(__dirname, "..", "client", "public")));
 const { grades, experience, location_topics } = require("./config.json");
 const { getCountries } = require("./countryAPI");
 const { activeUsers } = require("./socketHelper");
-const { analyseMatches } = require("./analyseMatches");
 // let visibleOnlineUsers = [];
 
 //////////////////////////////////////////////////////
@@ -70,11 +69,6 @@ app.use(locationRoutes);
 //////////////////////////////////////////////////////
 const socialRoutes = require("./socialRoutes");
 app.use(socialRoutes);
-//////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////
-const matchRoutes = require("./matchRoutes");
-app.use(matchRoutes);
 //////////////////////////////////////////////////////
 
 app.get("/in/essentialData.json", async (req, res) => {
@@ -103,7 +97,7 @@ app.get("/in/essentialData.json", async (req, res) => {
                 trips: results.trips.rows.filter(
                     (trip) => trip.person === req.session.userId || trip.public
                 ),
-                matches: analyseMatches(results.matches.rows),
+                matches: results.matches,
                 friendships: results.friendships.rows,
             };
             // FIXME proper ugly solution

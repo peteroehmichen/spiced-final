@@ -1,11 +1,12 @@
-module.exports.analyseMatches = function (arrOfMatches) {
-    const futureTrips = arrOfMatches.filter(
+module.exports.analyseMatches = function (locationMatches) {
+    // console.log("analyzing...", locationMatches);
+    let overlappingTrips = locationMatches.filter(
         (trip) =>
             trip.until_max >= trip.match_from_min &&
             trip.match_until_max >= trip.from_min
     );
 
-    const futureMatchesFormatted = futureTrips.map((trip) => {
+    overlappingTrips = overlappingTrips.map((trip) => {
         trip.match_duration =
             1 +
             (trip.match_until_max - trip.match_from_min) /
@@ -51,5 +52,5 @@ module.exports.analyseMatches = function (arrOfMatches) {
         );
         return trip;
     });
-    return futureMatchesFormatted;
+    return overlappingTrips;
 };

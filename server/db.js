@@ -44,6 +44,7 @@ const client = redis.createClient(
     process.env.REDIS_URL || { host: "localhost", port: 6379 }
 );
 const { promisify } = require("util");
+const { analyseMatches } = require("./analyseMatches");
 client.on("error", function (err) {
     console.log(err);
 });
@@ -242,11 +243,12 @@ module.exports.getOwnAndFriendsFutureTrips = async function (id) {
     );
 };
 
-module.exports.getMatches = function (userId) {
-    return sql.query(
-        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.username, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person AND trips.public=true;`,
+module.exports.getMatches = async function (userId) {
+    const result = await sql.query(
+        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now() AND public=true) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.username, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person AND trips.public=true;`,
         [userId]
     );
+    return analyseMatches(result.rows);
 };
 
 //////////////////////////////////////////////////////

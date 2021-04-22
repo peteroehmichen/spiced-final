@@ -1,7 +1,6 @@
 import { useEffect, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { findMatchingTrips } from "../helpers/actions";
 import { GetLocationName, Loader } from "../helpers/helperComponents";
 import OnlineSymbol from "./OnlineStatus";
 
@@ -10,7 +9,6 @@ export default function Matches(props) {
     // const dispatch = useDispatch();
 
     useEffect(() => {
-        // dispatch(findMatchingTrips());
     }, []);
 
     const perc2color = function (perc) {
