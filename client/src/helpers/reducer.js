@@ -145,6 +145,20 @@ export default function reducer(store = {}, action) {
         });
     }
 
+    if (action.type == "TOGGLE_TRIP_STATUS") {
+        console.log("reducer for status:", action);
+        return produce(store, (newStore) => {
+            if (action.payload.success) {
+                newStore.trips = newStore.trips.map((trip) => {
+                    if (trip.id == action.payload.id) {
+                        trip.public = !trip.public;
+                    }
+                    return trip;
+                });
+            }
+        });
+    }
+
     if (action.type == "DELETE_TRIP") {
         const { success } = action.payload;
         return produce(store, (newStore) => {

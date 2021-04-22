@@ -72,6 +72,17 @@ router.post("/in/updateUserData.json", async (req, res) => {
     }
 });
 
+router.put("/in/tripStatus.json", async (req, res) => {
+    console.log(req.body);
+    try {
+        await db.toggleTripStatus(req.body.id);
+        res.json({ success: true, error: false });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, error });
+    }
+});
+
 router.post("/in/updateTripData.json", async (req, res) => {
     const tripId = req.body.id;
     delete req.body.id;

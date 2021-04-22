@@ -1,11 +1,7 @@
-import { HashRouter, Link, Route } from "react-router-dom";
-import { Fragment, useEffect } from "react";
+import { HashRouter, Route } from "react-router-dom";
+import { Fragment } from "react";
 
-import Register from "./Register";
-import Login from "./Login";
-import Reset from "./Reset";
 import GettingStarted from "./GettingStarted";
-import OAuth from "./OAuth";
 import { Toaster } from "react-hot-toast";
 import Authenticate from "./Authenticate";
 

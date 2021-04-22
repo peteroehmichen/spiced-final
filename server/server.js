@@ -100,7 +100,9 @@ app.get("/in/essentialData.json", async (req, res) => {
                 location_topics,
                 user: results.user.rows[0],
                 locations: results.locations.rows,
-                trips: results.trips.rows,
+                trips: results.trips.rows.filter(
+                    (trip) => trip.person === req.session.userId || trip.public
+                ),
                 matches: analyseMatches(results.matches.rows),
                 friendships: results.friendships.rows,
             };

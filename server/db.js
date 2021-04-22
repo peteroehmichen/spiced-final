@@ -135,6 +135,11 @@ module.exports.addTrip = function (
     );
 };
 
+module.exports.toggleTripStatus = function (id) {
+    console.log("toggling trip:", id);
+    return sql.query(`update trips set public=NOT public where id=$1;`, [id]);
+};
+
 module.exports.getAuthenticatedUser = async function (email, password) {
     const errorObj = {};
     try {
@@ -233,14 +238,14 @@ module.exports.getOwnAndFriendsFutureTrips = async function (id) {
     const friendIds = friends.rows.map((friend) => friend.id);
     friendIds.push(id);
     return sql.query(
-        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, username, users.picture AS user_pic FROM trips JOIN users ON person=users.id WHERE person=ANY($1) AND until_max>=now() ORDER BY from_min ASC;`,
+        `SELECT trips.id, location_id, person, from_min, until_max, comment, trips.created_at, trips.picture, username, users.picture AS user_pic, public FROM trips JOIN users ON person=users.id WHERE person=ANY($1) AND until_max>=now() ORDER BY from_min ASC;`,
         [friendIds]
     );
 };
 
 module.exports.getMatches = function (userId) {
     return sql.query(
-        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.username, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person;`,
+        `WITH my_trips AS (select id, person, location_id, from_min, until_max from trips where person=$1 AND until_max>=now()) SELECT trips.id, trips.location_id, trips.from_min, trips.until_max, trips.person, users.username, trips.comment, trips.picture, my_trips.id AS match_id, my_trips.from_min AS match_from_min, my_trips.until_max AS match_until_max FROM trips JOIN my_trips ON trips.location_id=my_trips.location_id JOiN users ON trips.person=users.id WHERE trips.person!=my_trips.person AND trips.public=true;`,
         [userId]
     );
 };

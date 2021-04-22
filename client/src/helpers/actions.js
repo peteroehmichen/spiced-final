@@ -281,6 +281,19 @@ export async function deleteTrip(id) {
     }
 }
 
+export async function toggleTripStatus(id) {
+    const obj = { type: "TOGGLE_TRIP_STATUS" };
+    try {
+        const result = await axios.put("/in/tripStatus.json", { id });
+        console.log("action:", result.data);
+        obj.payload = { id, success: true };
+    } catch (error) {
+        console.log(error);
+        obj.payload = { id, error };
+    }
+    return obj;
+}
+
 export async function getUserData(id) {
     // console.log("Going to fetch user data:");
     try {
