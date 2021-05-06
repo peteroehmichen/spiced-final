@@ -3,34 +3,36 @@ const router = express.Router();
 const db = require("./db");
 
 router.post("/in/addLocationSection.json", async (req, res) => {
-    try {
-        const result = await db.addLocationSection(
-            req.body.title,
-            req.body.content,
-            req.body.id,
-            req.body.prev
-        );
-        if (result.rowCount > 0) {
-            return res.json({ success: result.rows[0], error: false });
-        } else {
-            res.json({
-                success: false,
-                error: {
-                    type: "notifications",
-                    text: "Database denied new Information",
-                },
-            });
-        }
-    } catch (err) {
-        console.log("Error in trip-Update:", err);
-        res.json({
-            success: false,
-            error: {
-                type: "notifications",
-                text: "Failed Connection to Database",
-            },
-        });
-    }
+    console.log("section-Details:", req.body);
+    // try {
+    //     const result = await db.addLocationSection(
+    //         req.body.title,
+    //         req.body.content,
+    //         req.body.id,
+    //         req.body.prev
+    //     );
+    //     if (result.rowCount > 0) {
+    //         return res.json({ success: result.rows[0], error: false });
+    //     } else {
+    //         res.json({
+    //             success: false,
+    //             error: {
+    //                 type: "notifications",
+    //                 text: "Database denied new Information",
+    //             },
+    //         });
+    //     }
+    // } catch (err) {
+    //     console.log("Error in trip-Update:", err);
+    //     res.json({
+    //         success: false,
+    //         error: {
+    //             type: "notifications",
+    //             text: "Failed Connection to Database",
+    //         },
+    //     });
+    // }
+    res.json({ status: "OK" });
 });
 
 router.get("/in/addLocation.json", async (req, res) => {

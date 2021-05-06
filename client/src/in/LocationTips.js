@@ -6,7 +6,7 @@ import { Loader } from "../helpers/helperComponents";
 export default function LocationTips() {
     const dispatch = useDispatch();
     const [newSection, setNewSection] = useState();
-    const [values, setValues] = useState();
+    const [values, setValues] = useState(null);
     const [editing, setEditing] = useState(false);
 
     const [secEdit, setSecEdit] = useState({});
@@ -19,17 +19,7 @@ export default function LocationTips() {
         });
     };
 
-    let infos;
-    if (location.infos) {
-        infos = [];
-        // let parsedInfos = JSON.parse(location.infos);
-        // let parsedInfos = JSON.parse(location.infos);
-        // let arrOfKeys = Object.keys(parsedInfos);
-        // infos = arrOfKeys.map((elem) => {
-        //     return { title: elem, content: parsedInfos[elem] };
-        // });
-    }
-    infos = location.infos;
+    const { infos } = location;
 
     return (
         <div className="location-tips">
@@ -108,9 +98,7 @@ export default function LocationTips() {
                                                 addLocationSection(
                                                     values,
                                                     location.id,
-                                                    {
-                                                        title: elem.title,
-                                                    }
+                                                    elem.id
                                                 )
                                             );
                                         }}
@@ -167,7 +155,7 @@ export default function LocationTips() {
                                 setEditing(false);
                                 setNewSection(false);
                                 dispatch(
-                                    addLocationSection(values, location.id, {})
+                                    addLocationSection(values, location.id)
                                 );
                             }}
                         >

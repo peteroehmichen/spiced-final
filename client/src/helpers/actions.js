@@ -144,11 +144,9 @@ export async function changeMyRating(value, id) {
 //     }
 // }
 
-export async function addLocationSection(values, id, prev) {
-    values.id = id;
-    if (prev.title) {
-        values.prev = prev.title;
-    }
+export async function addLocationSection(values, id, section) {
+    values.location_id = id;
+    values.section_id = section;
     try {
         const { data } = await axios.post(
             "/in/addLocationSection.json",
