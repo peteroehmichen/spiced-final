@@ -10,7 +10,7 @@ export default function LocationTips() {
     const [editing, setEditing] = useState(false);
 
     const [secEdit, setSecEdit] = useState({});
-    const { location: loc } = useSelector((store) => store);
+    const { location } = useSelector((store) => store);
 
     const fillNew = function (e) {
         setValues({
@@ -20,19 +20,21 @@ export default function LocationTips() {
     };
 
     let infos;
-    if (loc.infos) {
+    if (location.infos) {
         infos = [];
-        let parsedInfos = JSON.parse(loc.infos);
-        let arrOfKeys = Object.keys(parsedInfos);
-        infos = arrOfKeys.map((elem) => {
-            return { title: elem, content: parsedInfos[elem] };
-        });
+        // let parsedInfos = JSON.parse(location.infos);
+        // let parsedInfos = JSON.parse(location.infos);
+        // let arrOfKeys = Object.keys(parsedInfos);
+        // infos = arrOfKeys.map((elem) => {
+        //     return { title: elem, content: parsedInfos[elem] };
+        // });
     }
+    infos = location.infos;
 
     return (
         <div className="location-tips">
-            {!loc.name && <Loader />}
-            {loc.name && !infos && <p>be the first to add infos here</p>}
+            {!location.name && <Loader />}
+            {location.name && !infos && <p>be the first to add infos here</p>}
             {infos &&
                 infos.map((elem, i) => (
                     <div key={i}>
@@ -105,7 +107,7 @@ export default function LocationTips() {
                                             dispatch(
                                                 addLocationSection(
                                                     values,
-                                                    loc.id,
+                                                    location.id,
                                                     {
                                                         title: elem.title,
                                                     }
@@ -165,7 +167,7 @@ export default function LocationTips() {
                                 setEditing(false);
                                 setNewSection(false);
                                 dispatch(
-                                    addLocationSection(values, loc.id, {})
+                                    addLocationSection(values, location.id, {})
                                 );
                             }}
                         >

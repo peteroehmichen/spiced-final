@@ -219,7 +219,7 @@ module.exports.getEssentialData = async function (userId) {
 
 module.exports.getProfileData = function (userId) {
     return sql.query(
-        `SELECT id, username, age, picture, description, experience, grade_comfort, grade_max FROM users WHERE users.id=$1;`,
+        `UPDATE users SET last_online=now() WHERE id=$1 RETURNING id, username, age, picture, description, experience, grade_comfort, grade_max;`,
         [userId]
     );
     //     `SELECT * FROM users WHERE id=${id} FOR UPDATE; UPDATE users SET last_online=now() WHERE id=${id};`
@@ -296,6 +296,21 @@ module.exports.getUserById = function (id, userId) {
         `WITH relations as (SELECT * FROM friendships WHERE (recipient=$1 AND sender=$2) OR (sender=$1 AND recipient=$2)) SELECT username, age, picture, description, experience, grade_comfort, grade_max, confirmed, users.id FROM users LEFT OUTER JOIN relations ON users.id=relations.recipient OR users.id=relations.sender WHERE users.id=$1;`,
         [id, userId]
     );
+};
+
+module.exports.getLocationById_new = async function (id, user) {
+    return {
+        general: await sql.query(
+            `SELECT id, continent, country, name, picture FROM locations WHERE id=${id};`
+        ),
+        infos: await sql.query(
+            `SELECT id, title, content, last_updated from location_sections WHERE location_id=${id};`
+        ),
+        rating: await sql.query(
+            `WITH own as (SELECT rate AS own, location_id FROM location_rating WHERE location_id=$1 AND user_id=$2) SELECT COUNT(user_id) AS sum, AVG(rate) AS avg, AVG(own) as own FROM location_rating FULL JOIN own ON own.location_id=location_rating.location_id WHERE location_rating.location_id=$1;`,
+            [id, user]
+        ),
+    };
 };
 
 module.exports.getLocationById = async function (id) {

@@ -94,8 +94,23 @@ router.get("/in/getLocations.json", async (req, res) => {
 
 router.get("/in/locationData.json", async (req, res) => {
     try {
+        const result_new = await db.getLocationById_new(
+            req.query.id,
+            req.session.userId
+        );
+        // console.log("new dataset:");
+        // console.log("general:", result_new.general.rows[0]);
+        // console.log("infos:", result_new.infos.rows);
+        // console.log("rating:", result_new.rating.rows[0]);
+        // console.log("------------------");
         const result = await db.getLocationById(req.query.id);
         if (result.rowCount > 0) {
+            const locationDetails = {
+                ...result_new.general.rows[0],
+                ...result_new.rating.rows[0],
+                infos: result_new.infos.rows,
+            };
+
             const ratings = await db.getLocationRating(
                 req.query.id,
                 req.session.userId
@@ -105,7 +120,11 @@ router.get("/in/locationData.json", async (req, res) => {
                 ...ratings.rating.rows[0],
                 own: ratings.user.rows[0]?.own || false,
             };
-            return res.json({ success: locationData, error: false });
+            return res.json({
+                old: locationData,
+                success: locationDetails,
+                error: false,
+            });
         } else {
             res.json({
                 success: false,

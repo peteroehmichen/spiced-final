@@ -12,7 +12,7 @@ import LocationTips from "./LocationTips";
 export default function Location(props) {
     const dispatch = useDispatch();
 
-    const { location: loc, activateUploadModal } = useSelector(
+    const { location, activateUploadModal } = useSelector(
         (store) => store
     );
 
@@ -24,10 +24,10 @@ export default function Location(props) {
     }, []);
 
     let errorBlock;
-    if (loc.error) {
+    if (location.error) {
         errorBlock = (
             <div className="central location">
-                <h4>{loc.error}</h4>
+                <h4>{location.error}</h4>
             </div>
         );
     }
@@ -37,7 +37,7 @@ export default function Location(props) {
             <div
                 className="central location"
                 style={{
-                    backgroundImage: `url(${loc.picture})`,
+                    backgroundImage: `url(${location.picture})`,
                     backgroundSize: "cover",
                 }}
             >
@@ -46,11 +46,11 @@ export default function Location(props) {
                     <PhotoUploader type="location" id={props.match.params.id} />
                 )}
                 <div className="location-head">
-                    {(!loc.name && <Loader />) || (
+                    {(!location.name && <Loader />) || (
                         <Fragment>
-                            <h1>{loc.name}</h1>
+                            <h1>{location.name}</h1>
                             <p>
-                                {loc.country} ({loc.continent})
+                                {location.country} ({location.continent})
                             </p>
                             <LocationRating id={props.match.params.id} />
                         </Fragment>
@@ -63,7 +63,7 @@ export default function Location(props) {
                     </div>
                     <div className="location-right">
                         <h2>Forum</h2>
-                        {(!loc.name && <Loader />) || (
+                        {(!location.name && <Loader />) || (
                             <Chat
                                 type="location"
                                 location={props.match.params.id}

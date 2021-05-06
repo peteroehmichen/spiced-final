@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS location_rating;
+DROP TABLE IF EXISTS location_sections;
 DROP TABLE IF EXISTS trips;
 DROP TABLE IF EXISTS chat;
 DROP TABLE IF EXISTS friendships;
@@ -82,6 +83,15 @@ CREATE TABLE location_rating (
       user_id INT REFERENCES users(id) NOT NULL,
       location_id INT REFERENCES locations(id) NOT NULL,
       rate INT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE location_sections (
+      id SERIAL PRIMARY KEY,
+      location_id INT REFERENCES locations(id) NOT NULL,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
