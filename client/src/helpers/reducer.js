@@ -74,14 +74,13 @@ export default function reducer(store = {}, action) {
                     if (newStore.location.infos[i].id === success.id) {
                         newStore.location.infos[i] = success;
                         updated = true;
-                        toast.success("Location Details updated");
                         break;
                     }
                 }
                 if (!updated) {
                     newStore.location.infos.push(success);
-                    toast.success("Location Details added");
                 }
+                toast.success("Location Details added");
             }
         });
     }

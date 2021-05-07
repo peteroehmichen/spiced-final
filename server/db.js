@@ -102,6 +102,7 @@ module.exports.updateLocationSection = async function (article) {
             [title.trim(), content, location_id, section_id]
         );
     }
+
     const existingTitles = await sql.query(
         "SELECT title FROM location_sections WHERE location_id=$1;",
         [location_id]
@@ -116,27 +117,6 @@ module.exports.updateLocationSection = async function (article) {
     return sql.query(
         "INSERT INTO location_sections (location_id, title, content) VALUES ($1, $2, $3) RETURNING id, title, content, last_updated, location_id",
         [location_id, title, content]
-    );
-};
-
-module.exports.addLocationSection = async function (title, content, id, prev) {
-    let entry;
-    const old = await sql.query(`SELECT infos FROM locations WHERE id=${id}`);
-    entry = {
-        [title]: content,
-    };
-    if (old.rows[0].infos) {
-        entry = JSON.parse(old.rows[0].infos);
-        let keys = Object.keys(entry);
-        if (keys.includes(prev)) {
-            delete entry[prev];
-        }
-        entry[title] = content;
-    }
-    entry = JSON.stringify(entry);
-    return sql.query(
-        `UPDATE locations SET infos=$1 WHERE id=$2 RETURNING infos, id;`,
-        [entry, id]
     );
 };
 

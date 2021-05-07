@@ -157,7 +157,7 @@ export async function updateLocationSection(values, id, section) {
         );
         returnObj.payload = data;
     } catch (error) {
-        console.log("Received an error on /addLocationSection:", error);
+        console.log("Received an error on /updateLocationSection:", error);
         returnObj.payload = errorReturn(error, "Could not access the Server");
     }
 

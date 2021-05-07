@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLocationSection } from "../helpers/actions";
@@ -25,7 +25,9 @@ export default function LocationTips() {
     return (
         <div className="location-tips">
             {!location.name && <Loader />}
-            {location.name && !infos && <p>be the first to add infos here</p>}
+            {location.name && infos?.length === 0 && (
+                <p>be the first to add infos here</p>
+            )}
             {infos &&
                 infos.map((elem, i) => (
                     <div key={i}>
