@@ -6,6 +6,10 @@ export default function reducer(store = {}, action) {
     // changing complex and/or nested values with immer
     ///////////////////////////////////////////////////
 
+    if (action.payload?.error?.type === "notification") {
+        toast.error(action.payload.error.text);
+    }
+
     if (action.type == "GET_ESSENTIAL_DATA") {
         return produce(store, (newStore) => {
             const { success, error } = action.payload;
@@ -60,11 +64,23 @@ export default function reducer(store = {}, action) {
         });
     }
 
-    if (action.type == "ADD_LOCATION_SECTION") {
+    if (action.type == "UPDATE_LOCATION_SECTION") {
+        // console.log("updating store with: ", action.payload.success);
+        const { success } = action.payload;
         return produce(store, (newStore) => {
-            if (action.payload.success) {
-                if (newStore.location.id == action.payload.success.id) {
-                    newStore.location.infos = action.payload.success.infos;
+            if (success) {
+                let updated = false;
+                for (let i = 0; i < newStore.location.infos.length; i++) {
+                    if (newStore.location.infos[i].id === success.id) {
+                        newStore.location.infos[i] = success;
+                        updated = true;
+                        toast.success("Location Details updated");
+                        break;
+                    }
+                }
+                if (!updated) {
+                    newStore.location.infos.push(success);
+                    toast.success("Location Details added");
                 }
             }
         });

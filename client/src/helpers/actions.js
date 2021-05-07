@@ -2,6 +2,7 @@ import axios from "./axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import TripEdit from "../in/TripEdit";
+import { errorReturn } from "../../../globalHelpers/helpers";
 
 export async function getEssentialData() {
     try {
@@ -46,8 +47,8 @@ export async function addNewLocation(values) {
             toast.success(
                 `Location "${values.name.toUpperCase()}" was added succesfully`
             );
-        } else if (data.error) {
-            toast.error(data.error.text);
+            // } else if (data.error) {
+            //     toast.error(data.error.text);
         }
         return {
             type: "ADD_NEW_LOCATION",
@@ -55,13 +56,13 @@ export async function addNewLocation(values) {
         };
     } catch (error) {
         console.log("Received an error on /locations:", error);
-        toast.error("Could not access Server");
+        // toast.error("Could not access Server");
         return {
             type: "ADD_NEW_LOCATION",
             payload: {
                 success: false,
                 error: {
-                    type: "notifications",
+                    type: "notification",
                     text: "Could not access Server",
                 },
             },
@@ -98,8 +99,8 @@ export async function changeMyRating(value, id) {
         );
         if (data.success) {
             toast.success(`Your rating was updated succesfully`);
-        } else if (data.error) {
-            toast.error(data.error.text);
+            // } else if (data.error) {
+            //     toast.error(data.error.text);
         }
         return {
             type: "CHANGE_LOCATION_RATING",
@@ -107,7 +108,7 @@ export async function changeMyRating(value, id) {
         };
     } catch (error) {
         console.log("Received an error on /location:", error);
-        toast.error("Could not access Server");
+        // toast.error("Could not access Server");
         return {
             type: "CHANGE_LOCATION_RATING",
             payload: {
@@ -144,37 +145,23 @@ export async function changeMyRating(value, id) {
 //     }
 // }
 
-export async function addLocationSection(values, id, section) {
-    values.location_id = id;
-    values.section_id = section;
+export async function updateLocationSection(values, id, section) {
+    const returnObj = { type: "UPDATE_LOCATION_SECTION", payload: {} };
+
     try {
+        values.location_id = id;
+        values.section_id = section;
         const { data } = await axios.post(
-            "/in/addLocationSection.json",
+            "/in/updateLocationSection.json",
             values
         );
-        if (data.success) {
-            toast.success("Location details updated");
-        } else {
-            toast.error(data.error.text);
-        }
-        return {
-            type: "ADD_LOCATION_SECTION",
-            payload: data,
-        };
+        returnObj.payload = data;
     } catch (error) {
         console.log("Received an error on /addLocationSection:", error);
-        toast.error("Could not access Server");
-        return {
-            type: "ADD_LOCATION_SECTION",
-            payload: {
-                success: false,
-                error: {
-                    type: "notification",
-                    text: "Could not access Server",
-                },
-            },
-        };
+        returnObj.payload = errorReturn(error, "Could not access the Server");
     }
+
+    return returnObj;
 }
 
 export function removeReduxDetail(section, value) {
@@ -190,8 +177,8 @@ export function removeReduxDetail(section, value) {
 export async function updatePicture(response, destination, id) {
     if (response.success) {
         toast.success(`Picture for ${destination} was changed succesfully`);
-    } else if (response.error) {
-        toast.error(response.error.text);
+        // } else if (response.error) {
+        //     toast.error(response.error.text);
     }
     return {
         type: "UPDATE_PICTURE",
@@ -208,20 +195,20 @@ export async function updateUserData(values) {
         const { data } = await axios.post("/in/updateUserData.json", values);
         if (data.success) {
             toast.success(`Your profile data was successfully updated`);
-        } else if (data.error) {
-            toast.error(data.error.text);
+            // } else if (data.error) {
+            //     toast.error(data.error.text);
         }
         return {
             type: "UPDATE_USER_DATA",
             payload: data,
         };
     } catch (error) {
-        toast.error("No Server Connection");
+        // toast.error("No Server Connection");
         return {
             type: "UPDATE_USER_DATA",
             payload: {
                 success: false,
-                error: { type: "notifications", text: "No Server Connection" },
+                error: { type: "notification", text: "No Server Connection" },
             },
         };
     }
@@ -234,8 +221,8 @@ export async function updateTripData(values, id, index) {
         if (data.success) {
             data.success.index = index;
             toast.success("Trip was successfully updated");
-        } else {
-            toast.error(data.error.text);
+            // } else {
+            //     toast.error(data.error.text);
         }
         return {
             type: "UPDATE_TRIP_DATA",
@@ -243,12 +230,12 @@ export async function updateTripData(values, id, index) {
         };
     } catch (error) {
         console.log("error in updating Trip:", error);
-        toast.error("No Server Connection");
+        // toast.error("No Server Connection");
         return {
             type: "UPDATE_TRIP_DATA",
             payload: {
                 success: false,
-                error: { type: "notifications", text: "No Server Connection" },
+                error: { type: "notification", text: "No Server Connection" },
             },
         };
     }
@@ -259,8 +246,8 @@ export async function deleteTrip(id) {
         const { data } = await axios.get(`/in/deleteTrip.json?id=${id}`);
         if (data.success) {
             toast.success("Trip was successfully deleted");
-        } else {
-            toast.error(data.error.text);
+            // } else {
+            //     toast.error(data.error.text);
         }
         return {
             type: "DELETE_TRIP",
@@ -268,12 +255,12 @@ export async function deleteTrip(id) {
         };
     } catch (error) {
         console.log("Error in deleting trip:", error);
-        toast.error("No Connection to Server");
+        // toast.error("No Connection to Server");
         return {
             type: "DELETE_TRIP",
             payload: {
                 success: false,
-                error: { type: "notifications", text: "No Server Connection" },
+                error: { type: "notification", text: "No Server Connection" },
             },
         };
     }
@@ -287,15 +274,15 @@ export async function toggleTripStatus(id) {
     } catch (error) {
         console.log(error);
         obj.payload.error = {
-            type: "notifications",
+            type: "notification",
             text: "No Server Connection",
         };
     }
     console.log("returned OBJ:", obj.payload);
     if (obj.payload.success) {
         toast.success("Trip status changed");
-    } else {
-        toast.error(obj.payload.error?.text);
+        // } else {
+        //     toast.error(obj.payload.error?.text);
     }
     return obj;
 }
@@ -334,8 +321,8 @@ export async function submitFriendAction(id, task) {
             if (task == "Cancel Friendship" || task == "Accept Request") {
                 data.success.toggleConfirmed = true;
             }
-        } else if (data.error) {
-            toast.error(data.error.text);
+            // } else if (data.error) {
+            //     toast.error(data.error.text);
         }
         return {
             type: "SUBMIT_FRIEND_ACTION",
@@ -343,13 +330,13 @@ export async function submitFriendAction(id, task) {
         };
     } catch (err) {
         console.log("axios error in fetching ");
-        toast.error("could not connect to Server");
+        // toast.error("could not connect to Server");
         return {
             type: "SUBMIT_FRIEND_ACTION",
             payload: {
                 success: false,
-                type: {
-                    type: "notifications",
+                error: {
+                    type: "notification",
                     text: "could not connect to Server",
                 },
             },
@@ -374,7 +361,7 @@ export async function receiveChatMessages(about, id, limit = 20) {
             payload: {
                 success: false,
                 error: {
-                    type: "notifications",
+                    type: "notification",
                     text: "could not access Server",
                 },
             },
@@ -430,7 +417,7 @@ export function newMessage(obj) {
             obj = {};
         }
     } else {
-        toast.error(obj.error.text);
+        // toast.error(obj.error.text);
         obj = {};
     }
     return {
@@ -478,8 +465,8 @@ export async function addNewTrip(values) {
         const { data } = await axios.post(`/in/addTrip.json`, values);
         if (data.success) {
             toast.success(`new Trip was succesfully added`);
-        } else {
-            toast.error(data.error.text);
+            // } else {
+            //     toast.error(data.error.text);
         }
         return {
             type: "ADD_NEW_TRIP",
@@ -487,10 +474,10 @@ export async function addNewTrip(values) {
         };
     } catch (error) {
         console.log("Error in adding Trip:", error);
-        toast.error("Could not access Server");
+        // toast.error("Could not access Server");
         return {
             type: "ADD_NEW_TRIP",
-            error: { type: "notifications", text: "Could not access Server" },
+            error: { type: "notification", text: "Could not access Server" },
         };
     }
 }

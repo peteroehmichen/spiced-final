@@ -1,38 +1,21 @@
 const express = require("express");
+const { errorReturn } = require("../globalHelpers/helpers");
 const router = express.Router();
 const db = require("./db");
 
-router.post("/in/addLocationSection.json", async (req, res) => {
-    console.log("section-Details:", req.body);
-    // try {
-    //     const result = await db.addLocationSection(
-    //         req.body.title,
-    //         req.body.content,
-    //         req.body.id,
-    //         req.body.prev
-    //     );
-    //     if (result.rowCount > 0) {
-    //         return res.json({ success: result.rows[0], error: false });
-    //     } else {
-    //         res.json({
-    //             success: false,
-    //             error: {
-    //                 type: "notifications",
-    //                 text: "Database denied new Information",
-    //             },
-    //         });
-    //     }
-    // } catch (err) {
-    //     console.log("Error in trip-Update:", err);
-    //     res.json({
-    //         success: false,
-    //         error: {
-    //             type: "notifications",
-    //             text: "Failed Connection to Database",
-    //         },
-    //     });
-    // }
-    res.json({ status: "OK" });
+router.post("/in/updateLocationSection.json", async (req, res) => {
+    try {
+        const result = await db.updateLocationSection(req.body);
+        if (result.rowCount > 0) {
+            res.json({ success: result.rows[0] });
+        } else {
+            console.log("Unknown error in Location-Update:", result);
+            res.json(errorReturn({}, "Database denied new Information"));
+        }
+    } catch (error) {
+        console.log("Error in trip-Update:", error.message);
+        res.json(errorReturn(error));
+    }
 });
 
 router.get("/in/addLocation.json", async (req, res) => {

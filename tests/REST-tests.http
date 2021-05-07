@@ -1,0 +1,6 @@
+
+
+GET http://countryapi.gear.host/v1/Country/getCountries
+
+###
+GET {{host}}/in/getLocations.json

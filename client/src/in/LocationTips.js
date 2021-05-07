@@ -1,6 +1,7 @@
 import { Fragment, useState } from "react";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { addLocationSection } from "../helpers/actions";
+import { updateLocationSection } from "../helpers/actions";
 import { Loader } from "../helpers/helperComponents";
 
 export default function LocationTips() {
@@ -84,9 +85,8 @@ export default function LocationTips() {
                                     </button>
                                     <button
                                         disabled={
-                                            !values ||
-                                            !values.title ||
-                                            !values.content
+                                            values.title === elem.title &&
+                                            values.content === elem.content
                                         }
                                         onClick={() => {
                                             setEditing(false);
@@ -95,7 +95,7 @@ export default function LocationTips() {
                                                 [i]: false,
                                             });
                                             dispatch(
-                                                addLocationSection(
+                                                updateLocationSection(
                                                     values,
                                                     location.id,
                                                     elem.id
@@ -152,11 +152,24 @@ export default function LocationTips() {
                                 !values || !values.title || !values.content
                             }
                             onClick={() => {
-                                setEditing(false);
-                                setNewSection(false);
-                                dispatch(
-                                    addLocationSection(values, location.id)
-                                );
+                                if (
+                                    !infos.some(
+                                        (section) =>
+                                            section.title.toLowerCase() ===
+                                            values.title.toLowerCase().trim()
+                                    )
+                                ) {
+                                    setEditing(false);
+                                    setNewSection(false);
+                                    dispatch(
+                                        updateLocationSection(
+                                            values,
+                                            location.id
+                                        )
+                                    );
+                                } else {
+                                    toast.error("Title already exists...");
+                                }
                             }}
                         >
                             Submit

@@ -94,6 +94,31 @@ module.exports.addLocationPic = function (url, id) {
     ]);
 };
 
+module.exports.updateLocationSection = async function (article) {
+    const { title, content, section_id, location_id } = article;
+    if (section_id) {
+        return sql.query(
+            "UPDATE location_sections SET title=$1, content=$2, last_updated=now() WHERE location_id=$3 AND id=$4 RETURNING id, title, content, last_updated, location_id;",
+            [title.trim(), content, location_id, section_id]
+        );
+    }
+    const existingTitles = await sql.query(
+        "SELECT title FROM location_sections WHERE location_id=$1;",
+        [location_id]
+    );
+    for (const existingTitle of existingTitles.rows) {
+        if (existingTitle.title.toLowerCase() === title.toLowerCase().trim()) {
+            const err = new Error("Title already exists for this Location");
+            err.forClient = true;
+            throw err;
+        }
+    }
+    return sql.query(
+        "INSERT INTO location_sections (location_id, title, content) VALUES ($1, $2, $3) RETURNING id, title, content, last_updated, location_id",
+        [location_id, title, content]
+    );
+};
+
 module.exports.addLocationSection = async function (title, content, id, prev) {
     let entry;
     const old = await sql.query(`SELECT infos FROM locations WHERE id=${id}`);
@@ -227,7 +252,7 @@ module.exports.getProfileData = function (userId) {
 
 module.exports.getLocations = function () {
     return sql.query(
-        `WITH average AS (SELECT location_id, AVG(rate) AS avg from location_rating GROUP BY location_id) SELECT id, continent, country, name, picture, infos, avg FROM locations FULL JOIN average ON average.location_id=locations.id ORDER BY name;`
+        `WITH average AS (SELECT location_id, AVG(rate) AS avg from location_rating GROUP BY location_id) SELECT id, continent, country, name, picture, avg FROM locations FULL JOIN average ON average.location_id=locations.id ORDER BY name;`
     );
 };
 
