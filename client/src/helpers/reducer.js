@@ -86,8 +86,21 @@ export default function reducer(store = {}, action) {
     }
 
     if (action.type === "VOTE_LOCATION_SECTION") {
-        console.log("REDUCER: Unfinished");
-        return;
+        const { success } = action.payload;
+        console.log("Success:", success);
+        return produce(store, (newStore) => {
+            if (success?.rowCount) {
+                for (let i = 0; i < newStore.location.infos.length; i++) {
+                    if (newStore.location.infos[i].id === success.section_id) {
+                        newStore.location.infos[i].voted_down = success.vote === -1 ? true : false
+                        newStore.location.infos[i].voted_up = success.vote === 1 ? true : false
+                        newStore.location.infos[i].summed_votes = success.newSum;
+                        break;
+                    }
+                }
+            toast.success("Your Vote was cast");
+            }
+        });
     }
 
     if (action.type == "CHANGE_LOCATION_RATING") {

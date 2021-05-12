@@ -12,9 +12,7 @@ import LocationTips from "./LocationTips";
 export default function Location(props) {
     const dispatch = useDispatch();
 
-    const { location, activateUploadModal } = useSelector(
-        (store) => store
-    );
+    const { location, activateUploadModal } = useSelector((store) => store);
 
     useEffect(() => {
         dispatch(getLocationData(props.match.params.id));
@@ -24,7 +22,12 @@ export default function Location(props) {
     }, []);
 
     let errorBlock;
-    if (location.error) {
+
+    if (!location) {
+        errorBlock = <div className="central location"></div>;
+    }
+
+    if (location?.error) {
         errorBlock = (
             <div className="central location">
                 <h4>{location.error}</h4>

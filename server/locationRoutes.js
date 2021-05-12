@@ -123,20 +123,18 @@ router.get("/in/changeLocationRating.json", async (req, res) => {
 });
 
 router.post("/in/voteLocationSection.json", async (req, res) => {
-    console.log(
-        `Server is voting for section ${req.body.section_id} with ${req.body.vote}`
-    );
     try {
         const result = await db.voteLocationSection(
             req.body.section_id,
             req.body.vote,
             req.session.userId
         );
-        console.log("Result after DB-Vote:", result);
+        console.log(result.rows[0])
+        res.json({ success: { rowCount: result.rowCount, newSum: result.rows[0]?.summed_votes, vote: req.body.vote, section_id: req.body.section_id } });
     } catch (error) {
         console.log("error in vote:", error);
+        res.json(errorObj("notification", "Could not cast your vote"));
     }
-    res.sendStatus(200);
 });
 
 module.exports = router;

@@ -124,7 +124,7 @@ module.exports.voteLocationSection = async function (sectionId, vote, userId) {
     const direction =
         vote > 0 ? ["rate_down", "rate_up"] : ["rate_up", "rate_down"];
     return sql.query(
-        `UPDATE location_sections SET ${direction[0]} = array_remove(${direction[0]}, ${userId}), ${direction[1]} = array_append(array_remove(${direction[1]}, ${userId}), ${userId}) WHERE id=${sectionId};`
+        `UPDATE location_sections SET ${direction[0]} = array_remove(${direction[0]}, ${userId}), ${direction[1]} = array_append(array_remove(${direction[1]}, ${userId}), ${userId}) WHERE id=${sectionId} RETURNING COALESCE(cardinality(rate_up)-cardinality(rate_down), 0) AS summed_votes;`
     );
 };
 
@@ -317,7 +317,7 @@ module.exports.getLocationById = async function (id, user) {
             `SELECT id, continent, country, name, picture FROM locations WHERE id=${id};`
         ),
         infos: await sql.query(
-            `SELECT id, title, content, last_updated from location_sections WHERE location_id=${id};`
+            `SELECT id, title, content, ${user} = ANY (rate_up::int[]) AS voted_up, ${user} = ANY (rate_down::int[]) AS voted_down, COALESCE(cardinality(rate_up)-cardinality(rate_down), 0) AS summed_votes, last_updated from location_sections WHERE location_id=${id} ORDER BY summed_votes DESC;`
         ),
         rating: await sql.query(
             `WITH own as (SELECT rate AS own, location_id FROM location_rating WHERE location_id=$1 AND user_id=$2) SELECT COUNT(user_id) AS sum, AVG(rate) AS avg, AVG(own) as own FROM location_rating FULL JOIN own ON own.location_id=location_rating.location_id WHERE location_rating.location_id=$1;`,

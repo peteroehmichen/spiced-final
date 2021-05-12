@@ -155,19 +155,20 @@ export async function updateLocationSection(values, id, section) {
 }
 
 export async function voteLocationSection(section_id, vote) {
-    console.log("ACTION:", section_id, vote);
+    // console.log("ACTION:", section_id, vote);
+    const returnObj = { type: "VOTE_LOCATION_SECTION", payload: {} };
     try {
-        const result = await axios.post("/in/voteLocationSection.json", {
+        const { data } = await axios.post("/in/voteLocationSection.json", {
             section_id,
             vote,
         });
-        console.log(result);
+        // console.log("returned from DB", data.success);
+        returnObj.payload = data;
     } catch (error) {
         console.log("There was an error:", error);
+        returnObj.payload = errorObj("notification", "Could not finish action");
     }
-    return {
-        type: "VOTE_LOCATION_SECTION",
-    };
+    return returnObj;
 }
 
 export function removeReduxDetail(section, value) {

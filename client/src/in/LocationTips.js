@@ -38,7 +38,12 @@ export default function LocationTips() {
                                 <div className="infos-content">
                                     <p>{elem.content}</p>
                                 </div>
-                                <SectionVote id={elem.id} />
+                                <SectionVote
+                                    id={elem.id}
+                                    up={elem.voted_up}
+                                    down={elem.voted_down}
+                                    sum={elem.summed_votes}
+                                />
                                 <div>
                                     <button
                                         disabled={editing}
