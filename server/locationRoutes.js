@@ -129,7 +129,7 @@ router.post("/in/voteLocationSection.json", async (req, res) => {
             req.body.vote,
             req.session.userId
         );
-        console.log(result.rows[0])
+        // console.log(result.rows[0])
         res.json({ success: { rowCount: result.rowCount, newSum: result.rows[0]?.summed_votes, vote: req.body.vote, section_id: req.body.section_id } });
     } catch (error) {
         console.log("error in vote:", error);

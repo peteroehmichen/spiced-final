@@ -87,7 +87,7 @@ export default function reducer(store = {}, action) {
 
     if (action.type === "VOTE_LOCATION_SECTION") {
         const { success } = action.payload;
-        console.log("Success:", success);
+        // console.log("Success:", success);
         return produce(store, (newStore) => {
             if (success?.rowCount) {
                 for (let i = 0; i < newStore.location.infos.length; i++) {
