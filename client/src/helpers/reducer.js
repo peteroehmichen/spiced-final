@@ -85,6 +85,11 @@ export default function reducer(store = {}, action) {
         });
     }
 
+    if (action.type === "VOTE_LOCATION_SECTION") {
+        console.log("REDUCER: Unfinished");
+        return;
+    }
+
     if (action.type == "CHANGE_LOCATION_RATING") {
         const { success } = action.payload;
         return produce(store, (newStore) => {

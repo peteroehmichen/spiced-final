@@ -89,6 +89,9 @@ CREATE TABLE location_rating (
 CREATE TABLE location_sections (
       id SERIAL PRIMARY KEY,
       location_id INT REFERENCES locations(id) NOT NULL,
+      creator_id INT REFERENCES users(id) NOT NULL,
+      rate_up INT[],
+      rate_down INT[],
       title TEXT NOT NULL,
       content TEXT NOT NULL,
       last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -1,20 +1,23 @@
 const express = require("express");
-const { errorReturn } = require("../globalHelpers/helpers");
+const { errorObj } = require("../globalHelpers/helpers");
 const router = express.Router();
 const db = require("./db");
 
 router.post("/in/updateLocationSection.json", async (req, res) => {
     try {
-        const result = await db.updateLocationSection(req.body);
-        if (result.rowCount > 0) {
-            res.json({ success: result.rows[0] });
-        } else {
+        const result = await db.updateLocationSection(
+            req.body,
+            req.session.userId
+        );
+        if (!result.rowCount) {
             console.log("Unknown error in Location-Update:", result);
-            res.json(errorReturn({}, "Database denied new Information"));
+            throw new Error();
         }
+
+        res.json({ success: result.rows[0] });
     } catch (error) {
-        console.log("Error in trip-Update:", error.message);
-        res.json(errorReturn(error));
+        console.log("Error in section-Update:", error.message);
+        res.json(errorObj("notification", "Database rejected new information"));
     }
 });
 
@@ -23,31 +26,20 @@ router.get("/in/addLocation.json", async (req, res) => {
     const { continent, country, name } = req.query;
     try {
         const result = await db.addLocation(continent, country, name);
-        // console.log("checking:", result);
-        if (result.rowCount > 0) {
-            req.query.id = result.rows[0].id;
-            return res.json({
-                success: req.query,
-                error: false,
-            });
-        } else {
-            res.json({
-                success: false,
-                error: {
-                    type: "notifications",
-                    text: "Error in writing to Database",
-                },
-            });
+
+        if (!result.rowCount) {
+            console.log("Error from DB:", result);
+            throw new Error();
         }
+
+        req.query.id = result.rows[0].id;
+        return res.json({
+            success: req.query,
+            error: false,
+        });
     } catch (err) {
         console.log("checking Error:", err);
-        res.json({
-            success: false,
-            error: {
-                type: "notifications",
-                text: "Failed Connection to Database",
-            },
-        });
+        res.json(errorObj("notification", "Error in writing to Database"));
     }
 });
 
@@ -79,52 +71,25 @@ router.get("/in/getLocations.json", async (req, res) => {
 
 router.get("/in/locationData.json", async (req, res) => {
     try {
-        const result_new = await db.getLocationById_new(
+        const { general, rating, infos } = await db.getLocationById(
             req.query.id,
             req.session.userId
         );
-        // console.log("new dataset:");
-        // console.log("general:", result_new.general.rows[0]);
-        // console.log("infos:", result_new.infos.rows);
-        // console.log("rating:", result_new.rating.rows[0]);
-        // console.log("------------------");
-        const result = await db.getLocationById(req.query.id);
-        if (result.rowCount > 0) {
-            const locationDetails = {
-                ...result_new.general.rows[0],
-                ...result_new.rating.rows[0],
-                infos: result_new.infos.rows,
-            };
-
-            const ratings = await db.getLocationRating(
-                req.query.id,
-                req.session.userId
-            );
-            let locationData = {
-                ...result.rows[0],
-                ...ratings.rating.rows[0],
-                own: ratings.user.rows[0]?.own || false,
-            };
-            return res.json({
-                old: locationData,
-                success: locationDetails,
-                error: false,
-            });
-        } else {
-            res.json({
-                success: false,
-                error: { type: "component", text: "Location unkown" },
-            });
+        if (!general.rowCount) {
+            throw new Error("Location unknown");
         }
+        const locationDetails = {
+            ...general.rows[0],
+            ...rating.rows[0],
+            infos: infos.rows,
+        };
+        return res.json({
+            success: locationDetails,
+            error: false,
+        });
     } catch (err) {
         console.log("Error in getting location details:", err);
-        res.json({
-            success: false,
-            error: {
-                type: "component",
-                text: "Failed Connection to Database",
-            },
-        });
+        res.json(errorObj("component", err.message));
     }
 });
 
@@ -155,6 +120,23 @@ router.get("/in/changeLocationRating.json", async (req, res) => {
             },
         });
     }
+});
+
+router.post("/in/voteLocationSection.json", async (req, res) => {
+    console.log(
+        `Server is voting for section ${req.body.section_id} with ${req.body.vote}`
+    );
+    try {
+        const result = await db.voteLocationSection(
+            req.body.section_id,
+            req.body.vote,
+            req.session.userId
+        );
+        console.log("Result after DB-Vote:", result);
+    } catch (error) {
+        console.log("error in vote:", error);
+    }
+    res.sendStatus(200);
 });
 
 module.exports = router;

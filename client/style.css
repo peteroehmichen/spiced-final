@@ -612,6 +612,7 @@ textarea[name="comment"] {
 }
 
 .infos {
+    position: relative;
     margin: 5px;
     padding: 10px;
     width: 95%;
@@ -622,6 +623,21 @@ textarea[name="comment"] {
 
 .infos-content {
     padding: 5px 5px 5px 15px;
+}
+
+.section-voter {
+    padding: 5px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.section-voter div {
+    padding: 0 5px;
+    cursor: pointer;
 }
 
 .social {

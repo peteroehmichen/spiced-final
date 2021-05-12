@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLocationSection } from "../helpers/actions";
 import { Loader } from "../helpers/helperComponents";
+import SectionVote from "./SectionVote";
 
 export default function LocationTips() {
     const dispatch = useDispatch();
@@ -37,6 +38,7 @@ export default function LocationTips() {
                                 <div className="infos-content">
                                     <p>{elem.content}</p>
                                 </div>
+                                <SectionVote id={elem.id} />
                                 <div>
                                     <button
                                         disabled={editing}

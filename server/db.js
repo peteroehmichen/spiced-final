@@ -94,7 +94,7 @@ module.exports.addLocationPic = function (url, id) {
     ]);
 };
 
-module.exports.updateLocationSection = async function (article) {
+module.exports.updateLocationSection = async function (article, creator) {
     const { title, content, section_id, location_id } = article;
     if (section_id) {
         return sql.query(
@@ -115,8 +115,16 @@ module.exports.updateLocationSection = async function (article) {
         }
     }
     return sql.query(
-        "INSERT INTO location_sections (location_id, title, content) VALUES ($1, $2, $3) RETURNING id, title, content, last_updated, location_id",
-        [location_id, title, content]
+        "INSERT INTO location_sections (location_id, creator_id, title, content) VALUES ($1, $2, $3, $4) RETURNING id, title, content, last_updated, location_id",
+        [location_id, creator, title, content]
+    );
+};
+
+module.exports.voteLocationSection = async function (sectionId, vote, userId) {
+    const direction =
+        vote > 0 ? ["rate_down", "rate_up"] : ["rate_up", "rate_down"];
+    return sql.query(
+        `UPDATE location_sections SET ${direction[0]} = array_remove(${direction[0]}, ${userId}), ${direction[1]} = array_append(array_remove(${direction[1]}, ${userId}), ${userId}) WHERE id=${sectionId};`
     );
 };
 
@@ -303,7 +311,7 @@ module.exports.getUserById = function (id, userId) {
     );
 };
 
-module.exports.getLocationById_new = async function (id, user) {
+module.exports.getLocationById = async function (id, user) {
     return {
         general: await sql.query(
             `SELECT id, continent, country, name, picture FROM locations WHERE id=${id};`
@@ -316,10 +324,6 @@ module.exports.getLocationById_new = async function (id, user) {
             [id, user]
         ),
     };
-};
-
-module.exports.getLocationById = async function (id) {
-    return sql.query(`SELECT * FROM locations WHERE id=${id};`);
 };
 
 module.exports.getLocationRating = async function (id, user) {

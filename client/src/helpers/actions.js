@@ -1,8 +1,7 @@
 import axios from "./axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import TripEdit from "../in/TripEdit";
-import { errorReturn } from "../../../globalHelpers/helpers";
+import { errorObj } from "../../../globalHelpers/helpers";
 
 export async function getEssentialData() {
     try {
@@ -14,16 +13,10 @@ export async function getEssentialData() {
             },
         };
     } catch (err) {
-        console.log("Major Error in fetching essential data:", err);
+        console.log("Major Error in getting essential data:", err);
         return {
             type: "GET_ESSENTIAL_DATA",
-            payload: {
-                success: false,
-                error: {
-                    type: "major",
-                    text: "Connection to Server was lost",
-                },
-            },
+            payload: errorObj("major", "Connection to the Server was lost"),
         };
     }
 }
@@ -81,13 +74,7 @@ export async function getLocationData(id) {
         console.log("Received an error on /location:", error);
         return {
             type: "FULL_LOCATION_DATA",
-            payload: {
-                success: false,
-                error: {
-                    type: "component",
-                    text: "Could not access Server",
-                },
-            },
+            payload: errorObj("component", "Could not access Server"),
         };
     }
 }
@@ -158,10 +145,29 @@ export async function updateLocationSection(values, id, section) {
         returnObj.payload = data;
     } catch (error) {
         console.log("Received an error on /updateLocationSection:", error);
-        returnObj.payload = errorReturn(error, "Could not access the Server");
+        returnObj.payload = errorObj(
+            "notification",
+            "Could not access the Server"
+        );
     }
 
     return returnObj;
+}
+
+export async function voteLocationSection(section_id, vote) {
+    console.log("ACTION:", section_id, vote);
+    try {
+        const result = await axios.post("/in/voteLocationSection.json", {
+            section_id,
+            vote,
+        });
+        console.log(result);
+    } catch (error) {
+        console.log("There was an error:", error);
+    }
+    return {
+        type: "VOTE_LOCATION_SECTION",
+    };
 }
 
 export function removeReduxDetail(section, value) {
