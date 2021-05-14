@@ -11,15 +11,25 @@ export default function SectionVote({ id, up, down, sum }) {
         } else if (down && value === -1) {
             console.log("already voted down...");
         } else {
-        dispatch(voteLocationSection(id, value));
+            dispatch(voteLocationSection(id, value));
         }
     };
 
     return (
         <div className="section-voter">
-            <div style={{ visibility: up ? "hidden" : "visible" }} onClick={() => vote(1)}>↗️</div>
+            <div
+                style={{ visibility: up ? "hidden" : "visible" }}
+                onClick={() => vote(1)}
+            >
+                <b>+</b>
+            </div>
             <p>{sum}</p>
-            <div style={{ visibility: down ? "hidden" : "visible" }} onClick={() => vote(-1)}>↘️</div>
+            <div
+                style={{ visibility: down ? "hidden" : "visible" }}
+                onClick={() => vote(-1)}
+            >
+                <b>-</b>
+            </div>
         </div>
     );
 }

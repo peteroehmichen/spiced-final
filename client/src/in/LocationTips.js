@@ -30,21 +30,13 @@ export default function LocationTips() {
                 <p>be the first to add infos here</p>
             )}
             {infos &&
-                infos.map((elem, i) => (
-                    <div key={i}>
-                        {!secEdit[i] && (
-                            <div className="infos">
-                                <h3>{elem.title}</h3>
+                infos.map((elem, i) => {
+                    if (!secEdit[i]) {
+                        return (
+                            <div className="infos" key={i}>
                                 <div className="infos-content">
+                                    <h3>{elem.title}</h3>
                                     <p>{elem.content}</p>
-                                </div>
-                                <SectionVote
-                                    id={elem.id}
-                                    up={elem.voted_up}
-                                    down={elem.voted_down}
-                                    sum={elem.summed_votes}
-                                />
-                                <div>
                                     <button
                                         disabled={editing}
                                         onClick={() => {
@@ -62,24 +54,31 @@ export default function LocationTips() {
                                         edit
                                     </button>
                                 </div>
+                                <SectionVote
+                                    id={elem.id}
+                                    up={elem.voted_up}
+                                    down={elem.voted_down}
+                                    sum={elem.summed_votes}
+                                />
                             </div>
-                        )}
-                        {secEdit[i] && (
-                            <div key={i} className="infos">
-                                <div className="infos-content">
-                                    <input
-                                        type="text"
-                                        name="title"
-                                        defaultValue={elem.title}
-                                        onChange={fillNew}
-                                    />
-                                    <textarea
-                                        defaultValue={elem.content}
-                                        name="content"
-                                        onChange={fillNew}
-                                    />
-                                </div>
-                                <div>
+                        );
+                    }
+
+                    return (
+                        <div key={i} className="infos">
+                            <div className="infos-content">
+                                <input
+                                    type="text"
+                                    name="title"
+                                    defaultValue={elem.title}
+                                    onChange={fillNew}
+                                />
+                                <textarea
+                                    defaultValue={elem.content}
+                                    name="content"
+                                    onChange={fillNew}
+                                />
+                                <div className="infos-buttons">
                                     <button
                                         onClick={() => {
                                             setValues(null);
@@ -116,9 +115,9 @@ export default function LocationTips() {
                                     </button>
                                 </div>
                             </div>
-                        )}
-                    </div>
-                ))}
+                        </div>
+                    );
+                })}
             {!newSection && (
                 <div
                     className="infos add"

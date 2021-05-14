@@ -618,7 +618,8 @@ textarea[name="comment"] {
     width: 95%;
     background-color: #fff;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .infos-content {
@@ -627,12 +628,10 @@ textarea[name="comment"] {
 
 .section-voter {
     padding: 5px;
-    position: absolute;
-    top: 0px;
-    right: 0px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-evenly;
+    align-items: center;
 }
 
 .section-voter div {
