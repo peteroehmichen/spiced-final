@@ -37,6 +37,14 @@ export default function LocationTips() {
                                 <div className="infos-content">
                                     <h3>{elem.title}</h3>
                                     <p>{elem.content}</p>
+                                </div>
+                                <SectionVote
+                                    id={elem.id}
+                                    up={elem.voted_up}
+                                    down={elem.voted_down}
+                                    sum={elem.summed_votes}
+                                />
+                                <div className="infos-buttons">
                                     <button
                                         disabled={editing}
                                         onClick={() => {
@@ -54,12 +62,6 @@ export default function LocationTips() {
                                         edit
                                     </button>
                                 </div>
-                                <SectionVote
-                                    id={elem.id}
-                                    up={elem.voted_up}
-                                    down={elem.voted_down}
-                                    sum={elem.summed_votes}
-                                />
                             </div>
                         );
                     }
@@ -78,42 +80,42 @@ export default function LocationTips() {
                                     name="content"
                                     onChange={fillNew}
                                 />
-                                <div className="infos-buttons">
-                                    <button
-                                        onClick={() => {
-                                            setValues(null);
-                                            setEditing(false);
-                                            setSecEdit({
-                                                ...secEdit,
-                                                [i]: false,
-                                            });
-                                        }}
-                                    >
-                                        cancel
-                                    </button>
-                                    <button
-                                        disabled={
-                                            values.title === elem.title &&
-                                            values.content === elem.content
-                                        }
-                                        onClick={() => {
-                                            setEditing(false);
-                                            setSecEdit({
-                                                ...secEdit,
-                                                [i]: false,
-                                            });
-                                            dispatch(
-                                                updateLocationSection(
-                                                    values,
-                                                    location.id,
-                                                    elem.id
-                                                )
-                                            );
-                                        }}
-                                    >
-                                        submit
-                                    </button>
-                                </div>
+                            </div>
+                            <div className="infos-buttons">
+                                <button
+                                    onClick={() => {
+                                        setValues(null);
+                                        setEditing(false);
+                                        setSecEdit({
+                                            ...secEdit,
+                                            [i]: false,
+                                        });
+                                    }}
+                                >
+                                    cancel
+                                </button>
+                                <button
+                                    disabled={
+                                        values.title === elem.title &&
+                                        values.content === elem.content
+                                    }
+                                    onClick={() => {
+                                        setEditing(false);
+                                        setSecEdit({
+                                            ...secEdit,
+                                            [i]: false,
+                                        });
+                                        dispatch(
+                                            updateLocationSection(
+                                                values,
+                                                location.id,
+                                                elem.id
+                                            )
+                                        );
+                                    }}
+                                >
+                                    submit
+                                </button>
                             </div>
                         </div>
                     );
@@ -132,20 +134,20 @@ export default function LocationTips() {
             )}
             {newSection && (
                 <div className="infos">
-                    <input
-                        type="text"
-                        placeholder="title of section"
-                        name="title"
-                        onChange={fillNew}
-                    />
                     <div className="infos-content">
+                        <input
+                            type="text"
+                            placeholder="title of section"
+                            name="title"
+                            onChange={fillNew}
+                        />
                         <textarea
                             placeholder="content"
                             name="content"
                             onChange={fillNew}
                         />
                     </div>
-                    <div>
+                    <div className="infos-buttons">
                         <button
                             onClick={() => {
                                 setValues(null);

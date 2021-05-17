@@ -49,9 +49,7 @@ export default function User(props) {
                             )}
                         </div>
                         <div id="user-detail-description">
-                            <h1>
-                                {other.username}
-                            </h1>
+                            <h1>{other.username}</h1>
                             {other.age && (
                                 <p>
                                     <b>Age:</b> {other.age}
@@ -185,7 +183,7 @@ export default function User(props) {
                 </div>
             )}
             {other.id && (
-                <div className="location-right">
+                <div className="location-right" style={{ height: "100%" }}>
                     {other.confirmed ||
                     (matches &&
                         matches.some((match) => match.person === other.id)) ? (

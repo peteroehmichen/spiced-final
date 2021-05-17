@@ -19,7 +19,7 @@ export default function Dashboard() {
             </div>
             <div className="friend-two">
                 <div className="grow-split">
-                    <div>
+                    <div className="blurred-container">
                         <div>
                             <h3>What your friends are planning</h3>
                         </div>
@@ -67,7 +67,7 @@ export default function Dashboard() {
                             </div>
                         )}
                     </div>
-                    <div>
+                    <div className="blurred-container">
                         <div>
                             <h3>Trips that match your plans </h3>
                         </div>
@@ -78,6 +78,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                     <div
+                        className="blurred-container"
                         style={{
                             backgroundColor: "#fdc05480",
                         }}

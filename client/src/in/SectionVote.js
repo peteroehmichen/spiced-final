@@ -18,14 +18,14 @@ export default function SectionVote({ id, up, down, sum }) {
     return (
         <div className="section-voter">
             <div
-                style={{ visibility: up ? "hidden" : "visible" }}
+                style={{ color: up ? "grey" : "black" }}
                 onClick={() => vote(1)}
             >
                 <b>+</b>
             </div>
             <p>{sum}</p>
             <div
-                style={{ visibility: down ? "hidden" : "visible" }}
+                style={{ color: down ? "grey" : "black" }}
                 onClick={() => vote(-1)}
             >
                 <b>-</b>

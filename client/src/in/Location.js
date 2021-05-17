@@ -48,7 +48,7 @@ export default function Location(props) {
                 {activateUploadModal && (
                     <PhotoUploader type="location" id={props.match.params.id} />
                 )}
-                <div className="location-head">
+                <div className="location-head blurred-container">
                     {(!location.name && <Loader />) || (
                         <Fragment>
                             <h1>{location.name}</h1>
@@ -60,11 +60,11 @@ export default function Location(props) {
                     )}
                 </div>
                 <div className="location-body">
-                    <div className="location-left">
+                    <div className="location-left blurred-container">
                         <h2>Tips and Trick for Solo Climbers</h2>
                         <LocationTips />
                     </div>
-                    <div className="location-right">
+                    <div className="location-right blurred-container">
                         <h2>Forum</h2>
                         {(!location.name && <Loader />) || (
                             <Chat
